@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/cart_view.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/view_model/cart_view_model.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/customer_main_view.dart'; 
-import 'package:restaurant_fifo/ui/themes/app_colors.dart'; // Import App Colors
+import 'package:restaurant_fifo/pages/customer/Menu/customer_main_view.dart';
+import 'package:restaurant_fifo/pages/customer/Profile/profile_view.dart'; 
+import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class CustomerLayout extends StatefulWidget {
   const CustomerLayout({super.key, this.initialIndex = 0});
@@ -27,7 +28,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
   final List<Widget> _pages = [
     const CustomerMainView(), 
     const CartView(),
-    const Center(child: Text("User Profile", style: TextStyle(color: AppRestaurantColors.primary))), 
+    const ProfileView()
   ];
 
   @override
