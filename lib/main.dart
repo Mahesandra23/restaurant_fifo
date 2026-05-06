@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:restaurant_fifo/app.dart';
-import 'package:restaurant_fifo/mvvm/mvvm.dart';
+import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/navigator/route_list.dart';
 import 'package:restaurant_fifo/navigator/routes.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/view_model/cart_view_model.dart';
-import 'package:restaurant_fifo/pages/main/repositories/main_repository.dart';
-import 'package:restaurant_fifo/pages/main/view_model/main_view_model.dart';
 import 'package:restaurant_fifo/utils/device_type_util.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +23,14 @@ void main() async {
 
   GoogleFonts.montserrat();
   await ScreenUtil.ensureScreenSize();
+  
   runApp(
     MultiProvider(
       providers: [
-        // Tambahkan ini agar CartViewModel bersifat Global
+        // Cart bersifat Global agar bisa diakses dari Menu maupun halaman Cart
         ChangeNotifierProvider(create: (_) => CartViewModel()), 
+        // Session bersifat Global agar seluruh aplikasi tahu siapa yang sedang login
+        ChangeNotifierProvider(create: (_) => SessionProvider()..fetchCurrentUser()),
       ],
       child: const MainApp(),
     ),
@@ -51,40 +53,31 @@ class MainApp extends StatelessWidget {
       builder: (context, child) => LayoutBuilder(
         builder: (context, constraints) {
           
-          /// CATATAN: Jika MainViewModel dan MainRepository belum dibuat, 
-          /// kode MvvmBuilder ini akan merah/error. 
-          /// Anda harus membuat file-nya terlebih dahulu atau hapus bungkus MvvmBuilder ini sementara.
-          return MvvmBuilder(
-            key: const ValueKey('main'),
-            viewModel: MainViewModel(MainRepository()), 
-            view: (context) {
-              return MaterialApp(
-                title: 'Restaurant FIFO', // Saya ubah judulnya dari Game Hub
-                navigatorKey: navigatorKey,
-                scaffoldMessengerKey: snackBarKey,
-                
-                // --- PERUBAHAN UTAMA DI SINI ---
-                // Mengubah rute awal langsung ke halaman LayoutSelector
-                initialRoute: RouteList.AuthSelector, 
-                // -------------------------------
-                
-                routes: Routes().allRoutes,
-                onGenerateRoute: Routes.getRouteGenerate,
-                navigatorObservers: [routeObserver],
-                builder: (context, child) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      textScaler: const TextScaler.linear(1.0),
-                    ),
-                    child: Builder(
-                      builder: (context) => SafeArea(
-                        top: false,
-                        bottom: Platform.isAndroid,
-                        child: child ?? const SizedBox.shrink(),
-                      ),
-                    ),
-                  );
-                },
+          // MvvmBuilder sudah DIHAPUS karena tidak diperlukan di root aplikasi
+          return MaterialApp(
+            title: 'Restaurant FIFO',
+            navigatorKey: navigatorKey,
+            scaffoldMessengerKey: snackBarKey,
+            debugShowCheckedModeBanner: false, // Tambahan opsional agar tulisan "Debug" hilang
+            
+            // Mengubah rute awal langsung ke halaman AuthSelector / Login
+            initialRoute: RouteList.AuthSelector, 
+            
+            routes: Routes().allRoutes,
+            onGenerateRoute: Routes.getRouteGenerate,
+            navigatorObservers: [routeObserver],
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: const TextScaler.linear(1.0),
+                ),
+                child: Builder(
+                  builder: (context) => SafeArea(
+                    top: false,
+                    bottom: Platform.isAndroid,
+                    child: child ?? const SizedBox.shrink(),
+                  ),
+                ),
               );
             },
           );
