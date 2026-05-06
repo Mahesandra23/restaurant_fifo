@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/layout/customer_layout.dart';
 import 'package:restaurant_fifo/layout/kitchen_layout.dart';
 import 'package:restaurant_fifo/pages/auth/login/repository/login_repository.dart';
@@ -56,6 +58,8 @@ class LoginViewModel extends ChangeNotifier {
 
         // 2. Baca statusnya (Gunakan 0 sebagai default jika datanya kosong)
         final int status = userMetadata?['status'] ?? 0;
+
+        await context.read<SessionProvider>().fetchCurrentUser();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
