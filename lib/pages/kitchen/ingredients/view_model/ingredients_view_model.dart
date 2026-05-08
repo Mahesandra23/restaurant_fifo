@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
+import 'package:restaurant_fifo/pages/kitchen/ingredients/repository/ingredients_repository.dart';
+
 
 class IngredientItem {
-  final String id;
+  final String id; // Sekarang menggunakan UUID dari Supabase
   final String name;
   final String category;
 
@@ -9,6 +12,11 @@ class IngredientItem {
 }
 
 class IngredientsViewModel extends BaseViewModel {
+  final IngredientsRepository _repo;
+
+  // Masukkan repository ke dalam constructor
+  IngredientsViewModel(this._repo);
+
   bool isLoading = false;
   List<IngredientItem> rawIngredients = [];
   Map<String, List<IngredientItem>> groupedIngredients = {};
@@ -28,21 +36,30 @@ class IngredientsViewModel extends BaseViewModel {
     fetchIngredients();
   }
 
+  // Menarik data dari Supabase
   Future<void> fetchIngredients() async {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final rawData = await _repo.fetchIngredients();
+      
+      // Mapping dari Supabase ke Model UI
+      rawIngredients = rawData.map((row) {
+        return IngredientItem(
+          id: row['id'].toString(),
+          name: row['name'].toString(),
+          category: row['category'].toString(),
+        );
+      }).toList();
 
-    rawIngredients = [
-      IngredientItem(id: 'ING-01', name: 'Daging Ayam Paha', category: 'Bahan Baku Utama'),
-      IngredientItem(id: 'ING-04', name: 'Bawang Bombay', category: 'Sayur & Buah'),
-      IngredientItem(id: 'ING-07', name: 'Garam Halus', category: 'Bumbu & Rempah'),
-    ];
-
-    _groupData();
-    isLoading = false;
-    notifyListeners();
+      _groupData();
+    } catch (e) {
+      debugPrint("Error fetch ingredients: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   // Fungsi untuk mengelompokkan data
@@ -56,20 +73,34 @@ class IngredientsViewModel extends BaseViewModel {
     }
   }
 
-  // Fungsi Tambah Bahan (Tanpa pindah halaman)
-  void addIngredient(String name, String category) {
-    final newId = 'ING-${rawIngredients.length + 10}';
-    final newItem = IngredientItem(id: newId, name: name, category: category);
-    
-    rawIngredients.add(newItem);
-    _groupData();
+  // Fungsi Tambah Bahan ke Supabase
+  Future<void> addIngredient(String name, String category) async {
+    isLoading = true;
     notifyListeners();
+
+    try {
+      await _repo.addIngredient(name, category);
+      debugPrint("Ingredient added successfully: $name in category $category");
+      await fetchIngredients(); // Tarik ulang data agar list ter-update
+    } catch (e) {
+      debugPrint("Error add ingredient: $e");
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
-  // Fungsi Hapus Bahan (Tombol minus)
-  void removeIngredient(String id) {
-    rawIngredients.removeWhere((item) => item.id == id);
-    _groupData();
+  // Fungsi Hapus Bahan dari Supabase
+  Future<void> removeIngredient(String id) async {
+    isLoading = true;
     notifyListeners();
+
+    try {
+      await _repo.deleteIngredient(id);
+      await fetchIngredients(); // Tarik ulang data setelah sukses dihapus
+    } catch (e) {
+      debugPrint("Error delete ingredient: $e");
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

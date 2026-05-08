@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:restaurant_fifo/pages/kitchen/ingredients/ingredients_view.dart';
-import 'package:restaurant_fifo/pages/kitchen/menu/menu_view.dart';
+import 'package:restaurant_fifo/pages/kitchen/kitchen_catalog_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/queue/kitchen_main_view.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart'; // Import App Colors
 
@@ -25,9 +24,9 @@ class _KitchenLayoutState extends State<KitchenLayout> {
   // Halaman khusus Dapur
   final List<Widget> _pages = [
     const KitchenMainView(),
-    const IngredientsView(),
-    const MenuView(),
+    const KitchenCatalogView(),
     const Center(child: Text("Stocks", style: TextStyle(color: AppRestaurantColors.primary))),
+    const Center(child: Text("user", style: TextStyle(color: AppRestaurantColors.primary))),
   ];
 
   @override
@@ -54,9 +53,9 @@ class _KitchenLayoutState extends State<KitchenLayout> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildNavItem(index: 0, icon: Icons.receipt_long, label: 'Queue'),
-            _buildNavItem(index: 1, icon: Icons.kitchen, label: 'Ingredients'),
-            _buildNavItem(index: 2, icon: Icons.fastfood, label: 'Menu'), 
-            _buildNavItem(index: 3, icon: Icons.inventory, label: 'Stocks'), 
+            _buildNavItem(index: 1, icon: Icons.fastfood, label: 'Catalog'),
+            _buildNavItem(index: 2, icon: Icons.inventory, label: 'Stocks'), 
+            _buildNavItem(index: 3, icon: Icons.person, label: 'User'), 
           ],
         ),
       ),

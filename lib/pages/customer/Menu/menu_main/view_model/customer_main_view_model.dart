@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/repository/customer_main_repository.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_main/repository/customer_main_repository.dart';
 
 
 // Model MenuItem diperbarui untuk menampung ID (penting untuk masuk keranjang nanti)

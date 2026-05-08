@@ -1,119 +1,190 @@
+import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
+import 'package:restaurant_fifo/pages/kitchen/menu/repository/menu_repository.dart';
+  import 'dart:io';
 
-// --- MODEL DATA ---
+class CategoryData {
+  final String id;
+  final String name;
+  CategoryData({required this.id, required this.name});
+}
+
 class MasterIngredient {
   final String id;
   final String name;
   MasterIngredient({required this.id, required this.name});
 }
 
-class MenuData {
+class KitchenMenuData {
   final String id;
-  String name;
-  String description;
-  String category;
-  String imageUrl; // URL gambar atau asset
-  List<MasterIngredient> ingredients; // Relasi ke bahan baku
+  final String name;
+  final String description;
+  final int price;
+  final String categoryId;
+  final String categoryName;
+  final String imageUrl;
+  final List<MasterIngredient> ingredients;
 
-  MenuData({
+  KitchenMenuData({
     required this.id,
     required this.name,
     required this.description,
-    required this.category,
-    this.imageUrl = '',
+    required this.price,
+    required this.categoryId,
+    required this.categoryName,
+    required this.imageUrl,
     required this.ingredients,
   });
 }
 
-// --- VIEW MODEL ---
 class MenuViewModel extends BaseViewModel {
+  final MenuRepository _repo;
+  MenuViewModel(this._repo);
+
   bool isLoading = false;
 
-  // Daftar Menu yang ada di restoran
-  List<MenuData> menus = [];
-
-  // Daftar Master Bahan Baku (Diambil dari database/halaman Ingredients)
+  List<CategoryData> categories = [];
   List<MasterIngredient> availableIngredients = [];
-
-  // Kategori Menu
-  final List<String> menuCategories = [
-    'Appetizer',
-    'Main Course',
-    'Dessert',
-    'Drink'
-  ];
+  Map<String, List<KitchenMenuData>> groupedMenus = {};
 
   @override
   void init() {
     super.init();
-    fetchData();
+    fetchInitialData();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchInitialData() async {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      // Fetch Paralel agar lebih cepat
+      final results = await Future.wait([
+        _repo.fetchCategories(),
+        _repo.fetchIngredients(),
+        _repo.fetchMenus(),
+      ]);
 
-    // 1. Ambil Master Data Bahan (Simulasi)
-    availableIngredients = [
-      MasterIngredient(id: 'ING-01', name: 'Daging Ayam Paha'),
-      MasterIngredient(id: 'ING-04', name: 'Bawang Bombay'),
-      MasterIngredient(id: 'ING-06', name: 'Selada Air'),
-      MasterIngredient(id: 'ING-07', name: 'Garam Halus'),
-      MasterIngredient(id: 'ING-09', name: 'Kaldu Jamur'),
-      MasterIngredient(id: 'ING-10', name: 'Minyak Goreng Sawit'),
-    ];
+      // 1. Parse Categories
+      categories = (results[0] as List)
+          .map(
+            (c) => CategoryData(
+              id: c['id'].toString(),
+              name: c['name'].toString(),
+            ),
+          )
+          .toList();
 
-    // 2. Ambil Data Menu (Simulasi)
-    menus = [
-      MenuData(
-        id: 'MNU-001',
-        name: 'Ayam Goreng Crispy',
-        description: 'Ayam goreng renyah dengan bumbu rahasia.',
-        category: 'Main Course',
-        ingredients: [
-          availableIngredients[0], // Daging Ayam Paha
-          availableIngredients[3], // Garam
-          availableIngredients[5], // Minyak Goreng
-        ],
-      ),
-    ];
+      // 2. Parse Ingredients
+      availableIngredients = (results[1] as List)
+          .map(
+            (i) => MasterIngredient(
+              id: i['id'].toString(),
+              name: i['name'].toString(),
+            ),
+          )
+          .toList();
 
-    isLoading = false;
-    notifyListeners();
-  }
+      // 3. Parse Menus & Grouping
+      final rawMenus = results[2] as List;
+      groupedMenus = {};
 
-  // --- FUNGSI CRUD ---
+      for (var row in rawMenus) {
+        final catMap = row['menu_categories'] as Map<String, dynamic>?;
+        final catName = catMap?['name'] ?? 'Uncategorized';
 
-  // CREATE
-  void addMenu(String name, String desc, String category, List<MasterIngredient> selectedIng) {
-    final newMenu = MenuData(
-      id: 'MNU-00${menus.length + 2}',
-      name: name,
-      description: desc,
-      category: category,
-      ingredients: List.from(selectedIng),
-    );
-    menus.add(newMenu);
-    notifyListeners();
-  }
+        final List<dynamic> rawIng = row['menu_ingredients'] ?? [];
+        final List<MasterIngredient> menuIngs = rawIng.map((item) {
+          return MasterIngredient(
+            id: item['ingredient_id'].toString(),
+            name: item['ingredients']['name'].toString(),
+          );
+        }).toList();
 
-  // UPDATE
-  void updateMenu(String id, String newName, String newDesc, String newCategory, List<MasterIngredient> newIng) {
-    final index = menus.indexWhere((m) => m.id == id);
-    if (index != -1) {
-      menus[index].name = newName;
-      menus[index].description = newDesc;
-      menus[index].category = newCategory;
-      menus[index].ingredients = List.from(newIng);
+        final menu = KitchenMenuData(
+          id: row['id'].toString(),
+          name: row['name'].toString(),
+          description: row['description']?.toString() ?? '',
+          price: row['price'] as int? ?? 0,
+          categoryId: row['category_id']?.toString() ?? '',
+          categoryName: catName,
+          imageUrl: row['image_path']?.toString() ?? '',
+          ingredients: menuIngs,
+        );
+
+        if (!groupedMenus.containsKey(catName)) {
+          groupedMenus[catName] = [];
+        }
+        groupedMenus[catName]!.add(menu);
+      }
+    } catch (e) {
+      debugPrint("Error fetching kitchen data: $e");
+    } finally {
+      isLoading = false;
       notifyListeners();
     }
   }
 
-  // DELETE
-  void deleteMenu(String id) {
-    menus.removeWhere((m) => m.id == id);
+  // --- FUNGSI KATEGORI ---
+  Future<void> addCategory(String name) async {
+    await _repo.addCategory(name);
+    await fetchInitialData();
+  }
+
+  Future<void> deleteCategory(String id) async {
+    await _repo.deleteCategory(id);
+    await fetchInitialData();
+  }
+
+  // --- FUNGSI MENU ---
+  // Update parameter saveMenu
+  Future<void> saveMenu({
+    String? id, required String name, required String desc, 
+    required int price, required String categoryId, required List<String> ingredientIds,
+    File? imageFile, // Parameter foto baru
+    String? existingImageUrl, // URL foto lama (jika edit)
+  }) async {
+    isLoading = true;
     notifyListeners();
+    
+    String? finalImageUrl = existingImageUrl;
+
+    try {
+      // Jika Admin memilih foto baru dari galeri, Upload dulu!
+      if (imageFile != null) {
+        final uploadedUrl = await _repo.uploadMenuImage(imageFile);
+        if (uploadedUrl != null) {
+          finalImageUrl = uploadedUrl;
+        }
+      }
+
+      // Siapkan data untuk disimpan ke tabel menus
+      final menuData = {
+        'name': name, 
+        'description': desc, 
+        'price': price, 
+        'category_id': categoryId,
+        if (finalImageUrl != null && finalImageUrl.isNotEmpty) 'image_path': finalImageUrl,
+      };
+      
+      if (id == null) {
+        await _repo.addMenu(menuData, ingredientIds);
+      } else {
+        await _repo.updateMenu(id, menuData, ingredientIds);
+      }
+      await fetchInitialData();
+    } catch (e) {
+      debugPrint("Error save menu: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteMenu(String id) async {
+    isLoading = true;
+    notifyListeners();
+    await _repo.deleteMenu(id);
+    await fetchInitialData();
   }
 }
