@@ -1,8 +1,8 @@
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/menu_all/view_model/menu_all_view_model.dart'; // Import model menu Anda
+import 'package:restaurant_fifo/core/models/menu_model.dart'; // Import model menu Anda
 
 class MenuDetailViewModel extends BaseViewModel {
-  final CustomerMenuModel menu; // Menerima data menu dari halaman sebelumnya
+  final MenuModel menu; // Menerima data menu dari halaman sebelumnya
 
   int quantity = 1;
   String notes = '';

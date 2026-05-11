@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MenuRepository {
+class MenuMainRepository {
   final _supabase = Supabase.instance.client;
 
   // 1. Fungsi mengambil daftar Menu beserta nama Kategorinya

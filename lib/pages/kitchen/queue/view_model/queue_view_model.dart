@@ -24,7 +24,7 @@ class OrderQueue {
 }
 
 // --- VIEW MODEL ---
-class KitchenMainViewModel extends BaseViewModel {
+class QueueViewModel extends BaseViewModel {
   bool isLoading = false;
   
   // List untuk menyimpan antrean pesanan

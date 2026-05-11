@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/cart_view.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/view_model/cart_view_model.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/menu_main/customer_main_view.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_main/menu_main_view.dart';
 import 'package:restaurant_fifo/pages/customer/Profile/profile_view.dart'; 
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
@@ -26,7 +26,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
 
   // Halaman khusus Customer
   final List<Widget> _pages = [
-    const CustomerMainView(), 
+    const MenuMainView(), 
     const CartView(),
     const ProfileView()
   ];

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
-// Sesuaikan import di bawah ini dengan lokasi file Anda yang sebenarnya:
 import 'package:restaurant_fifo/pages/kitchen/menu/menu_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/ingredients/ingredients_view.dart';
 
@@ -14,7 +13,7 @@ class KitchenCatalogView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppRestaurantColors.background,
         appBar: AppBar(
-          title: const Text('Katalog & Resep', style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.accent)),
+          title: const Text('Catalog & Recipes', style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.accent)),
           backgroundColor: AppRestaurantColors.primary,
           centerTitle: true,
           elevation: 0,
@@ -24,8 +23,8 @@ class KitchenCatalogView extends StatelessWidget {
             labelColor: AppRestaurantColors.accent,
             unselectedLabelColor: Colors.white54,
             tabs: [
-              Tab(icon: Icon(Icons.restaurant_menu), text: 'Daftar Menu'),
-              Tab(icon: Icon(Icons.kitchen), text: 'Master Bahan'),
+              Tab(icon: Icon(Icons.restaurant_menu), text: 'Menu List'),
+              Tab(icon: Icon(Icons.kitchen), text: 'Ingredient Master'),
             ],
           ),
         ),

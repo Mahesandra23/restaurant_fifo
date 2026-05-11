@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_all/menu_all_view.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/menu_main/repository/customer_main_repository.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/menu_main/view_model/customer_main_view_model.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_detail/menu_detail_view.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_main/repository/menu_main_repository.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_main/view_model/menu_main_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart';
 
-class CustomerMainView extends StatelessWidget {
-  const CustomerMainView({super.key});
+class MenuMainView extends StatelessWidget {
+  const MenuMainView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MvvmBuilder<CustomerMainViewModel>(
+    return MvvmBuilder<MenuMainViewModel>(
       // Masukkan MenuRepository saat inisialisasi ViewModel
-      viewModel: CustomerMainViewModel(MenuRepository()),
+      viewModel: MenuMainViewModel(MenuMainRepository()),
       initOnce: true,
       key: const Key('CustomerMain'),
       view: (context) {
-        final vm = context.watch<CustomerMainViewModel>();
+        final vm = context.watch<MenuMainViewModel>();
 
         return Scaffold(
           backgroundColor: AppRestaurantColors.background,
@@ -63,7 +65,7 @@ class CustomerMainView extends StatelessWidget {
                                 ),
                               ...vm.groupedMenus.entries.map((entry) {
                                 String categoryName = entry.key;
-                                List<MenuItem> menuItems = entry.value;
+                                List<MenuModel> menuItems = entry.value;
                                 return _buildMenuSection(
                                   context,
                                   categoryName,
@@ -85,8 +87,7 @@ class CustomerMainView extends StatelessWidget {
   }
 
   // --- WIDGET BUILDERS (Hanya bagian yang berubah) ---
-
-  Widget _buildHeader(BuildContext context, CustomerMainViewModel vm) {
+  Widget _buildHeader(BuildContext context, MenuMainViewModel vm) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -179,7 +180,7 @@ class CustomerMainView extends StatelessWidget {
   Widget _buildMenuSection(
     BuildContext context,
     String title,
-    List<MenuItem> items,
+    List<MenuModel> items,
   ) {
     if (items.isEmpty) return const SizedBox.shrink();
 
@@ -235,22 +236,18 @@ class CustomerMainView extends StatelessWidget {
                 ),
                 child: MenuCardWidget(
                   name: item.name,
-                  formattedPrice:
-                      'Rp ${item.price}', 
+                  formattedPrice: 'Rp ${item.price}',
                   imageUrl: item.imageUrl,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Menu dipilih: ${item.name}')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MenuDetailView(
+                          menu: item,
+                        ), // Lempar datanya ke sini
+                      ),
                     );
                   },
-//                   onTap: () {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => MenuDetailView(menu: item), // Lempar datanya ke sini
-//     ),
-//   );
-// },
                 ),
               );
             },
@@ -262,7 +259,7 @@ class CustomerMainView extends StatelessWidget {
   }
 
   // MENAMPILKAN KATEGORI DINAMIS DI BOTTOM SHEET
-  void _showFilterBottomSheet(BuildContext context, CustomerMainViewModel vm) {
+  void _showFilterBottomSheet(BuildContext context, MenuMainViewModel vm) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppRestaurantColors.background,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
 import 'package:restaurant_fifo/pages/kitchen/menu/repository/menu_repository.dart';
   import 'dart:io';
@@ -9,34 +10,6 @@ class CategoryData {
   CategoryData({required this.id, required this.name});
 }
 
-class MasterIngredient {
-  final String id;
-  final String name;
-  MasterIngredient({required this.id, required this.name});
-}
-
-class KitchenMenuData {
-  final String id;
-  final String name;
-  final String description;
-  final int price;
-  final String categoryId;
-  final String categoryName;
-  final String imageUrl;
-  final List<MasterIngredient> ingredients;
-
-  KitchenMenuData({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.categoryId,
-    required this.categoryName,
-    required this.imageUrl,
-    required this.ingredients,
-  });
-}
-
 class MenuViewModel extends BaseViewModel {
   final MenuRepository _repo;
   MenuViewModel(this._repo);
@@ -44,8 +17,8 @@ class MenuViewModel extends BaseViewModel {
   bool isLoading = false;
 
   List<CategoryData> categories = [];
-  List<MasterIngredient> availableIngredients = [];
-  Map<String, List<KitchenMenuData>> groupedMenus = {};
+  List<MenuIngredient> availableIngredients = [];
+  Map<String, List<MenuModel>> groupedMenus = {};
 
   @override
   void init() {
@@ -78,7 +51,7 @@ class MenuViewModel extends BaseViewModel {
       // 2. Parse Ingredients
       availableIngredients = (results[1] as List)
           .map(
-            (i) => MasterIngredient(
+            (i) => MenuIngredient(
               id: i['id'].toString(),
               name: i['name'].toString(),
             ),
@@ -94,14 +67,14 @@ class MenuViewModel extends BaseViewModel {
         final catName = catMap?['name'] ?? 'Uncategorized';
 
         final List<dynamic> rawIng = row['menu_ingredients'] ?? [];
-        final List<MasterIngredient> menuIngs = rawIng.map((item) {
-          return MasterIngredient(
+        final List<MenuIngredient> menuIngs = rawIng.map((item) {
+          return MenuIngredient(
             id: item['ingredient_id'].toString(),
             name: item['ingredients']['name'].toString(),
           );
         }).toList();
 
-        final menu = KitchenMenuData(
+        final menu = MenuModel(
           id: row['id'].toString(),
           name: row['name'].toString(),
           description: row['description']?.toString() ?? '',

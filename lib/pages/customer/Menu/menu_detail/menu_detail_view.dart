@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
-import 'package:restaurant_fifo/pages/customer/Menu/menu_all/view_model/menu_all_view_model.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_detail/view_model/menu_detail_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class MenuDetailView extends StatelessWidget {
-  final CustomerMenuModel menu; // Data dilempar dari halaman sebelumnya
+  final MenuModel menu; // Data dilempar dari halaman sebelumnya
 
   const MenuDetailView({super.key, required this.menu});
 

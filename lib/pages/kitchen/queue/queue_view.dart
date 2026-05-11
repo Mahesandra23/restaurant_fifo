@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
-import 'package:restaurant_fifo/pages/kitchen/queue/view_model/kitchen_main_view_model.dart';
+import 'package:restaurant_fifo/pages/kitchen/queue/view_model/queue_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
-class KitchenMainView extends StatelessWidget {
-  const KitchenMainView({super.key});
+class QueueView extends StatelessWidget {
+  const QueueView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MvvmBuilder<KitchenMainViewModel>(
-      viewModel: KitchenMainViewModel(),
+    return MvvmBuilder<QueueViewModel>(
+      viewModel: QueueViewModel(),
       initOnce: true,
       key: const Key('KitchenMain'),
       view: (context) {
-        final vm = context.watch<KitchenMainViewModel>();
+        final vm = context.watch<QueueViewModel>();
 
         return Scaffold(
           backgroundColor: AppRestaurantColors.background, 
@@ -73,7 +73,7 @@ class KitchenMainView extends StatelessWidget {
   Widget _buildOrderCard(
     BuildContext context,
     OrderQueue order,
-    KitchenMainViewModel vm,
+    QueueViewModel vm,
   ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -140,7 +140,7 @@ class KitchenMainView extends StatelessWidget {
   void _showOrderDetails(
     BuildContext context,
     OrderQueue order,
-    KitchenMainViewModel vm,
+    QueueViewModel vm,
   ) {
     showModalBottomSheet(
       context: context,
