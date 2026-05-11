@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:restaurant_fifo/app.dart';
+import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/navigator/route_list.dart';
 import 'package:restaurant_fifo/navigator/routes.dart';
-import 'package:restaurant_fifo/pages/customer/Cart/view_model/cart_view_model.dart';
 import 'package:restaurant_fifo/utils/device_type_util.dart';
 
 void main() async {
@@ -28,7 +28,7 @@ void main() async {
     MultiProvider(
       providers: [
         // Cart bersifat Global agar bisa diakses dari Menu maupun halaman Cart
-        ChangeNotifierProvider(create: (_) => CartViewModel()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
         // Session bersifat Global agar seluruh aplikasi tahu siapa yang sedang login
         ChangeNotifierProvider(
           create: (_) => SessionProvider()..fetchCurrentUser(),

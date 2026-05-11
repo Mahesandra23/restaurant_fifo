@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:restaurant_fifo/layout/customer_layout.dart';
 import 'package:restaurant_fifo/pages/auth/login/view%20model/login_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/button/gradient_button.dart';
@@ -95,10 +94,7 @@ class LoginView extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
                     ),
-                    onPressed: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CustomerLayout()),
-                    ),
+                    onPressed: () => vm.loginGuest(context),
                     child: Text(
                       'Continue as Guest',
                       style: AppTextStyle.bodySm.semibold.copyWith(

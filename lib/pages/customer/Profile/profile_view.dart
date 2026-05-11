@@ -7,6 +7,7 @@ import 'package:restaurant_fifo/pages/customer/Profile/repository/profile_reposi
 
 import 'package:restaurant_fifo/pages/customer/Profile/view_model/profile_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -17,8 +18,10 @@ class ProfileView extends StatelessWidget {
     final session = context.watch<SessionProvider>();
     final user = session.currentUserProfile;
 
+    final isGuest = Supabase.instance.client.auth.currentUser?.isAnonymous ?? false;
+
     // Jika user null, berarti dia GUEST
-    if (user == null) {
+    if (user == null || isGuest) {
       return _buildGuestView(context);
     }
 

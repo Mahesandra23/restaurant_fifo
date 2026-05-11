@@ -1,3 +1,4 @@
+import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart'; // Import model menu Anda
 
@@ -29,17 +30,11 @@ class MenuDetailViewModel extends BaseViewModel {
   int get totalPrice => menu.price * quantity;
 
   // Fungsi untuk memasukkan ke keranjang
-  void addToCart() {
-    // TODO: Nanti disambungkan ke CartProvider atau SessionProvider
-    // Contoh bentuk data yang akan dilempar ke keranjang:
-    // {
-    //   'menu_id': menu.id,
-    //   'name': menu.name,
-    //   'price': menu.price,
-    //   'quantity': quantity,
-    //   'notes': notes,
-    // }
+  // Fungsi untuk memasukkan ke keranjang global (Provider)
+  void addToCart(CartProvider cartProvider) {
+    cartProvider.addItem(menu, quantity, notes);
     
-    print('Berhasil ditambahkan: ${menu.name}, Qty: $quantity, Notes: $notes');
+    // Print ini akan muncul di terminal untuk memastikan berhasil
+    print('Berhasil masuk Tas Belanja: ${menu.name}, Qty: $quantity, Notes: $notes');
   }
 }

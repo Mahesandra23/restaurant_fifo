@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/core/models/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 class SessionProvider extends ChangeNotifier {
   UserProfile? _currentUserProfile;
   bool isLoading = true;
@@ -46,7 +45,21 @@ class SessionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Fungsi untuk Logout
+  // 2. FUNGSI LOGIN GUEST (Harus di luar fetchCurrentUser)
+  Future<void> loginAsGuest() async {
+    try {
+      final response = await Supabase.instance.client.auth.signInAnonymously();
+
+      if (response.user != null) {
+        await fetchCurrentUser();
+        print('Guest login sukses: ${response.user!.id}');
+      }
+    } catch (e) {
+      print('Error Guest Login: $e');
+    }
+  }
+
+  // 3. FUNGSI LOGOUT
   Future<void> logout() async {
     await _supabase.auth.signOut();
     _currentUserProfile = null;

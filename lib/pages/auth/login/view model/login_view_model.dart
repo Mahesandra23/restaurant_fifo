@@ -33,9 +33,6 @@ class LoginViewModel extends ChangeNotifier {
     // kecuali kamu butuh validasi real-time untuk tombol login
   }
 
-  // Fungsi untuk proses login
-  // LoginViewModel.dart
-
   Future<void> login(BuildContext context) async {
     if (_email.isEmpty || _password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,6 +99,42 @@ class LoginViewModel extends ChangeNotifier {
       );
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // Tambahkan fungsi ini di dalam LoginViewModel
+  Future<void> loginGuest(BuildContext context) async {
+    _setLoading(true); // Munculkan efek loading di layar
+
+    try {
+      // 1. Panggil SessionProvider lewat context
+      await context.read<SessionProvider>().loginAsGuest();
+
+      if (!context.mounted) return;
+
+      // 2. Tampilkan pesan sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Berhasil masuk sebagai Tamu'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // 3. Pindah ke halaman Customer
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CustomerLayout()),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gagal masuk sebagai tamu. Coba lagi.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      _setLoading(false); // Matikan loading
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/cart_view.dart';
-import 'package:restaurant_fifo/pages/customer/Cart/view_model/cart_view_model.dart';
+import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_main/menu_main_view.dart';
 import 'package:restaurant_fifo/pages/customer/Profile/profile_view.dart'; 
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
@@ -65,7 +65,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
 
   Widget _buildNavItem(BuildContext context, {required int index, required IconData icon, required String label}) {
     final bool isActive = index == _currentIndex;
-    final cartVm = context.watch<CartViewModel>();
+    final cartVm = context.watch<CartProvider>();
 
     // Menentukan warna berdasarkan status aktif
     final Color iconColor = isActive ? AppRestaurantColors.primary : AppRestaurantColors.secondary;

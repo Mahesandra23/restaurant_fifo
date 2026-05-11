@@ -41,7 +41,8 @@ class QueueView extends StatelessWidget {
                   itemCount: vm.activeOrders.length,
                   itemBuilder: (context, index) {
                     final order = vm.activeOrders[index];
-                    return _buildOrderCard(context, order, vm);
+                    // --- UBAH DI SINI: Kirimkan index ---
+                    return _buildOrderCard(context, order, vm, index); 
                   },
                 ),
         );
@@ -74,6 +75,7 @@ class QueueView extends StatelessWidget {
     BuildContext context,
     OrderQueue order,
     QueueViewModel vm,
+    int index,
   ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -82,7 +84,7 @@ class QueueView extends StatelessWidget {
       elevation: 3,
       shadowColor: AppRestaurantColors.primary.withOpacity(0.2),
       child: InkWell(
-        onTap: () => _showOrderDetails(context, order, vm),
+        onTap: () => _showOrderDetails(context, order, vm, index == 0),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -141,6 +143,7 @@ class QueueView extends StatelessWidget {
     BuildContext context,
     OrderQueue order,
     QueueViewModel vm,
+    bool isFrontOrder,
   ) {
     showModalBottomSheet(
       context: context,
@@ -268,7 +271,7 @@ class QueueView extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    vm.completeOrder(order.id);
+                    vm.completeFrontOrder();
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
