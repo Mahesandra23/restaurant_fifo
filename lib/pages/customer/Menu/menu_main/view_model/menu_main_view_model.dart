@@ -4,18 +4,19 @@ import 'package:restaurant_fifo/pages/customer/Menu/menu_main/repository/menu_ma
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 
 class MenuMainViewModel extends BaseViewModel {
-  // Injeksi Repository
   final MenuMainRepository _repository;
   MenuMainViewModel(this._repository);
 
   bool isLoading = false;
 
-  // Kumpulan data yang dikelompokkan otomatis berdasarkan kategori
-  // Contoh isi: {'Drink': [Item1, Item2], 'Dessert': [Item3]}
   Map<String, List<MenuModel>> groupedMenus = {};
-
-  // Daftar nama kategori untuk filter bottom sheet
   List<String> filterCategories = [];
+  List<String> bannerUrls = [];
+
+  // VARIABLE BARU: Untuk menyimpan kata kunci pencarian aktif agar bisa dibaca oleh UI
+  String searchQuery = '';
+
+  List<Map<String, dynamic>> _cachedRawMenus = [];
 
   @override
   void init() {
@@ -28,44 +29,69 @@ class MenuMainViewModel extends BaseViewModel {
     notifyListeners();
 
     try {
-      // 1. Tarik data dari Supabase via Repository
-      final rawMenus = await _repository.fetchMenus();
-      final rawCategories = await _repository.fetchCategories();
+      // 1. OPTIMASI: Menjalankan 3 fungsi API secara berbarengan (Lebih Cepat!)
+      final results = await Future.wait([
+        _repository.fetchMenus(),
+        _repository.fetchCategories(),
+        _repository.fetchActiveBanners(),
+      ]);
+
+      final rawMenus = results[0] as List<Map<String, dynamic>>;
+      final rawCategories = results[1] as List<Map<String, dynamic>>;
+      bannerUrls = results[2] as List<String>;
+
+      _cachedRawMenus = rawMenus;
 
       // 2. Olah data kategori untuk Filter
       filterCategories = rawCategories.map((c) => c['name'] as String).toList();
 
-      // 3. Olah dan kelompokkan Menu berdasarkan Kategori
-      Map<String, List<MenuModel>> tempGrouped = {};
-
-      for (var row in rawMenus) {
-        // Karena ada relasi, bentuk datanya bertingkat. Kita ekstrak nama kategorinya.
-        final categoryMap = row['menu_categories'] as Map<String, dynamic>?;
-        final categoryName = categoryMap?['name'] ?? 'Uncategorized';
-
-        final item = MenuModel(
-          id: row['id'].toString(),
-          name: row['name'].toString(),
-          price: row['price'] as int,
-          imageUrl: row['image_path']?.toString() ?? '',
-          description: row['description']?.toString() ?? '',
-        );
-
-        // Jika kategori belum ada di Map, buat list baru
-        if (!tempGrouped.containsKey(categoryName)) {
-          tempGrouped[categoryName] = [];
-        }
-
-        // Masukkan item ke dalam kelompok kategorinya
-        tempGrouped[categoryName]!.add(item);
-      }
-
-      groupedMenus = tempGrouped;
+      // 3. Reset pencarian awal
+      searchQuery = '';
+      _filterAndGroupMenus('');
+      
     } catch (e) {
       debugPrint("Error fetching menus: $e");
     } finally {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  void searchMenu(String query) {
+    searchQuery = query; // Simpan query terbaru
+    _filterAndGroupMenus(query);
+    notifyListeners();
+  }
+
+  void _filterAndGroupMenus(String query) {
+    Map<String, List<MenuModel>> tempGrouped = {};
+    final lowerQuery = query.toLowerCase().trim();
+
+    for (var row in _cachedRawMenus) {
+      final menuName = row['name'].toString();
+
+      if (lowerQuery.isNotEmpty && !menuName.toLowerCase().contains(lowerQuery)) {
+        continue; 
+      }
+
+      final categoryMap = row['menu_categories'] as Map<String, dynamic>?;
+      final categoryName = categoryMap?['name'] ?? 'Uncategorized';
+
+      final item = MenuModel(
+        id: row['id'].toString(),
+        name: menuName,
+        price: (row['price'] as num).toInt(), // Lebih aman dari error casting
+        imageUrl: row['image_path']?.toString() ?? '',
+        description: row['description']?.toString() ?? '',
+      );
+
+      if (!tempGrouped.containsKey(categoryName)) {
+        tempGrouped[categoryName] = [];
+      }
+
+      tempGrouped[categoryName]!.add(item);
+    }
+
+    groupedMenus = tempGrouped;
   }
 }

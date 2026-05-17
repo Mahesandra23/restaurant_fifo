@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -7,6 +8,7 @@ import 'package:restaurant_fifo/pages/kitchen/menu/repository/menu_repository.da
 import 'package:restaurant_fifo/pages/kitchen/menu/view_model/menu_view_model.dart';
 import 'package:restaurant_fifo/pages/kitchen/menu/widget/show_menu_form.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart';
 
 class MenuView extends StatelessWidget {
@@ -21,109 +23,117 @@ class MenuView extends StatelessWidget {
       view: (context) {
         final vm = context.watch<MenuViewModel>();
 
-        return Scaffold(
-          backgroundColor: AppRestaurantColors.background,
+        return FocusDetector(
+          onFocusGained: () {
+            // 3. PANGGIL FUNGSI FETCH SAAT HALAMAN KEMBALI MUNCUL
+            vm.fetchInitialData();
+          },
+          child: Scaffold(
+            backgroundColor: AppRestaurantColors.background,
 
-          // APPBAR DIHAPUS, DIGANTI 2 TOMBOL MELAYANG INI:
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Tombol Kelola Kategori (Kecil)
-              FloatingActionButton(
-                heroTag: 'manageCategoryBtn',
-                backgroundColor: AppRestaurantColors.secondary,
-                mini: true,
-                onPressed: () => _showCategoryManager(context, vm),
-                child: const Icon(
-                  Icons.category,
-                  color: AppRestaurantColors.accent,
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Tombol Tambah Menu (Besar)
-              FloatingActionButton(
-                heroTag: 'addMenuBtn',
-                backgroundColor: AppRestaurantColors.primary,
-                onPressed: () {
-                  // --- PEMANGGILAN BOTTOM SHEET WIDGET LANGSUNG DI SINI ---
-
-                  // 1. Cek dulu apakah kategori sudah ada
-                  if (vm.categories.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Buat Kategori terlebih dahulu!'),
-                      ),
-                    );
-                    return; // Hentikan eksekusi jika kategori kosong
-                  }
-
-                  // 2. Tampilkan Bottom Sheet
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled:
-                        true, // Penting agar bisa full screen dan tidak tertutup keyboard
-                    backgroundColor: AppRestaurantColors.background,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                    ),
-                    builder: (context) {
-                      // 3. Panggil widget yang sudah kita pisahkan tadi
-                      return MenuFormBottomSheet(
-                        vm: vm,
-                        // existingMenu TIDAK PERLU dikirim (atau kirim null),
-                        // karena ini untuk membuat menu BARU, bukan mengedit.
-                      );
-                    },
-                  );
-                },
-                child: const Icon(Icons.add, color: AppRestaurantColors.accent),
-              ),
-            ],
-          ),
-
-          body: vm.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: AppRestaurantColors.primary,
+            // APPBAR DIHAPUS, DIGANTI 2 TOMBOL MELAYANG INI:
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Tombol Kelola Kategori (Kecil)
+                FloatingActionButton(
+                  heroTag: 'manageCategoryBtn',
+                  backgroundColor: AppRestaurantColors.secondary,
+                  mini: true,
+                  onPressed: () => _showCategoryManager(context, vm),
+                  child: const Icon(
+                    Icons.category,
+                    color: AppRestaurantColors.accent,
                   ),
-                )
-              : Column(
-                  children: [
-                    _buildSearchBar(),
-                    Expanded(
-                      child: vm.groupedMenus.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'Belum ada menu.',
-                                style: TextStyle(
-                                  color: AppRestaurantColors.secondary,
+                ),
+                const SizedBox(height: 12),
+                // Tombol Tambah Menu (Besar)
+                FloatingActionButton(
+                  heroTag: 'addMenuBtn',
+                  backgroundColor: AppRestaurantColors.primary,
+                  onPressed: () {
+                    // --- PEMANGGILAN BOTTOM SHEET WIDGET LANGSUNG DI SINI ---
+
+                    // 1. Cek dulu apakah kategori sudah ada
+                    if (vm.categories.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please create a category first!'),
+                        ),
+                      );
+                      return; // Hentikan eksekusi jika kategori kosong
+                    }
+
+                    // 2. Tampilkan Bottom Sheet
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled:
+                          true, // Penting agar bisa full screen dan tidak tertutup keyboard
+                      backgroundColor: AppRestaurantColors.background,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) {
+                        // 3. Panggil widget yang sudah kita pisahkan tadi
+                        return MenuFormBottomSheet(
+                          vm: vm,
+                          // existingMenu TIDAK PERLU dikirim (atau kirim null),
+                          // karena ini untuk membuat menu BARU, bukan mengedit.
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(
+                    Icons.add,
+                    color: AppRestaurantColors.accent,
+                  ),
+                ),
+              ],
+            ),
+
+            body: vm.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: AppRestaurantColors.primary,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      _buildSearchBar(),
+                      Expanded(
+                        child: vm.groupedMenus.isEmpty
+                            ? const CustomEmptyState(
+                                icon: Icons.restaurant_menu,
+                                message: 'There are no menus available yet.',
+                                iconColor: AppRestaurantColors.secondary,
+                              )
+                            : SingleChildScrollView(
+                                padding: const EdgeInsets.only(
+                                  left: 16.0,
+                                  right: 16.0,
+                                  top: 16.0,
+                                  bottom: 80.0,
+                                ), // Padding bawah agar list tidak tertutup tombol
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: vm.groupedMenus.entries.map((
+                                    entry,
+                                  ) {
+                                    return _buildMenuSection(
+                                      context,
+                                      vm,
+                                      entry.key,
+                                      entry.value,
+                                    );
+                                  }).toList(),
                                 ),
                               ),
-                            )
-                          : SingleChildScrollView(
-                              padding: const EdgeInsets.only(
-                                left: 16.0,
-                                right: 16.0,
-                                top: 16.0,
-                                bottom: 80.0,
-                              ), // Padding bawah agar list tidak tertutup tombol
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: vm.groupedMenus.entries.map((entry) {
-                                  return _buildMenuSection(
-                                    context,
-                                    vm,
-                                    entry.key,
-                                    entry.value,
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+          ),
         );
       },
     );
@@ -134,7 +144,7 @@ class MenuView extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: TextField(
         decoration: InputDecoration(
-          hintText: 'Cari menu untuk diubah...',
+          hintText: 'Search menus to edit...',
           prefixIcon: const Icon(
             Icons.search,
             color: AppRestaurantColors.secondary,
@@ -195,7 +205,7 @@ class MenuView extends StatelessWidget {
                 );
               },
               child: const Text(
-                'See all',
+                'See all ➔',
                 style: TextStyle(color: AppRestaurantColors.secondary),
               ),
             ),
@@ -233,7 +243,7 @@ class MenuView extends StatelessWidget {
                     if (vm.categories.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Buat Kategori terlebih dahulu!'),
+                          content: Text('Please create a category first!'),
                         ),
                       );
                       return; // Hentikan eksekusi jika kategori kosong
@@ -296,7 +306,7 @@ class MenuView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Kelola Kategori',
+                'Manage Categories',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -311,7 +321,7 @@ class MenuView extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       decoration: const InputDecoration(
-                        labelText: 'Nama Kategori Baru',
+                        labelText: 'New Category Name',
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
                       ),
@@ -331,7 +341,7 @@ class MenuView extends StatelessWidget {
                       }
                     },
                     child: const Text(
-                      'Tambah',
+                      'Add Category',
                       style: TextStyle(color: AppRestaurantColors.accent),
                     ),
                   ),
@@ -341,7 +351,7 @@ class MenuView extends StatelessWidget {
 
               // Daftar Kategori
               const Text(
-                'Daftar Kategori Saat Ini:',
+                'Manage Categories:',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.secondary,

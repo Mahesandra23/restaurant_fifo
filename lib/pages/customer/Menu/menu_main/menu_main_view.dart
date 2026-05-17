@@ -1,4 +1,6 @@
+import 'dart:async'; // Tambahkan ini untuk Timer
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -7,6 +9,7 @@ import 'package:restaurant_fifo/pages/customer/Menu/menu_detail/menu_detail_view
 import 'package:restaurant_fifo/pages/customer/Menu/menu_main/repository/menu_main_repository.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_main/view_model/menu_main_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart';
 
 class MenuMainView extends StatelessWidget {
@@ -15,7 +18,6 @@ class MenuMainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MvvmBuilder<MenuMainViewModel>(
-      // Masukkan MenuRepository saat inisialisasi ViewModel
       viewModel: MenuMainViewModel(MenuMainRepository()),
       initOnce: true,
       key: const Key('CustomerMain'),
@@ -24,6 +26,7 @@ class MenuMainView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppRestaurantColors.background,
+          appBar: _buildHeader(context, vm),
           body: SafeArea(
             child: vm.isLoading
                 ? const Center(
@@ -33,10 +36,6 @@ class MenuMainView extends StatelessWidget {
                   )
                 : Column(
                     children: [
-                      _buildHeader(
-                        context,
-                        vm,
-                      ), // Tambahkan parameter vm ke header
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.symmetric(
@@ -46,22 +45,19 @@ class MenuMainView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildPromoBanner(),
+                              // Passing ViewModel ke sini
+                              _buildPromoBanner(vm),
                               const SizedBox(height: 24),
 
-                              // MENAMPILKAN KATEGORI SECARA DINAMIS
-                              // Sistem akan meloop semua kategori yang ada di Database
                               if (vm.groupedMenus.isEmpty)
-                                const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(20.0),
-                                    child: Text(
-                                      "Belum ada menu yang tersedia.",
-                                      style: TextStyle(
-                                        color: AppRestaurantColors.secondary,
-                                      ),
-                                    ),
-                                  ),
+                                CustomEmptyState(
+                                  icon: vm.searchQuery.isEmpty
+                                      ? Icons.restaurant_menu
+                                      : Icons.search_off,
+                                  message: vm.searchQuery.isEmpty
+                                      ? 'There are no menus available yet.'
+                                      : 'No menus found for "${vm.searchQuery}".',
+                                  iconColor: AppRestaurantColors.secondary,
                                 ),
                               ...vm.groupedMenus.entries.map((entry) {
                                 String categoryName = entry.key;
@@ -86,18 +82,21 @@ class MenuMainView extends StatelessWidget {
     );
   }
 
-  // --- WIDGET BUILDERS (Hanya bagian yang berubah) ---
-  Widget _buildHeader(BuildContext context, MenuMainViewModel vm) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
+  AppBar _buildHeader(BuildContext context, MenuMainViewModel vm) {
+    return AppBar(
+      backgroundColor: AppRestaurantColors.primary,
+      elevation: 0,
+      automaticallyImplyLeading: false, // Mencegah tombol back otomatis muncul
+      titleSpacing:
+          16.0, // Memberikan jarak kiri-kanan yang pas di dalam AppBar
+      title: Row(
         children: [
           const Text(
             'RestaurantApp',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppRestaurantColors.primary,
+              color: AppRestaurantColors.accent, // Warna teks accent
             ),
           ),
           const SizedBox(width: 12),
@@ -105,9 +104,10 @@ class MenuMainView extends StatelessWidget {
             child: SizedBox(
               height: 40,
               child: TextField(
+                onChanged: (value) => vm.searchMenu(value),
                 decoration: InputDecoration(
                   hintText: 'Search menu...',
-                  hintStyle: const TextStyle(fontSize: 14),
+                  hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
                   prefixIcon: const Icon(
                     Icons.search,
                     size: 20,
@@ -134,46 +134,38 @@ class MenuMainView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: AppRestaurantColors.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.filter_list,
-                color: AppRestaurantColors.accent,
-              ),
-              onPressed: () => _showFilterBottomSheet(
-                context,
-                vm,
-              ), // Passing VM ke BottomSheet
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildPromoBanner() {
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: BoxDecoration(
-        color: AppRestaurantColors.secondary,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Center(
-        child: Text(
-          'Banner Info Diskon\n(Ambil dari Storage/Remote Config nanti)',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppRestaurantColors.accent,
-            fontWeight: FontWeight.bold,
+  // --- UPDATE _buildPromoBanner UNTUK MENGGUNAKAN DATA VM ---
+  Widget _buildPromoBanner(MenuMainViewModel vm) {
+    // Jika tidak ada banner aktif, tampilkan fallback atau bisa juga SizedBox.shrink()
+    if (vm.bannerUrls.isEmpty) {
+      return Container(
+        width: double.infinity,
+        height: 140,
+        decoration: BoxDecoration(
+          color: AppRestaurantColors.secondary.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Center(
+          child: Text(
+            'There are no promotions available at the moment.',
+            style: TextStyle(
+              color: AppRestaurantColors.secondary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
+      );
+    }
+
+    // Panggil Widget Stateful khusus untuk Carousel
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: _PromoBannerCarousel(imageUrls: vm.bannerUrls),
     );
   }
 
@@ -207,7 +199,7 @@ class MenuMainView extends StatelessWidget {
                 );
               },
               child: const Text(
-                'See all',
+                'See all ➔',
                 style: TextStyle(color: AppRestaurantColors.secondary),
               ),
             ),
@@ -242,9 +234,7 @@ class MenuMainView extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MenuDetailView(
-                          menu: item,
-                        ), // Lempar datanya ke sini
+                        builder: (context) => MenuDetailView(menu: item),
                       ),
                     );
                   },
@@ -257,58 +247,82 @@ class MenuMainView extends StatelessWidget {
       ],
     );
   }
+}
 
-  // MENAMPILKAN KATEGORI DINAMIS DI BOTTOM SHEET
-  void _showFilterBottomSheet(BuildContext context, MenuMainViewModel vm) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppRestaurantColors.background,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+// --- WIDGET BARU: STATEFUL CAROUSEL ---
+class _PromoBannerCarousel extends StatefulWidget {
+  final List<String> imageUrls;
+
+  const _PromoBannerCarousel({required this.imageUrls});
+
+  @override
+  State<_PromoBannerCarousel> createState() => _PromoBannerCarouselState();
+}
+
+class _PromoBannerCarouselState extends State<_PromoBannerCarousel> {
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    // Timer hanya jalan jika gambar lebih dari 1
+    if (widget.imageUrls.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
+        if (_currentPage < widget.imageUrls.length - 1) {
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+
+        if (_pageController.hasClients) {
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 140, // Sama seperti container promo sebelumnya
+      width: double.infinity,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.imageUrls.length,
+        physics: const BouncingScrollPhysics(),
+        onPageChanged: (index) {
+          _currentPage = index;
+        },
+        itemBuilder: (context, index) {
+          return Image.network(
+            widget.imageUrls[index],
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey.shade300,
+                child: const Center(
+                  child: Icon(Icons.broken_image, color: Colors.grey),
+                ),
+              );
+            },
+          );
+        },
       ),
-      builder: (BuildContext ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Filter by Category',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppRestaurantColors.primary,
-                  ),
-                ),
-                const Divider(),
-                // Loop dari data Kategori di database
-                if (vm.filterCategories.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text("Tidak ada kategori."),
-                  ),
-                ...vm.filterCategories.map(
-                  (option) => ListTile(
-                    title: Text(
-                      option,
-                      style: const TextStyle(
-                        color: AppRestaurantColors.primary,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: AppRestaurantColors.secondary,
-                    ),
-                    onTap: () => Navigator.pop(ctx),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

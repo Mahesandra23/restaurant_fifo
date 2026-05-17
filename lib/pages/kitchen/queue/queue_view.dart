@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/kitchen/queue/view_model/queue_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
 
 class QueueView extends StatelessWidget {
   const QueueView({super.key});
@@ -16,75 +18,73 @@ class QueueView extends StatelessWidget {
       view: (context) {
         final vm = context.watch<QueueViewModel>();
 
-        return Scaffold(
-          backgroundColor: AppRestaurantColors.background, 
-          appBar: AppBar(
-            title: const Text(
-              'Kitchen Queue',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppRestaurantColors.accent, // Teks terang di atas background gelap
+        return FocusDetector(
+          onFocusGained: () {
+            vm.fetchData();
+          },
+          child: Scaffold(
+            backgroundColor: AppRestaurantColors.background,
+            appBar: AppBar(
+              title: const Text(
+                'Kitchen Queue',
+                style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.accent),
               ),
+              backgroundColor: AppRestaurantColors.primary,
+              centerTitle: true,
+              elevation: 0,
             ),
-            backgroundColor: AppRestaurantColors.primary, 
-            centerTitle: true,
-            elevation: 0,
+            body: vm.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: AppRestaurantColors.primary),
+                  )
+                : RefreshIndicator(
+                    color: AppRestaurantColors.primary,
+                    onRefresh: () => vm.fetchData(),
+                    child: vm.activeOrders.isEmpty
+                        ? SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: const SizedBox(
+                              height: 300, 
+                              child: CustomEmptyState(
+                                icon: Icons.check_circle_outline,
+                                message: 'There are no active orders in the queue.',
+                                iconColor: AppRestaurantColors.accent,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(), 
+                            padding: const EdgeInsets.all(16),
+                            itemCount: vm.activeOrders.length,
+                            itemBuilder: (context, index) {
+                              final order = vm.activeOrders[index];
+                              return _buildOrderCard(context, order, vm);
+                            },
+                          ),
+                  ),
           ),
-          body: vm.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: AppRestaurantColors.primary),
-                )
-              : vm.activeOrders.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: vm.activeOrders.length,
-                  itemBuilder: (context, index) {
-                    final order = vm.activeOrders[index];
-                    // --- UBAH DI SINI: Kirimkan index ---
-                    return _buildOrderCard(context, order, vm, index); 
-                  },
-                ),
         );
       },
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
-          SizedBox(height: 16),
-          Text(
-            'Dapur Bersih!\nTidak ada pesanan saat ini.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: AppRestaurantColors.secondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildOrderCard(BuildContext context, OrderQueue order, QueueViewModel vm) {
+    final bool isCooking = order.status == 'cooking';
 
-  Widget _buildOrderCard(
-    BuildContext context,
-    OrderQueue order,
-    QueueViewModel vm,
-    int index,
-  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        // Berikan border highlight tipis berwarna orange jika pesanan sedang dimasak
+        side: isCooking 
+            ? const BorderSide(color: AppRestaurantColors.accent, width: 1.5) 
+            : BorderSide.none,
+      ),
       color: AppRestaurantColors.background,
-      elevation: 3,
+      elevation: isCooking ? 5 : 2,
       shadowColor: AppRestaurantColors.primary.withOpacity(0.2),
       child: InkWell(
-        onTap: () => _showOrderDetails(context, order, vm, index == 0),
+        onTap: () => _showOrderDetails(context, order, vm),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -94,21 +94,35 @@ class QueueView extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    order.id,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppRestaurantColors.secondary,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        order.id,
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.secondary),
+                      ),
+                      const SizedBox(width: 8),
+                      // Badge Status Tambahan di UI Kartu
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isCooking ? Colors.orange.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          isCooking ? 'COOKING' : 'PENDING',
+                          style: TextStyle(
+                            fontSize: 10, 
+                            fontWeight: FontWeight.bold, 
+                            color: isCooking ? Colors.orange.shade800 : Colors.grey.shade700
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    order.customerName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppRestaurantColors.primary,
-                    ),
+                    '${order.customerName} - ${order.tableNumber}', 
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -124,11 +138,7 @@ class QueueView extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     order.orderTime,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: AppRestaurantColors.primary,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppRestaurantColors.primary),
                   ),
                 ],
               ),
@@ -139,25 +149,19 @@ class QueueView extends StatelessWidget {
     );
   }
 
-  void _showOrderDetails(
-    BuildContext context,
-    OrderQueue order,
-    QueueViewModel vm,
-    bool isFrontOrder,
-  ) {
+  void _showOrderDetails(BuildContext context, OrderQueue order, QueueViewModel vm) {
+    // Cek apakah status order saat ini masih berupa antrean pending baru
+    final bool isPending = order.status == 'pending';
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(24),
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.7,
-          ),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -177,11 +181,7 @@ class QueueView extends StatelessWidget {
                 children: [
                   Text(
                     'Detail ${order.id}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppRestaurantColors.primary,
-                    ),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
                   ),
                   Text(
                     order.orderTime,
@@ -192,11 +192,7 @@ class QueueView extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 order.customerName,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: AppRestaurantColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: const TextStyle(fontSize: 16, color: AppRestaurantColors.primary, fontWeight: FontWeight.w600),
               ),
               const Divider(height: 32, thickness: 1, color: AppRestaurantColors.secondary),
 
@@ -211,20 +207,14 @@ class QueueView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppRestaurantColors.accent, // Badge jumlah pakai warna kuning/hijau terang
+                              color: AppRestaurantColors.accent, 
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               '${item.quantity}x',
-                              style: const TextStyle(
-                                color: AppRestaurantColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(color: AppRestaurantColors.primary, fontWeight: FontWeight.bold),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -234,20 +224,12 @@ class QueueView extends StatelessWidget {
                               children: [
                                 Text(
                                   item.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppRestaurantColors.primary,
-                                  ),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppRestaurantColors.primary),
                                 ),
                                 if (item.notes.isNotEmpty)
                                   Text(
                                     '* ${item.notes}',
-                                    style: const TextStyle(
-                                      color: Colors.redAccent,
-                                      fontSize: 13,
-                                      fontStyle: FontStyle.italic,
-                                    ),
+                                    style: const TextStyle(color: Colors.redAccent, fontSize: 13, fontStyle: FontStyle.italic),
                                   ),
                               ],
                             ),
@@ -260,33 +242,46 @@ class QueueView extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
+              // --- TOMBOL AKSI DINAMIS BERDASARKAN STATUS ---
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // Tetap hijau karena semantik "Sukses/Selesai"
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    // Warna orange jika mau dimasak, warna hijau jika mau diselesaikan
+                    backgroundColor: isPending ? AppRestaurantColors.accent : AppRestaurantColors.primary, 
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  onPressed: () {
-                    vm.completeFrontOrder();
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${order.id} selesai disiapkan!'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                  onPressed: () async {
+                    if (isPending) {
+                      // Proses pindah ke status Cooking + Kurangi Stok FIFO
+                      final success = await vm.acceptToCook(order.rawId);
+                      if (context.mounted && success) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${order.id} Started Cooking! and Stock Updated!'),
+                            backgroundColor: AppRestaurantColors.accent,
+                          ),
+                        );
+                      }
+                    } else {
+                      // Selesaikan pesanan ke status Completed
+                      final success = await vm.completeOrder(order.rawId);
+                      if (context.mounted && success) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${order.id} Completed!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    }
                   },
-                  child: const Text(
-                    'MARK AS DONE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Text(
+                    isPending ? 'START COOKING' : 'COOKING COMPLETE',
+                    style: const TextStyle(color: AppRestaurantColors.accent, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

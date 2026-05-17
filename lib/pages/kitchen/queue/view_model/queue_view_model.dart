@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_fifo/core/services/fifo_queue_service.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
+import 'package:restaurant_fifo/pages/kitchen/queue/repository/queue_repository.dart'; 
+import 'package:restaurant_fifo/core/services/fifo_queue_service.dart';
 
-// --- MODEL DATA (Tetap Sama) ---
 class OrderItem {
   final String name;
   final int quantity;
@@ -12,26 +12,29 @@ class OrderItem {
 }
 
 class OrderQueue {
-  final String id;
+  final String id;          // ID pendek untuk tampilan UI (ORD-XXXXXX)
+  final String rawId;       // UUID asli dari Supabase untuk transaksi query
   final String customerName;
   final String orderTime;
   final List<OrderItem> items;
+  final String tableNumber;
+  final String status;      // Menampung nilai status: 'pending' atau 'cooking'
 
   OrderQueue({
     required this.id,
+    required this.rawId,
     required this.customerName,
     required this.orderTime,
     required this.items,
+    required this.tableNumber,
+    required this.status,
   });
 }
 
-// --- VIEW MODEL ---
 class QueueViewModel extends BaseViewModel {
   bool isLoading = false;
-  
-  // Panggil Service Database + Algoritma Anda
+  final QueueRepository _repo = QueueRepository();
   final FifoQueueService _queueService = FifoQueueService();
-  
   List<OrderQueue> activeOrders = [];
 
   @override
@@ -44,22 +47,48 @@ class QueueViewModel extends BaseViewModel {
     isLoading = true;
     notifyListeners();
 
-    // 1. Ambil data dari Supabase dan masukkan ke dalam Array FIFO
-    await _queueService.loadInitialQueue();
-    
-    // 2. Terjemahkan Array FIFO menjadi List untuk UI
+    final rawOrders = await _repo.fetchActiveOrders();
+    _queueService.loadInitialQueue(rawOrders);
     _mapQueueToUI();
 
     isLoading = false;
     notifyListeners(); 
   }
 
-  // Fungsi Penerjemah (Data Supabase -> Data UI)
+  // Fungsi Baru: Mengubah status menjadi Cooking & Mengurangi Stok Bahan Baku
+  Future<bool> acceptToCook(String orderId) async {
+    isLoading = true;
+    notifyListeners();
+
+    final success = await _repo.startCookingOrder(orderId);
+    if (success) {
+      await fetchData(); // Ambil ulang data terbaru untuk memperbarui status di UI
+    }
+    
+    isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
+  // Fungsi: Menyelesaikan pesanan yang sedang dimasak
+  Future<bool> completeOrder(String orderId) async {
+    isLoading = true;
+    notifyListeners();
+
+    final success = await _repo.updateOrderStatusToCompleted(orderId);
+    if (success) {
+      await fetchData(); 
+    }
+    
+    isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
   void _mapQueueToUI() {
     final rawQueue = _queueService.getCurrentQueue();
 
     activeOrders = rawQueue.map((orderMap) {
-      // Ambil daftar item makanan
       final rawItems = orderMap['order_items'] as List<dynamic>? ?? [];
       final parsedItems = rawItems.map((item) {
         return OrderItem(
@@ -69,7 +98,6 @@ class QueueViewModel extends BaseViewModel {
         );
       }).toList();
 
-      // Format Jam (Contoh: 14:30)
       final createdAt = orderMap['created_at'];
       String timeString = '';
       if (createdAt != null) {
@@ -77,37 +105,23 @@ class QueueViewModel extends BaseViewModel {
         timeString = '${parsedDate.hour.toString().padLeft(2, '0')}:${parsedDate.minute.toString().padLeft(2, '0')}';
       }
 
-      // Potong ID agar rapi (Ambil 6 karakter pertama UUID)
       final String rawId = orderMap['id'].toString();
       final String shortId = rawId.length > 6 ? rawId.substring(0, 6).toUpperCase() : rawId;
 
+      String customerName = 'Guest'; 
+      if (orderMap['profiles'] != null && orderMap['profiles']['display_name'] != null) {
+        customerName = orderMap['profiles']['display_name'];
+      }
+
       return OrderQueue(
         id: 'ORD-$shortId',
-        customerName: 'Pelanggan', // Jika Anda punya kolom nama, bisa dipanggil di sini
+        rawId: rawId, // Kita simpan UUID aslinya di sini
+        customerName: customerName,
         orderTime: timeString,
         items: parsedItems,
+        tableNumber: orderMap['table_number'] ?? 'Takeaway', 
+        status: orderMap['status']?.toString() ?? 'pending', // Ambil status dari DB
       );
     }).toList();
-  }
-
-  // Fungsi untuk menyelesaikan pesanan FIFO (DEQUEUE)
-  Future<bool> completeFrontOrder() async {
-    isLoading = true;
-    notifyListeners();
-
-    // Jalankan Dequeue dari array dan update ke database
-    final finishedOrder = await _queueService.finishFrontOrder();
-
-    if (finishedOrder != null) {
-      // Refresh UI dengan array terbaru yang antreannya sudah maju
-      _mapQueueToUI();
-      isLoading = false;
-      notifyListeners();
-      return true; // Sukses
-    } else {
-      isLoading = false;
-      notifyListeners();
-      return false; // Gagal / Kosong
-    }
   }
 }

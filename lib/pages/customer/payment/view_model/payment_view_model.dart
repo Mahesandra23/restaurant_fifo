@@ -4,18 +4,38 @@ import 'package:restaurant_fifo/pages/customer/payment/repository/payment_reposi
 
 class PaymentViewModel extends BaseViewModel {
   final PaymentRepository _repository;
-  
+
   final int totalAmount;
-  final List<dynamic> cartItems; // Menerima isi keranjang dari halaman Cart
-  
+  final List<dynamic> cartItems;
+
   String selectedMethod = 'QRIS';
   bool isProcessing = false;
+  bool isTakeaway = true;
+  String tableInput = '';
 
-  PaymentViewModel(this._repository, {required this.totalAmount, required this.cartItems});
+  // 1. UBAH INI JADI STRING
+  String customerId;
+
+  PaymentViewModel(
+    this._repository, {
+    required this.totalAmount,
+    required this.cartItems,
+    required this.customerId,
+  });
 
   void selectMethod(String method) {
     selectedMethod = method;
     notifyListeners();
+  }
+
+  void toggleOrderType(bool value) {
+    isTakeaway = value;
+    notifyListeners();
+  }
+
+  void setTableInput(String value) {
+    tableInput = value;
+    // Boleh pakai notifyListeners() kalau mau validasi real-time, tapi opsional
   }
 
   // Fungsi simulasi bayar + simpan data beneran ke Supabase
@@ -23,19 +43,23 @@ class PaymentViewModel extends BaseViewModel {
     isProcessing = true;
     notifyListeners();
 
-    // 1. Simulasi loading bayar ke Bank (2 detik)
     await Future.delayed(const Duration(seconds: 2));
 
-    // 2. Simpan orderan ke Supabase menggunakan Repository
+    String finalTableNumber = isTakeaway
+        ? 'Takeaway'
+        : (tableInput.isEmpty ? 'Meja ?' : 'Meja $tableInput');
+
     final success = await _repository.createOrder(
-      totalAmount, 
-      selectedMethod, 
+      totalAmount,
+      selectedMethod,
       cartItems,
+      finalTableNumber,
+      customerId, // Sekarang mengirimkan String UUID
     );
 
     isProcessing = false;
     notifyListeners();
 
-    return success; 
+    return success;
   }
 }

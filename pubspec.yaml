@@ -40,6 +40,7 @@ dependencies:
   supabase_flutter: ^2.12.2
   flutter_dotenv: ^6.0.0
   image_picker: ^1.1.1
+  focus_detector: ^2.0.1
 
 dev_dependencies:
   flutter_test:

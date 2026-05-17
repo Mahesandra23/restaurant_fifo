@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
 import 'package:restaurant_fifo/pages/kitchen/menu/repository/menu_repository.dart';
-  import 'dart:io';
+import 'dart:io';
 
 class CategoryData {
   final String id;
@@ -31,7 +31,6 @@ class MenuViewModel extends BaseViewModel {
     notifyListeners();
 
     try {
-      // Fetch Paralel agar lebih cepat
       final results = await Future.wait([
         _repo.fetchCategories(),
         _repo.fetchIngredients(),
@@ -40,20 +39,16 @@ class MenuViewModel extends BaseViewModel {
 
       // 1. Parse Categories
       categories = (results[0] as List)
-          .map(
-            (c) => CategoryData(
-              id: c['id'].toString(),
-              name: c['name'].toString(),
-            ),
-          )
+          .map((c) => CategoryData(id: c['id'].toString(), name: c['name'].toString()))
           .toList();
 
-      // 2. Parse Ingredients
+      // 2. Parse Ingredients (Ambil Unit)
       availableIngredients = (results[1] as List)
           .map(
             (i) => MenuIngredient(
               id: i['id'].toString(),
               name: i['name'].toString(),
+              unit: i['unit']?.toString() ?? '',
             ),
           )
           .toList();
@@ -68,9 +63,12 @@ class MenuViewModel extends BaseViewModel {
 
         final List<dynamic> rawIng = row['menu_ingredients'] ?? [];
         final List<MenuIngredient> menuIngs = rawIng.map((item) {
+          final ingMap = item['ingredients'] as Map<String, dynamic>?;
           return MenuIngredient(
             id: item['ingredient_id'].toString(),
-            name: item['ingredients']['name'].toString(),
+            name: ingMap?['name'].toString() ?? '',
+            unit: ingMap?['unit']?.toString() ?? '',
+            quantityNeeded: (item['quantity_needed'] as num?)?.toDouble() ?? 0.0,
           );
         }).toList();
 
@@ -98,7 +96,6 @@ class MenuViewModel extends BaseViewModel {
     }
   }
 
-  // --- FUNGSI KATEGORI ---
   Future<void> addCategory(String name) async {
     await _repo.addCategory(name);
     await fetchInitialData();
@@ -109,13 +106,16 @@ class MenuViewModel extends BaseViewModel {
     await fetchInitialData();
   }
 
-  // --- FUNGSI MENU ---
-  // Update parameter saveMenu
+  // Ganti parameter tipe data ingredientIds menjadi Map
   Future<void> saveMenu({
-    String? id, required String name, required String desc, 
-    required int price, required String categoryId, required List<String> ingredientIds,
-    File? imageFile, // Parameter foto baru
-    String? existingImageUrl, // URL foto lama (jika edit)
+    String? id, 
+    required String name, 
+    required String desc, 
+    required int price, 
+    required String categoryId, 
+    required Map<String, double> ingredientQuantities,
+    File? imageFile, 
+    String? existingImageUrl, 
   }) async {
     isLoading = true;
     notifyListeners();
@@ -123,7 +123,6 @@ class MenuViewModel extends BaseViewModel {
     String? finalImageUrl = existingImageUrl;
 
     try {
-      // Jika Admin memilih foto baru dari galeri, Upload dulu!
       if (imageFile != null) {
         final uploadedUrl = await _repo.uploadMenuImage(imageFile);
         if (uploadedUrl != null) {
@@ -131,7 +130,6 @@ class MenuViewModel extends BaseViewModel {
         }
       }
 
-      // Siapkan data untuk disimpan ke tabel menus
       final menuData = {
         'name': name, 
         'description': desc, 
@@ -141,9 +139,9 @@ class MenuViewModel extends BaseViewModel {
       };
       
       if (id == null) {
-        await _repo.addMenu(menuData, ingredientIds);
+        await _repo.addMenu(menuData, ingredientQuantities);
       } else {
-        await _repo.updateMenu(id, menuData, ingredientIds);
+        await _repo.updateMenu(id, menuData, ingredientQuantities);
       }
       await fetchInitialData();
     } catch (e) {

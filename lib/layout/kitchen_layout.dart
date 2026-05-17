@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/pages/kitchen/kitchen_catalog_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/queue/queue_view.dart';
+import 'package:restaurant_fifo/pages/kitchen/settings/settings_view.dart';
+import 'package:restaurant_fifo/pages/kitchen/stocks/stocks_view.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart'; // Import App Colors
 
 class KitchenLayout extends StatefulWidget {
@@ -25,8 +27,8 @@ class _KitchenLayoutState extends State<KitchenLayout> {
   final List<Widget> _pages = [
     const QueueView(),
     const KitchenCatalogView(),
-    const Center(child: Text("Stocks", style: TextStyle(color: AppRestaurantColors.primary))),
-    const Center(child: Text("user", style: TextStyle(color: AppRestaurantColors.primary))),
+    const StockView(),
+    const SettingsView(),
   ];
 
   @override

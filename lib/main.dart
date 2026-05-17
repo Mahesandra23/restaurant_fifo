@@ -11,6 +11,7 @@ import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/navigator/route_list.dart';
 import 'package:restaurant_fifo/navigator/routes.dart';
+import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/utils/device_type_util.dart';
 
 void main() async {
@@ -66,6 +67,44 @@ class MainApp extends StatelessWidget {
                 false, // Tambahan opsional agar tulisan "Debug" hilang
             // Mengubah rute awal langsung ke halaman AuthSelector / Login
             initialRoute: RouteList.AuthSelector,
+
+            theme: ThemeData(
+              scaffoldBackgroundColor: AppRestaurantColors.background,
+
+              canvasColor: Colors.white,
+
+              appBarTheme: const AppBarTheme(
+                iconTheme: IconThemeData(color: Colors.white), // Tombol back & ikon kiri otomatis putih
+                actionsIconTheme: IconThemeData(color: Colors.white), // Ikon menu kanan otomatis putih
+              ),
+
+              // 2. MENGUBAH WARNA CARD/LIST MENJADI PUTIH BERSIH
+              cardTheme: const CardThemeData(
+                // <--- Tambahkan kata 'Data' di sini
+                color: Colors.white,
+                surfaceTintColor: Colors.transparent,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ), // Gunakan .all agar bisa di-const
+                ),
+              ),
+
+              // Menyesuaikan gaya form input secara global
+              inputDecorationTheme: const InputDecorationTheme(
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppRestaurantColors.primary,
+                    width: 2.0,
+                  ),
+                ),
+                floatingLabelStyle: TextStyle(
+                  color: AppRestaurantColors.primary,
+                ),
+              ),
+            ),
 
             routes: Routes().allRoutes,
             onGenerateRoute: Routes.getRouteGenerate,

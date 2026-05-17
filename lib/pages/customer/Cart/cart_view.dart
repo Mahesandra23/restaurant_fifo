@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/pages/customer/payment/payment_view.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
 
 class CartView extends StatelessWidget {
   const CartView({super.key});
@@ -18,20 +19,21 @@ class CartView extends StatelessWidget {
         title: const Text(
           'My Cart',
           style: TextStyle(
-            color: AppRestaurantColors.primary,
+            color: AppRestaurantColors
+                .accent, // Mengubah warna teks menjadi accent
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: AppRestaurantColors.background,
+        backgroundColor:
+            AppRestaurantColors.primary, // Mengubah background menjadi primary
         elevation: 0,
         centerTitle: true,
       ),
       body: vm.items.isEmpty
-          ? const Center(
-              child: Text(
-                "Keranjang masih kosong, yuk pesan makan!",
-                style: TextStyle(color: AppRestaurantColors.secondary),
-              ),
+          ? const CustomEmptyState(
+              icon: Icons.shopping_cart_outlined,
+              message: 'Your cart is empty. Add some delicious items!',
+              iconColor: AppRestaurantColors.secondary,
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),

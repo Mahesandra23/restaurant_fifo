@@ -5,10 +5,6 @@ import 'package:restaurant_fifo/pages/auth/signup/signup_view.dart';
 import 'package:restaurant_fifo/pages/auth/widget/auto_background_carousel.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
-// Pastikan import file form login dan register kamu di sini:
-// import 'package:restaurant_fifo/pages/auth/login_form_view.dart';
-// import 'package:restaurant_fifo/pages/auth/register_form_view.dart';
-
 class AuthLayout extends StatefulWidget {
   const AuthLayout({super.key});
 
@@ -33,7 +29,6 @@ class _AuthLayoutState extends State<AuthLayout> {
 
     return Scaffold(
       backgroundColor: AppRestaurantColors.primary,
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Stack(
           children: [
