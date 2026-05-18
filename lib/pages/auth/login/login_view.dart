@@ -5,7 +5,6 @@ import 'package:restaurant_fifo/pages/auth/login/view%20model/login_view_model.d
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/button/gradient_button.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/labeled_text_field.dart';
-import 'package:restaurant_fifo/ui/themes/typography/text_style_app.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatelessWidget {
@@ -22,48 +21,49 @@ class LoginView extends StatelessWidget {
           return Container(
             width: 1.sw,
             height: 1.sh,
-            margin: EdgeInsets.only(top: 220.h),
-            // Padding dihapus dari sini dan dipindahkan ke SingleChildScrollView
+            margin: EdgeInsets.only(top: 250.h), // Diperkecil agar tidak terlalu bawah
             decoration: BoxDecoration(
               color: AppRestaurantColors.background,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.r),
-                topRight: Radius.circular(30.r),
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r),
               ),
             ),
-            // Bungkus konten dengan SingleChildScrollView
             child: SingleChildScrollView(
-              // Padding dinamis yang menyesuaikan dengan munculnya keyboard
               padding: EdgeInsets.only(
-                left: 25.w,
-                right: 25.w,
-                top: 25.h,
-                bottom: 25.h + MediaQuery.of(context).viewInsets.bottom, 
+                left: 16.w,
+                right: 16.w,
+                top: 20.h, // Diperkecil sedikit
+                bottom: 20.h + MediaQuery.of(context).viewInsets.bottom,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "RestaurantApp",
-                    style: AppTextStyle.heading3.copyWith(
+                    style: TextStyle(
+                      fontSize: 24.sp, // Diperkecil dari 28
+                      fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 6.h),
                   Text(
                     "Login to your account",
-                    style: AppTextStyle.bodySm.semibold.copyWith(
+                    style: TextStyle(
+                      fontSize: 14.sp, // Diperkecil dari 16
+                      fontWeight: FontWeight.w600,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 20.h), // Diperkecil dari 24
                   LabeledTextField(
                     label: 'Email',
                     hint: 'Email address',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputLoginFieldType.email, value),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 12.h), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Password',
                     hint: 'Password',
@@ -71,60 +71,82 @@ class LoginView extends StatelessWidget {
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputLoginFieldType.password, value),
                   ),
-                  SizedBox(height: 20.h),
-                  GradientButton(
+                  SizedBox(height: 20.h), // Diperkecil dari 24
+                  
+                  // Tombol Login diperkecil ukurannya menjadi 45.h
+                  SizedBox(
+                    height: 35.h,
                     width: 1.sw,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12).w,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
+                    child: GradientButton(
+                      width: 1.sw,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () => vm.login(context),
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 14.sp, // Teks dalam tombol diperkecil
+                            fontWeight: FontWeight.bold,
+                            color: AppRestaurantColors.accent,
+                          ),
+                        ),
                       ),
-                      onPressed: () => vm.login(context),
-                      child: Text(
-                        'Login',
-                        style: AppTextStyle.bodySm.semibold.copyWith(
-                          color: AppRestaurantColors.accent,
+                    ),
+                  ),
+                  SizedBox(height: 12.h), // Diperkecil dari 16
+                  
+                  // Tombol Guest diperkecil ukurannya menjadi 45.h
+                  SizedBox(
+                    height: 35.h,
+                    width: 1.sw,
+                    child: GradientButton(
+                      width: 1.sw,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () => vm.loginGuest(context),
+                        child: Text(
+                          'Continue as Guest',
+                          style: TextStyle(
+                            fontSize: 14.sp, // Teks dalam tombol diperkecil
+                            fontWeight: FontWeight.bold,
+                            color: AppRestaurantColors.accent,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  GradientButton(
-                    width: 1.sw,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12).w,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                      onPressed: () => vm.loginGuest(context),
-                      child: Text(
-                        'Continue as Guest',
-                        style: AppTextStyle.bodySm.semibold.copyWith(
-                          color: AppRestaurantColors.accent,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
                   Center(
                     child: RichText(
                       text: TextSpan(
                         text: "Don't have an account? ",
-                        style: AppTextStyle.bodyXs.regular.copyWith(
+                        style: TextStyle(
+                          fontSize: 12.sp, // Diperkecil dari 14
                           color: AppRestaurantColors.secondary,
                         ),
                         children: [
                           TextSpan(
                             text: "Register here",
-                            style: AppTextStyle.bodyXs.bold.copyWith(
+                            style: TextStyle(
+                              fontSize: 12.sp, // Diperkecil dari 14
+                              fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.accent,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = onToggle,
+                            recognizer: TapGestureRecognizer()..onTap = onToggle,
                           ),
                         ],
                       ),

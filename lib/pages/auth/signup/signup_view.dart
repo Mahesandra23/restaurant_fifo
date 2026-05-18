@@ -6,43 +6,38 @@ import 'package:restaurant_fifo/pages/auth/signup/view_model/signup_view_model.d
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/button/gradient_button.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/labeled_text_field.dart';
-import 'package:restaurant_fifo/ui/themes/typography/text_style_app.dart';
 import 'package:provider/provider.dart';
 
 class SignupView extends StatelessWidget {
-  final VoidCallback onToggle; 
+  final VoidCallback onToggle;
 
   const SignupView({super.key, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      // Jangan lupa masukkan Repository-nya ke ViewModel
-      create: (_) => SignupViewModel(SignupRepository()), 
+      create: (_) => SignupViewModel(SignupRepository()),
       child: Consumer<SignupViewModel>(
         builder: (context, vm, child) {
-          // Bungkus dengan SingleChildScrollView
           return SingleChildScrollView(
             physics: const ClampingScrollPhysics(),
             child: Container(
               width: 1.sw,
-              // Ganti height statis dengan constraints minHeight
               constraints: BoxConstraints(
-                minHeight: 1.sh - 170.h,
+                minHeight: 1.sh - 140.h, // Disesuaikan agar lebih compact
               ),
-              margin: EdgeInsets.only(top: 170.h),
-              // Tambahkan viewInsets.bottom untuk menghindari keyboard
+              margin: EdgeInsets.only(top: 190.h), // Disesuaikan agar lebih compact
               padding: EdgeInsets.only(
-                left: 25.w, 
-                right: 25.w, 
-                top: 25.h, 
-                bottom: 25.h + MediaQuery.of(context).viewInsets.bottom
+                left: 16.w,
+                right: 16.w,
+                top: 20.h, // Diperkecil dari 24
+                bottom: 20.h + MediaQuery.of(context).viewInsets.bottom,
               ),
               decoration: BoxDecoration(
                 color: AppRestaurantColors.background,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.r),
-                  topRight: Radius.circular(30.r),
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
                 ),
               ),
               child: Column(
@@ -50,18 +45,22 @@ class SignupView extends StatelessWidget {
                 children: [
                   Text(
                     "RestaurantApp",
-                    style: AppTextStyle.heading3.copyWith(
+                    style: TextStyle(
+                      fontSize: 24.sp, // Diperkecil dari 28
+                      fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 6.h),
                   Text(
                     "Create your account",
-                    style: AppTextStyle.bodySm.semibold.copyWith(
+                    style: TextStyle(
+                      fontSize: 14.sp, // Diperkecil dari 16
+                      fontWeight: FontWeight.w600,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 20.h), // Diperkecil dari 24
                   LabeledTextField(
                     label: 'Username',
                     hint: 'Username',
@@ -70,21 +69,21 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 12.h), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Email',
                     hint: 'Email address',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.email, value),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 12.h), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Phone Number',
                     hint: 'Phone Number',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.phone, value),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 12.h), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Password',
                     hint: 'Password',
@@ -94,30 +93,39 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 20.h),
-                  GradientButton(
+                  SizedBox(height: 20.h), // Diperkecil dari 24
+
+                  // Tombol Signup diperkecil ukurannya menjadi 45.h
+                  SizedBox(
+                    height: 35.h,
                     width: 1.sw,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12).w,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
+                    child: GradientButton(
+                      width: 1.sw,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: vm.isLoading
+                            ? null
+                            : () => vm.signUp(context, onSuccess: onToggle),
+                        child: vm.isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : Text(
+                                'Register',
+                                style: TextStyle(
+                                  fontSize: 14.sp, // Teks dalam tombol diperkecil
+                                  fontWeight: FontWeight.bold,
+                                  color: AppRestaurantColors.accent,
+                                ),
+                              ),
                       ),
-                      onPressed: vm.isLoading
-                          ? null
-                          : () => vm.signUp(
-                                context,
-                                onSuccess: onToggle,
-                              ),
-                      child: vm.isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              'Register',
-                              style: AppTextStyle.bodySm.semibold.copyWith(
-                                color: AppRestaurantColors.accent,
-                              ),
-                            ),
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -125,13 +133,16 @@ class SignupView extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                         text: "Already have an account? ",
-                        style: AppTextStyle.bodyXs.regular.copyWith(
+                        style: TextStyle(
+                          fontSize: 12.sp, // Diperkecil dari 14
                           color: AppRestaurantColors.secondary,
                         ),
                         children: [
                           TextSpan(
                             text: "Login here",
-                            style: AppTextStyle.bodyXs.bold.copyWith(
+                            style: TextStyle(
+                              fontSize: 12.sp, // Diperkecil dari 14
+                              fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.accent,
                             ),
                             recognizer: TapGestureRecognizer()..onTap = onToggle,

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -22,66 +23,138 @@ class BannerView extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppRestaurantColors.background,
           appBar: AppBar(
-            title: const Text('Manage Banners', style: TextStyle(color: AppRestaurantColors.accent)),
+            title: const Text(
+              'Manage Banners',
+              style: TextStyle(
+                color: AppRestaurantColors.background,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             backgroundColor: AppRestaurantColors.primary,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: AppRestaurantColors.background,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
           floatingActionButton: FloatingActionButton(
             backgroundColor: AppRestaurantColors.primary,
-            onPressed: vm.isUploading ? null : () => _showAddBottomSheet(context, vm),
-            child: vm.isUploading 
-                ? const CircularProgressIndicator(color: AppRestaurantColors.accent)
+            onPressed: vm.isUploading
+                ? null
+                : () => _showAddBottomSheet(context, vm),
+            child: vm.isUploading
+                ? const CircularProgressIndicator(
+                    color: AppRestaurantColors.accent,
+                  )
                 : const Icon(Icons.add, color: AppRestaurantColors.accent),
           ),
           body: vm.isLoading
-              ? const Center(child: CircularProgressIndicator(color: AppRestaurantColors.primary))
-              : vm.banners.isEmpty 
-                  ? const Center(child: Text('No banners available.', style: TextStyle(color: AppRestaurantColors.secondary)))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: vm.banners.length,
-                      itemBuilder: (ctx, i) {
-                        final banner = vm.banners[i];
-                        final uploaderName = banner['profiles'] != null ? banner['profiles']['display_name'] : 'Unknown Admin';
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: AppRestaurantColors.primary,
+                  ),
+                )
+              : vm.banners.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No banners available.',
+                    style: TextStyle(color: AppRestaurantColors.secondary),
+                  ),
+                )
+              : ListView.builder(
+                  // Standarisasi padding layar: 16.0 (dengan bottom 100 agar aman dari FAB)
+                  padding: EdgeInsets.only(
+                    left: 16.w,
+                    right: 16.w,
+                    top: 16.h,
+                    bottom: 100.h,
+                  ),
+                  itemCount: vm.banners.length,
+                  itemBuilder: (ctx, i) {
+                    final banner = vm.banners[i];
+                    final uploaderName = banner['profiles'] != null
+                        ? banner['profiles']['display_name']
+                        : 'Unknown Admin';
 
-                        return Card(
-                          clipBehavior: Clip.antiAlias,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.network(
-                                banner['image_url'], 
-                                height: 160, 
-                                width: double.infinity, 
-                                fit: BoxFit.cover,
-                                errorBuilder: (c, e, s) => Container(height: 160, color: Colors.grey.shade300, child: const Center(child: Icon(Icons.broken_image))),
+                    return Card(
+                      // Clip agar gambar mengikuti radius Card
+                      clipBehavior: Clip.antiAlias,
+                      // Gap standar antar item list/card: 16.0
+                      margin: EdgeInsets.only(bottom: 16.h),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        // Radius Medium standar: 12.0
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.network(
+                            banner['image_url'],
+                            height: 160.h,
+                            width:
+                                1.sw, // Mengubah double.infinity menjadi 1.sw
+                            fit: BoxFit.cover,
+                            errorBuilder: (c, e, s) => Container(
+                              height: 160.h,
+                              color: Colors.grey.shade300,
+                              child: const Center(
+                                child: Icon(Icons.broken_image),
                               ),
-                              ListTile(
-                                title: Text(banner['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text(
-                                  'Uploaded by: $uploaderName\n${banner['is_active'] ? 'Status: Active' : 'Status: Hidden'}', 
-                                  style: TextStyle(color: banner['is_active'] ? Colors.green : Colors.red, fontSize: 12),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Switch(
-                                      value: banner['is_active'],
-                                      activeColor: AppRestaurantColors.primary,
-                                      onChanged: (val) => vm.toggleStatus(banner['id'], banner['is_active']),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () => _confirmDelete(context, vm, banner),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                          ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 8.h,
+                            ),
+                            title: Text(
+                              banner['title'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppRestaurantColors.primary,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Uploaded by: $uploaderName\n${banner['is_active'] ? 'Status: Active' : 'Status: Hidden'}',
+                              style: TextStyle(
+                                color: banner['is_active']
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontSize: 12.sp,
+                                height: 1.5,
+                              ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Switch(
+                                  value: banner['is_active'],
+                                  activeColor: AppRestaurantColors.primary,
+                                  onChanged: (val) => vm.toggleStatus(
+                                    banner['id'],
+                                    banner['is_active'],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () =>
+                                      _confirmDelete(context, vm, banner),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
         );
       },
     );
@@ -91,29 +164,72 @@ class BannerView extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      backgroundColor: AppRestaurantColors.background,
+      shape: RoundedRectangleBorder(
+        // Radius Besar standar: 16.0
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (context) => BannerFormBottomSheet(vm: vm),
     );
   }
 
-  void _confirmDelete(BuildContext context, BannerViewModel vm, Map<String, dynamic> banner) {
+  void _confirmDelete(
+    BuildContext context,
+    BannerViewModel vm,
+    Map<String, dynamic> banner,
+  ) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Banner?'),
-        content: const Text('This will permanently delete the image from storage.'),
+        backgroundColor: AppRestaurantColors.background,
+        shape: RoundedRectangleBorder(
+          // Radius Besar standar untuk Dialog/Sheet: 16.0
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'Delete Banner?',
+          style: TextStyle(
+            color: AppRestaurantColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'This will permanently delete the image from storage.',
+          style: TextStyle(color: AppRestaurantColors.secondary),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppRestaurantColors.secondary),
+            ),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               vm.deleteBanner(banner['id'], banner['image_path']);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -125,10 +241,7 @@ class BannerView extends StatelessWidget {
 class BannerFormBottomSheet extends StatefulWidget {
   final BannerViewModel vm;
 
-  const BannerFormBottomSheet({
-    super.key,
-    required this.vm,
-  });
+  const BannerFormBottomSheet({super.key, required this.vm});
 
   @override
   State<BannerFormBottomSheet> createState() => _BannerFormBottomSheetState();
@@ -166,40 +279,52 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
     final vm = widget.vm;
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: 0.85.sh, // Menggunakan .sh
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
-          top: 20,
+          // Standarisasi padding Sheet: 16.0
+          left: 16.w,
+          right: 16.w,
+          top: 16.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- FORM HEADER ---
-            const Text(
-              'Add New Banner',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppRestaurantColors.primary,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Add New Banner',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppRestaurantColors.primary,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
+            // Gap antar section utama (Header ke Image Picker): 24.0
+            SizedBox(height: 24.h),
 
             // --- IMAGE PICKER AREA ---
             Center(
               child: GestureDetector(
                 onTap: _pickImage,
                 child: Container(
-                  height: 120,
-                  width: 120,
+                  height: 120.h,
+                  width: 1.sw, // Menggunakan .sw untuk penuh layar
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey.shade100,
+                    // Radius Medium standar: 12.0
+                    borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: AppRestaurantColors.primary,
+                      color: AppRestaurantColors.primary.withOpacity(0.5),
                       style: BorderStyle.solid,
                     ),
                     image: selectedImageBytes != null
@@ -210,17 +335,21 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                         : null,
                   ),
                   child: selectedImageBytes == null
-                      ? const Column(
+                      ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo,
-                                color: AppRestaurantColors.secondary, size: 30),
-                            SizedBox(height: 4),
+                            Icon(
+                              Icons.add_a_photo,
+                              color: AppRestaurantColors.secondary,
+                              size: 30.sp,
+                            ),
+                            SizedBox(height: 8.h),
                             Text(
-                              'Choose Image',
+                              'Choose Banner Image',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 color: AppRestaurantColors.secondary,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
@@ -229,7 +358,8 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            // Gap antar section utama (Image Picker ke Text Input): 24.0
+            SizedBox(height: 24.h),
 
             // --- TEXT INPUT AREA ---
             Expanded(
@@ -239,61 +369,87 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                   children: [
                     TextFormField(
                       controller: _titleController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Banner Title',
-                        border: OutlineInputBorder(),
+                        // Radius Medium standar untuk input form: 12.0
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: const BorderSide(
+                            color: AppRestaurantColors.primary,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 14.h,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    // Gap ekstra untuk ruang aman scroll
+                    SizedBox(height: 24.h),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 12),
 
             // --- SAVE BUTTON ---
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              // Standarisasi Tinggi Tombol: 55.0
+              height: 35.h,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    // Radius Medium standar: 12.0
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
                 onPressed: () async {
-                  if (_titleController.text.trim().isEmpty || selectedImageBytes == null) {
+                  if (_titleController.text.trim().isEmpty ||
+                      selectedImageBytes == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Title and Image are required!'),
+                        backgroundColor: Colors.red,
                       ),
                     );
                     return;
                   }
-                  
+
                   // Close bottom sheet and start upload
                   Navigator.pop(context);
                   vm.uploadNewBanner(
-                    _titleController.text, 
-                    selectedFileName!, 
-                    selectedImageBytes!
+                    _titleController.text.trim(),
+                    selectedFileName!,
+                    selectedImageBytes!,
                   );
-                  
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Uploading banner...'))
+                    const SnackBar(
+                      content: Text('Uploading banner...'),
+                      backgroundColor: AppRestaurantColors.secondary,
+                    ),
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Save Banner',
                   style: TextStyle(
                     color: AppRestaurantColors.accent,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            // Ekstra padding bawah
+            SizedBox(height: 20.h),
           ],
         ),
       ),

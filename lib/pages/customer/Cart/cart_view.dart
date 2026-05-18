@@ -19,13 +19,11 @@ class CartView extends StatelessWidget {
         title: const Text(
           'My Cart',
           style: TextStyle(
-            color: AppRestaurantColors
-                .accent, // Mengubah warna teks menjadi accent
+            color: AppRestaurantColors.background, // Warna teks accent
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor:
-            AppRestaurantColors.primary, // Mengubah background menjadi primary
+        backgroundColor: AppRestaurantColors.primary, // Background primary
         elevation: 0,
         centerTitle: true,
       ),
@@ -35,101 +33,117 @@ class CartView extends StatelessWidget {
               message: 'Your cart is empty. Add some delicious items!',
               iconColor: AppRestaurantColors.secondary,
             )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: vm.items.length,
-              itemBuilder: (context, index) {
-                final item = vm.items[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppRestaurantColors.background,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8),
+          : SafeArea(
+              child: ListView.builder(
+                // Standarisasi padding layar utama: 16.0
+                padding: EdgeInsets.all(16.w),
+                itemCount: vm.items.length,
+                itemBuilder: (context, index) {
+                  final item = vm.items[index];
+                  return Container(
+                    // Gap antar Card item (Vertical): 16.0
+                    margin: EdgeInsets.only(bottom: 16.h),
+                    // Padding dalam Card disamakan ke 16.0 agar konsisten
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: AppRestaurantColors.accent2.withOpacity(0.05),
+                      // Radius standar Card: 12.0
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: AppRestaurantColors.accent),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 5.r,
+                          // Offset disamakan dengan card di menu utama
+                          offset: Offset(0, 2.h),
                         ),
-                        child: const Icon(
-                          Icons.fastfood,
-                          color: AppRestaurantColors.secondary,
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 60.h,
+                          width: 60.w,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            // Radius untuk gambar di dalam card sedikit lebih kecil (8.0)
+                            // agar proporsional dengan radius luar (12.0)
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: const Icon(
+                            Icons.fastfood,
+                            color: AppRestaurantColors.secondary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        // Gap standar antar elemen horizontal: 16.0
+                        SizedBox(width: 16.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.menu.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                  color: AppRestaurantColors.primary,
+                                ),
+                              ),
+                              // Gap kecil antar teks judul dan harga
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Rp ${item.menu.price}',
+                                style: TextStyle(
+                                  color: AppRestaurantColors.secondary,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
                           children: [
-                            Text(
-                              item.menu.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle_outline,
                                 color: AppRestaurantColors.primary,
                               ),
+                              onPressed: () => vm.decreaseQuantity(item.id),
                             ),
-                            const SizedBox(height: 4),
                             Text(
-                              'Rp ${item.menu.price}',
-                              style: const TextStyle(
-                                color: AppRestaurantColors.secondary,
-                                fontSize: 12,
+                              '${item.quantity}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppRestaurantColors.primary,
+                                fontSize: 14
+                                    .sp, // Diberi ukuran spesifik agar lebih jelas
                               ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.add_circle_outline,
+                                color: AppRestaurantColors.primary,
+                              ),
+                              onPressed: () => vm.increaseQuantity(item.id),
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_circle_outline,
-                              color: AppRestaurantColors.primary,
-                            ),
-                            onPressed: () => vm.decreaseQuantity(item.id),
-                          ),
-                          Text(
-                            '${item.quantity}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppRestaurantColors.primary,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.add_circle_outline,
-                              color: AppRestaurantColors.primary,
-                            ),
-                            onPressed: () => vm.increaseQuantity(item.id),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
+        // Standarisasi padding layar utama: 16.0
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+              blurRadius: 10.r,
+              offset: Offset(0, -5.h),
             ),
           ],
         ),
@@ -141,18 +155,20 @@ class CartView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Total Price',
                     style: TextStyle(
                       color: AppRestaurantColors.secondary,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                   ),
+                  // Gap kecil untuk pemisah teks
+                  SizedBox(height: 4.h),
                   Text(
                     'Rp ${vm.totalPrice}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppRestaurantColors.primary,
-                      fontSize: 18,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -160,16 +176,16 @@ class CartView extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppRestaurantColors.primary, // Latar gelap
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
+                  backgroundColor: AppRestaurantColors.primary,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 32.w,
+                    vertical: 10.h,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    // Radius standar Tombol/Button disamakan dengan Card: 12.0
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-
                 onPressed: vm.items.isEmpty
                     ? null
                     : () {
@@ -177,14 +193,12 @@ class CartView extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => PaymentView(
-                              totalAmount:
-                                  vm.totalPrice, // Kirim Total Harga dari Cart
-                              cartItems: vm.items, // Kirim Isi Keranjang
+                              totalAmount: vm.totalPrice,
+                              cartItems: vm.items,
                             ),
                           ),
                         );
                       },
-                // Teks menggunakan warna terang/kuning (Accent)
                 child: const Text(
                   'Checkout',
                   style: TextStyle(

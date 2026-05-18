@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/services/saw_restock_service.dart';
@@ -30,7 +31,7 @@ class StockView extends StatelessWidget {
               title: const Text(
                 'Restock Recommendations',
                 style: TextStyle(
-                  color: AppRestaurantColors.accent,
+                  color: AppRestaurantColors.background,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -68,7 +69,12 @@ class StockView extends StatelessWidget {
                           )
                         else
                           SliverPadding(
-                            padding: const EdgeInsets.all(16),
+                            // Standarisasi padding layar: 16.0 (dengan ekstra ruang di bawah)
+                            padding: EdgeInsets.only(
+                              left: 16.w,
+                              right: 16.w,
+                              bottom: 40.h,
+                            ),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
                                 (ctx, i) =>
@@ -91,8 +97,15 @@ class StockView extends StatelessWidget {
     bool isValid = (totalWeight * 100).round() == 100;
 
     return Card(
-      margin: const EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // Standarisasi margin layar: 16.0 dan Gap section: 24.0 (menuju ke list bawah)
+      margin: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.h, bottom: 24.h),
+      shape: RoundedRectangleBorder(
+        // Radius Medium standar: 12.0
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide(
+          color: AppRestaurantColors.accent,
+        ),
+      ),
       elevation: 2,
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -110,47 +123,59 @@ class StockView extends StatelessWidget {
             style: TextStyle(
               color: isValid ? AppRestaurantColors.secondary : Colors.red,
               fontWeight: FontWeight.bold,
-              fontSize: 12,
+              fontSize: 12.sp,
             ),
           ),
           children: [
-            // --- DROPDOWN INFO / EDUCATION BOX (MENGGUNAKAN EXPANSIONTILE) ---
+            // --- DROPDOWN INFO / EDUCATION BOX ---
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              // Standarisasi padding elemen internal: 16.0
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Theme(
-                // Menghilangkan garis pembatas bawaan khusus untuk dropdown internal ini
-                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
-                  backgroundColor: AppRestaurantColors.primary.withOpacity(0.05),
-                  collapsedBackgroundColor: AppRestaurantColors.primary.withOpacity(0.05),
-                  tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  childrenPadding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                  // Mengatur melengkungnya sudut border kotak info
+                  backgroundColor: AppRestaurantColors.primary.withOpacity(
+                    0.05,
+                  ),
+                  collapsedBackgroundColor: AppRestaurantColors.primary
+                      .withOpacity(0.05),
+                  tilePadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 0,
+                  ),
+                  childrenPadding: EdgeInsets.only(
+                    left: 12.w,
+                    right: 12.w,
+                    bottom: 12.h,
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    // Radius Medium disamakan dengan standar: 12.0
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   collapsedShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  leading: const Icon(
-                    Icons.lightbulb_outline, 
-                    color: AppRestaurantColors.primary, 
-                    size: 20
+                  leading: Icon(
+                    Icons.lightbulb_outline,
+                    color: AppRestaurantColors.primary,
+                    size: 20.sp,
                   ),
-                  title: const Text(
+                  title: Text(
                     'What is the purpose of these weights?',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold, 
+                      fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                   children: [
-                    const Text(
+                    Text(
                       'Weights determine the importance of each criterion when the system calculates which ingredients should be restocked first (Total must be exactly 100%):',
-                      style: TextStyle(fontSize: 12, color: Colors.black87),
+                      style: TextStyle(fontSize: 12.sp, color: Colors.black87),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     _buildInfoText(
                       '• ABC (Usage Frequency):',
                       'How often the ingredient is used in the kitchen.',
@@ -174,14 +199,17 @@ class StockView extends StatelessWidget {
 
             // --- SLIDERS ---
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Column(
                 children: vm.weights.keys.map((key) {
                   return Row(
                     children: [
                       SizedBox(
-                        width: 40,
-                        child: Text(key, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        width: 40.w,
+                        child: Text(
+                          key,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                       Expanded(
                         child: Slider(
@@ -197,7 +225,7 @@ class StockView extends StatelessWidget {
                           },
                           onChangeEnd: (val) async {
                             bool isSaved = await vm.saveCurrentWeightsToDb();
-                            
+
                             if (isSaved && context.mounted) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -212,7 +240,7 @@ class StockView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 40,
+                        width: 40.w,
                         child: Text('${(vm.weights[key]! * 100).toInt()}%'),
                       ),
                     ],
@@ -221,14 +249,18 @@ class StockView extends StatelessWidget {
               ),
             ),
             if (!isValid)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 16, left: 16, right: 16),
+              Padding(
+                padding: EdgeInsets.only(bottom: 16.h, left: 16.w, right: 16.w),
                 child: Text(
                   '*The total weight must be exactly 100% for the algorithm calculation to be accurate and saved.',
-                  style: TextStyle(color: Colors.red, fontSize: 12, fontStyle: FontStyle.italic),
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
           ],
         ),
       ),
@@ -237,12 +269,15 @@ class StockView extends StatelessWidget {
 
   Widget _buildInfoText(String title, String desc) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: EdgeInsets.only(bottom: 4.h),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
+          style: TextStyle(fontSize: 12.sp, color: Colors.black87),
           children: [
-            TextSpan(text: '$title ', style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+              text: '$title ',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             TextSpan(text: desc),
           ],
         ),
@@ -254,63 +289,106 @@ class StockView extends StatelessWidget {
     final item = result.ingredient;
     final isCritical = item.currentStock <= item.reorderPoint;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+    return Container(
+      // Gap antar item list tetap aman di luar container
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        // 1. FILL COLOR (Warna Isi)
+        color: AppRestaurantColors.accent2.withOpacity(0.05),
+
+        // 2. RADIUS CORNER
+        borderRadius: BorderRadius.circular(12.r),
+
+        // 3. BORDER COLOR (Silakan sesuaikan warnanya sesuka Anda)
+        border: Border.all(
+          color: AppRestaurantColors.accent, // Contoh: border tipis warna primary
+          width: 1.2,
+        ),
+
+        // 4. ELEVATION (Menggantikan elevation: 2 milik Card)
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5.r,
+            offset: Offset(0, 2.h),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        // Padding internal tetap 16.0
+        padding: EdgeInsets.all(16.w),
         child: Row(
           children: [
             Container(
-              width: 45,
-              height: 45,
+              width: 45.w,
+              height: 45.h,
               decoration: BoxDecoration(
-                color: result.rank == 1 ? Colors.orange : AppRestaurantColors.primary.withOpacity(0.1),
+                color:  AppRestaurantColors.accent,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
-                  '#${result.rank}',
+                  '${result.rank}',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
-                    color: result.rank == 1 ? Colors.white : AppRestaurantColors.primary,
+                    color:  AppRestaurantColors.primary,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            // Gap elemen horizontal standar: 16.0
+            SizedBox(width: 16.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppRestaurantColors.primary,
+                    ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      _buildStockChip('Remaining: ${item.currentStock}', isCritical ? Colors.red : Colors.orange),
-                      const SizedBox(width: 4),
+                      _buildStockChip(
+                        'Remaining: ${item.currentStock}',
+                        isCritical ? Colors.red : Colors.orange,
+                      ),
+                      SizedBox(width: 4.w),
                       _buildStockChip('ROP: ${item.reorderPoint}', Colors.grey),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     'Criteria: ABC(${item.abcClass}) HML(${item.hmlClass}) SDE(${item.sdeClass}) FSN(${item.fsnClass})',
-                    style: const TextStyle(fontSize: 12, color: AppRestaurantColors.secondary),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppRestaurantColors.secondary,
+                    ),
                   ),
                 ],
               ),
             ),
             Column(
               children: [
-                const Text('Vi Score', style: TextStyle(fontSize: 10, color: AppRestaurantColors.secondary)),
+                Text(
+                  'Vi Score',
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: AppRestaurantColors.secondary,
+                  ),
+                ),
                 Text(
                   result.score.toStringAsFixed(3),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppRestaurantColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -322,15 +400,19 @@ class StockView extends StatelessWidget {
 
   Widget _buildStockChip(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(4.r),
         border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         label,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(
+          fontSize: 10.sp,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
       ),
     );
   }

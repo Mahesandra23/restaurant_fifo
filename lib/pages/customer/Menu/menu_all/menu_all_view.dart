@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_all/repository/menu_all_repository.dart';
@@ -8,20 +9,16 @@ import 'package:restaurant_fifo/pages/kitchen/menu/widget/show_menu_form.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart';
 
-// PASTIKAN ANDA MENG-IMPORT FILE BOTTOM SHEET KITCHEN DI SINI:
-// import 'package:restaurant_fifo/pages/kitchen/menu/widgets/menu_form_bottom_sheet.dart';
-
 class MenuAllView extends StatelessWidget {
   final String categoryName;
 
-  // --- PARAMETER BARU UNTUK MEMBEDAKAN ROLE ---
   final bool isKitchen;
   final dynamic kitchenVm;
 
   const MenuAllView({
     super.key,
     required this.categoryName,
-    this.isKitchen = false, // Nilai bawaannya false (Sebagai Customer)
+    this.isKitchen = false, 
     this.kitchenVm,
   });
 
@@ -37,22 +34,19 @@ class MenuAllView extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppRestaurantColors.background,
           appBar: AppBar(
-            backgroundColor: AppRestaurantColors
-                .primary, // Mengubah background menjadi primary
+            backgroundColor: AppRestaurantColors.primary,
             elevation: 0,
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back,
-                color: AppRestaurantColors
-                    .accent, // Mengubah warna tombol back menjadi accent
+                color: AppRestaurantColors.background, // Warna accent agar seragam
               ),
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
               categoryName,
               style: const TextStyle(
-                color: AppRestaurantColors
-                    .accent, // Mengubah warna teks menjadi accent
+                color: AppRestaurantColors.background,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -60,12 +54,13 @@ class MenuAllView extends StatelessWidget {
           ),
           body: Column(
             children: [
+              // Gap standar dari AppBar ke konten pertama (Search Bar): 16.0
+              SizedBox(height: 16.h),
+
               // Search Bar
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
+                // Standarisasi padding horizontal layar: 16.0
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: TextField(
                   onChanged: vm.onSearchChanged,
                   decoration: InputDecoration(
@@ -76,17 +71,18 @@ class MenuAllView extends StatelessWidget {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    contentPadding: EdgeInsets.symmetric(vertical: 0.h),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      // Radius Medium standar: 12.0
+                      borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                       borderSide: const BorderSide(
                         color: AppRestaurantColors.primary,
                       ),
@@ -94,6 +90,9 @@ class MenuAllView extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // Gap standar antar section (Search Bar ke Grid Menu): 24.0
+              SizedBox(height: 24.h),
 
               // Grid Daftar Makanan
               Expanded(
@@ -104,80 +103,84 @@ class MenuAllView extends StatelessWidget {
                         ),
                       )
                     : vm.menus.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Menu tidak ditemukan.',
-                          style: TextStyle(
-                            color: AppRestaurantColors.secondary,
-                          ),
-                        ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(16),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        ? const Center(
+                            child: Text(
+                              'Menu tidak ditemukan.',
+                              style: TextStyle(
+                                color: AppRestaurantColors.secondary,
+                              ),
+                            ),
+                          )
+                        : GridView.builder(
+                            // Padding kiri-kanan 16.0, ditambah padding bawah ekstra 40.0
+                            padding: EdgeInsets.only(
+                              left: 16.w,
+                              right: 16.w,
+                              bottom: 40.h,
+                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 0.8,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
+                              // Gap antar elemen standar: 16.0
+                              crossAxisSpacing: 16.w,
+                              mainAxisSpacing: 16.h,
                             ),
-                        itemCount: vm.menus.length,
-                        itemBuilder: (context, index) {
-                          final item = vm.menus[index];
-                          return MenuCardWidget(
-                            name: item.name,
-                            formattedPrice: item
-                                .formattedPrice, // Jika model Anda masih berbentuk string, ganti 'Rp ${item.price}'
-                            imageUrl: item.imageUrl,
+                            itemCount: vm.menus.length,
+                            itemBuilder: (context, index) {
+                              final item = vm.menus[index];
+                              return MenuCardWidget(
+                                name: item.name,
+                                formattedPrice: item.formattedPrice, 
+                                imageUrl: item.imageUrl,
+                                onTap: () {
+                                  if (isKitchen && kitchenVm != null) {
+                                    // 1. AKSI JIKA YANG MENGKLIK ADALAH KOKI / ADMIN DAPUR
+                                    if (kitchenVm.categories.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Buat Kategori terlebih dahulu!',
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
 
-                            // --- LOGIKA PERCABANGAN ROLE (KITCHEN VS CUSTOMER) ---
-                            onTap: () {
-                              if (isKitchen && kitchenVm != null) {
-                                // 1. AKSI JIKA YANG MENGKLIK ADALAH KOKI / ADMIN DAPUR
-                                if (kitchenVm.categories.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Buat Kategori terlebih dahulu!',
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor:
+                                          AppRestaurantColors.background,
+                                      shape: RoundedRectangleBorder(
+                                        // Radius Besar standar untuk BottomSheet: 16.0
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16.r),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor:
-                                      AppRestaurantColors.background,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return MenuFormBottomSheet(
-                                      vm: kitchenVm,
-                                      existingMenu: item,
+                                      builder: (context) {
+                                        return MenuFormBottomSheet(
+                                          vm: kitchenVm,
+                                          existingMenu: item,
+                                        );
+                                      },
+                                    ).then((_) {
+                                      vm.fetchMenus();
+                                    });
+                                  } else {
+                                    // 2. AKSI JIKA YANG MENGKLIK ADALAH PELANGGAN (DEFAULT)
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            MenuDetailView(menu: item),
+                                      ),
                                     );
-                                  },
-                                ).then((_) {
-                                  vm.fetchMenus();
-                                });
-                              } else {
-                                // 2. AKSI JIKA YANG MENGKLIK ADALAH PELANGGAN (DEFAULT)
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        MenuDetailView(menu: item),
-                                  ),
-                                );
-                              }
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
               ),
             ],
           ),

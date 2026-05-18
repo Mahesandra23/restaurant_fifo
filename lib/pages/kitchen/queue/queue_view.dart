@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -27,7 +28,10 @@ class QueueView extends StatelessWidget {
             appBar: AppBar(
               title: const Text(
                 'Kitchen Queue',
-                style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.accent),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppRestaurantColors.background,
+                ),
               ),
               backgroundColor: AppRestaurantColors.primary,
               centerTitle: true,
@@ -35,7 +39,9 @@ class QueueView extends StatelessWidget {
             ),
             body: vm.isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppRestaurantColors.primary),
+                    child: CircularProgressIndicator(
+                      color: AppRestaurantColors.primary,
+                    ),
                   )
                 : RefreshIndicator(
                     color: AppRestaurantColors.primary,
@@ -43,18 +49,20 @@ class QueueView extends StatelessWidget {
                     child: vm.activeOrders.isEmpty
                         ? SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
-                            child: const SizedBox(
-                              height: 300, 
-                              child: CustomEmptyState(
+                            child: SizedBox(
+                              height: 300.h,
+                              child: const CustomEmptyState(
                                 icon: Icons.check_circle_outline,
-                                message: 'There are no active orders in the queue.',
+                                message:
+                                    'There are no active orders in the queue.',
                                 iconColor: AppRestaurantColors.accent,
                               ),
                             ),
                           )
                         : ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(), 
-                            padding: const EdgeInsets.all(16),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            // Standarisasi padding layar utama: 16.0
+                            padding: EdgeInsets.all(16.w),
                             itemCount: vm.activeOrders.length,
                             itemBuilder: (context, index) {
                               final order = vm.activeOrders[index];
@@ -68,168 +76,256 @@ class QueueView extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, OrderQueue order, QueueViewModel vm) {
+  Widget _buildOrderCard(
+    BuildContext context,
+    OrderQueue order,
+    QueueViewModel vm,
+  ) {
     final bool isCooking = order.status == 'cooking';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        // Berikan border highlight tipis berwarna orange jika pesanan sedang dimasak
-        side: isCooking 
-            ? const BorderSide(color: AppRestaurantColors.accent, width: 1.5) 
-            : BorderSide.none,
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: AppRestaurantColors.accent2.withOpacity(0.05),
+        // Radius standar Card: 12.0
+        borderRadius: BorderRadius.circular(12.r),
+        // Border kuning tipis hanya muncul jika statusnya COOKING (sesuai gambar)
+        // Menggunakan warna transparent saat PENDING agar ukuran card tidak bergeser/lompat
+        border: isCooking
+            ? Border.all(color: AppRestaurantColors.accent, width: 1.5)
+            : Border.all(color: AppRestaurantColors.primary, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5.r,
+            // Offset disamakan dengan card di menu utama
+            offset: Offset(0, 2.h),
+          ),  
+        ],
       ),
-      color: AppRestaurantColors.background,
-      elevation: isCooking ? 5 : 2,
-      shadowColor: AppRestaurantColors.primary.withOpacity(0.2),
-      child: InkWell(
-        onTap: () => _showOrderDetails(context, order, vm),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        order.id,
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.secondary),
-                      ),
-                      const SizedBox(width: 8),
-                      // Badge Status Tambahan di UI Kartu
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isCooking ? Colors.orange.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          isCooking ? 'COOKING' : 'PENDING',
+      child: Material(
+        color: Colors
+            .transparent, // Penting agar background dari Container tidak tertutup
+        child: InkWell(
+          onTap: () => _showOrderDetails(context, order, vm),
+          borderRadius: BorderRadius.circular(
+            12.r,
+          ), // Menjaga efek klik tetap di dalam radius
+          child: Padding(
+            // Padding dalam Card disamakan ke 16.0
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          order.id,
                           style: TextStyle(
-                            fontSize: 10, 
-                            fontWeight: FontWeight.bold, 
-                            color: isCooking ? Colors.orange.shade800 : Colors.grey.shade700
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold,
+                            color: AppRestaurantColors.secondary,
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${order.customerName} - ${order.tableNumber}', 
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${order.items.length} Items',
-                    style: const TextStyle(color: AppRestaurantColors.secondary),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Icon(Icons.access_time, color: AppRestaurantColors.secondary, size: 20),
-                  const SizedBox(height: 4),
-                  Text(
-                    order.orderTime,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppRestaurantColors.primary),
-                  ),
-                ],
-              ),
-            ],
+                        SizedBox(width: 8.w),
+                        // Badge Status
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppRestaurantColors.background,
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            isCooking ? 'COOKING' : 'PENDING',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppRestaurantColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      '${order.customerName} - ${order.tableNumber}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppRestaurantColors.primary,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      '${order.items.length} Items',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppRestaurantColors.secondary,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      color: AppRestaurantColors.secondary,
+                      size: 20.sp,
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      order.orderTime,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                        color: AppRestaurantColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _showOrderDetails(BuildContext context, OrderQueue order, QueueViewModel vm) {
-    // Cek apakah status order saat ini masih berupa antrean pending baru
+  void _showOrderDetails(
+    BuildContext context,
+    OrderQueue order,
+    QueueViewModel vm,
+  ) {
     final bool isPending = order.status == 'pending';
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: RoundedRectangleBorder(
+        // Radius Besar standar untuk BottomSheet: 16.0
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(24),
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
+          // Standarisasi padding layar: 16.0
+          padding: EdgeInsets.all(16.w),
+          constraints: BoxConstraints(
+            maxHeight: 0.7.sh, // Menggunakan .sh pengganti MediaQuery height
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Drag Handle
               Center(
                 child: Container(
-                  width: 40,
-                  height: 5,
+                  width: 40.w,
+                  height: 5.h,
                   decoration: BoxDecoration(
                     color: AppRestaurantColors.secondary.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              // Gap standar: 16.0
+              SizedBox(height: 16.h),
+
+              // Header Details
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Detail ${order.id}',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppRestaurantColors.primary,
+                    ),
                   ),
                   Text(
                     order.orderTime,
-                    style: const TextStyle(fontSize: 16, color: AppRestaurantColors.secondary),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppRestaurantColors.secondary,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 order.customerName,
-                style: const TextStyle(fontSize: 16, color: AppRestaurantColors.primary, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: AppRestaurantColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              const Divider(height: 32, thickness: 1, color: AppRestaurantColors.secondary),
 
+              // Divider berfungsi ganda memberi spacing vertikal setara 16.0 atas-bawah
+              Divider(
+                height: 32.h,
+                thickness: 1,
+                color: AppRestaurantColors.secondary,
+              ),
+
+              // Item List
               Expanded(
                 child: ListView.builder(
                   itemCount: order.items.length,
                   itemBuilder: (context, index) {
                     final item = order.items[index];
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      // Gap standar antar item list: 16.0
+                      padding: EdgeInsets.only(bottom: 16.h),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 4.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: AppRestaurantColors.accent, 
-                              borderRadius: BorderRadius.circular(8),
+                              color: AppRestaurantColors.accent,
+                              borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
                               '${item.quantity}x',
-                              style: const TextStyle(color: AppRestaurantColors.primary, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                color: AppRestaurantColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          // Gap standar horizontal antar elemen: 16.0
+                          SizedBox(width: 16.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   item.name,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppRestaurantColors.primary),
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppRestaurantColors.primary,
+                                  ),
                                 ),
                                 if (item.notes.isNotEmpty)
                                   Text(
                                     '* ${item.notes}',
-                                    style: const TextStyle(color: Colors.redAccent, fontSize: 13, fontStyle: FontStyle.italic),
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontSize: 13.sp,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
                               ],
                             ),
@@ -241,32 +337,39 @@ class QueueView extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              // Gap section utama (List ke Action Button): 24.0
+              SizedBox(height: 24.h),
+
               // --- TOMBOL AKSI DINAMIS BERDASARKAN STATUS ---
               SizedBox(
-                width: double.infinity,
-                height: 50,
+                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+                height: 35
+                    .h, // Disamakan dengan tinggi tombol di halaman lain (55.0)
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    // Warna orange jika mau dimasak, warna hijau jika mau diselesaikan
-                    backgroundColor: isPending ? AppRestaurantColors.accent : AppRestaurantColors.primary, 
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor: isPending
+                        ? AppRestaurantColors.accent
+                        : AppRestaurantColors.primary,
+                    shape: RoundedRectangleBorder(
+                      // Radius Medium standar: 12.0
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
                   ),
                   onPressed: () async {
                     if (isPending) {
-                      // Proses pindah ke status Cooking + Kurangi Stok FIFO
                       final success = await vm.acceptToCook(order.rawId);
                       if (context.mounted && success) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('${order.id} Started Cooking! and Stock Updated!'),
+                            content: Text(
+                              '${order.id} Started Cooking! and Stock Updated!',
+                            ),
                             backgroundColor: AppRestaurantColors.accent,
                           ),
                         );
                       }
                     } else {
-                      // Selesaikan pesanan ke status Completed
                       final success = await vm.completeOrder(order.rawId);
                       if (context.mounted && success) {
                         Navigator.pop(context);
@@ -281,10 +384,20 @@ class QueueView extends StatelessWidget {
                   },
                   child: Text(
                     isPending ? 'START COOKING' : 'COOKING COMPLETE',
-                    style: const TextStyle(color: AppRestaurantColors.accent, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      // Memastikan teks selalu kontras dengan background
+                      color: isPending
+                          ? AppRestaurantColors.primary
+                          : AppRestaurantColors.accent,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
+
+              // Memberikan ruang bawah ekstra jika HP tidak memiliki SafeArea
+              SizedBox(height: 8.h),
             ],
           ),
         );

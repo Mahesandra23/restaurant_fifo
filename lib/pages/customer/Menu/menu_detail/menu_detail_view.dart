@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
@@ -7,9 +8,17 @@ import 'package:restaurant_fifo/pages/customer/Menu/menu_detail/view_model/menu_
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class MenuDetailView extends StatelessWidget {
-  final MenuModel menu; // Data dilempar dari halaman sebelumnya
+  final MenuModel menu; 
 
   const MenuDetailView({super.key, required this.menu});
+
+  // --- HELPER FORMAT HARGA MANUAL TANPA LIBRARY ---
+  String _formatPrice(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +31,14 @@ class MenuDetailView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppRestaurantColors.background,
-
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 250.0,
+                expandedHeight: 200.h, 
                 pinned: true,
                 backgroundColor: AppRestaurantColors.primary,
                 leading: Container(
-                  margin: const EdgeInsets.all(8),
+                  margin: EdgeInsets.all(8.w), 
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.3),
                     shape: BoxShape.circle,
@@ -41,13 +49,13 @@ class MenuDetailView extends StatelessWidget {
                   ),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: menu.imageUrl.isNotEmpty
-                      ? Image.network(menu.imageUrl, fit: BoxFit.cover)
+                  background: vm.menu.imageUrl.isNotEmpty
+                      ? Image.network(vm.menu.imageUrl, fit: BoxFit.cover)
                       : Container(
                           color: Colors.grey.shade300,
-                          child: const Icon(
+                          child: Icon(
                             Icons.fastfood,
-                            size: 80,
+                            size: 80.sp, 
                             color: AppRestaurantColors.secondary,
                           ),
                         ),
@@ -57,7 +65,7 @@ class MenuDetailView extends StatelessWidget {
               // Detail Konten
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(16.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -68,77 +76,83 @@ class MenuDetailView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              menu.name,
-                              style: const TextStyle(
-                                fontSize: 24,
+                              vm.menu.name, 
+                              style: TextStyle(
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.bold,
                                 color: AppRestaurantColors.primary,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 16.w),
                           Text(
-                            menu.formattedPrice,
-                            style: const TextStyle(
-                              fontSize: 20,
+                            'Rp ${_formatPrice(vm.menu.price)}', // Menggunakan format manual
+                            style: TextStyle(
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.primary,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      
+                      SizedBox(height: 24.h),
 
-                      // Deskripsi (Dummy, bisa Anda tambahkan di model nanti jika perlu)
-                      const Text(
-                        'Deskripsi Menu',
+                      // Deskripsi
+                      Text(
+                        'Menu Description',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Hidangan spesial ini disiapkan dengan bahan-bahan pilihan berkualitas tinggi. Segera pesan untuk menikmati kelezatannya!',
-                        style: TextStyle(
+                      SizedBox(height: 8.h),
+                      
+                      Text(
+                        vm.menu.description.isNotEmpty 
+                            ? vm.menu.description 
+                            : 'No description available for this delicious dish.',
+                        style: const TextStyle(
                           color: AppRestaurantColors.secondary,
                           height: 1.5,
                         ),
                       ),
-                      const Divider(height: 40),
+                      
+                      SizedBox(height: 24.h),
+                      Divider(height: 1.h, color: Colors.grey.shade300),
+                      SizedBox(height: 24.h),
 
                       // Input Catatan (Notes)
-                      const Text(
-                        'Catatan Khusus (Opsional)',
+                      Text(
+                        'Special Notes (Optional)',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       TextField(
                         maxLines: 2,
                         decoration: InputDecoration(
-                          hintText:
-                              'Misal: Jangan pakai bawang, pedas sedang...',
-                          hintStyle: const TextStyle(
+                          hintText: 'E.g.: No onions, medium spice...',
+                          hintStyle: TextStyle(
                             color: Colors.grey,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                           ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             borderSide: const BorderSide(
                               color: AppRestaurantColors.primary,
                             ),
@@ -146,9 +160,8 @@ class MenuDetailView extends StatelessWidget {
                         ),
                         onChanged: vm.updateNotes,
                       ),
-                      const SizedBox(
-                        height: 100,
-                      ), // Ruang kosong agar tidak tertutup tombol bawah
+                      
+                      SizedBox(height: 40.h), 
                     ],
                   ),
                 ),
@@ -158,18 +171,18 @@ class MenuDetailView extends StatelessWidget {
 
           // --- TOMBOL BAWAH (QTY & ADD TO CART) ---
           bottomNavigationBar: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
+                  blurRadius: 10.r,
+                  offset: Offset(0, -5.h),
                 ),
               ],
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16.r),
               ),
             ),
             child: SafeArea(
@@ -177,9 +190,10 @@ class MenuDetailView extends StatelessWidget {
                 children: [
                   // Pengatur Jumlah (Quantity)
                   Container(
+                    height: 35.h, 
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Row(
                       children: [
@@ -192,8 +206,8 @@ class MenuDetailView extends StatelessWidget {
                         ),
                         Text(
                           '${vm.quantity}',
-                          style: const TextStyle(
-                            fontSize: 18,
+                          style: TextStyle(
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary,
                           ),
@@ -208,46 +222,41 @@ class MenuDetailView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  
+                  SizedBox(width: 16.w),
 
                   // Tombol Masukkan Keranjang
                   Expanded(
                     child: SizedBox(
-                      height: 50,
+                      height: 35.h, 
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppRestaurantColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
                         ),
-
                         onPressed: () {
-                          // 1. Ambil tas belanja (Provider) dari memori HP
                           final cartProvider = context.read<CartProvider>();
-
-                          // 2. Lempar tas belanja itu ke ViewModel agar diisi barang
                           vm.addToCart(cartProvider);
 
-                          // 3. Tampilkan Pop-up sukses
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                '${menu.name} ditambahkan ke keranjang!',
+                                '${vm.menu.name} added to cart!',
                               ),
                               duration: const Duration(seconds: 1),
                             ),
                           );
 
-                          // 4. Tutup halaman detail dan kembali ke menu
                           Navigator.pop(context);
                         },
                         child: Text(
-                          'Tambah • Rp ${vm.totalPrice}',
-                          style: const TextStyle(
+                          'Add to Cart • Rp ${_formatPrice(vm.totalPrice)}', // Menggunakan format manual
+                          style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),

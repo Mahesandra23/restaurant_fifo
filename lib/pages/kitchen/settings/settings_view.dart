@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/navigator/route_list.dart';
@@ -24,7 +25,6 @@ class SettingsView extends StatelessWidget {
         final vm = context.watch<SettingsViewModel>();
         final session = context.watch<SessionProvider>();
 
-
         return FocusDetector(
           onFocusGained: () => vm.fetchDashboardData(),
           child: Scaffold(
@@ -33,7 +33,7 @@ class SettingsView extends StatelessWidget {
               title: const Text(
                 'Admin Panel',
                 style: TextStyle(
-                  color: AppRestaurantColors.accent,
+                  color: AppRestaurantColors.background,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -57,14 +57,20 @@ class SettingsView extends StatelessWidget {
                     color: AppRestaurantColors.primary,
                     onRefresh: () => vm.fetchDashboardData(),
                     child: ListView(
-                      padding: const EdgeInsets.all(16),
+                      // Standarisasi padding layar utama: 16.0
+                      padding: EdgeInsets.all(16.w),
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         _buildDailyReportCard(vm.formattedDailyRevenue),
-                        const SizedBox(height: 24),
+                        // Gap antar section utama: 24.0
+                        SizedBox(height: 24.h),
                         _buildRecentOrdersSection(context, vm.recentOrders),
-                        const SizedBox(height: 24),
+                        // Gap antar section utama: 24.0
+                        SizedBox(height: 24.h),
                         _buildManagementMenu(context),
+                        
+                        // Ekstra padding bawah agar nyaman di-scroll
+                        SizedBox(height: 16.h),
                       ],
                     ),
                   ),
@@ -77,7 +83,8 @@ class SettingsView extends StatelessWidget {
   // --- BOX 1: DAILY REPORT ---
   Widget _buildDailyReportCard(String formattedRevenue) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      // Padding di dalam Card Utama, kita buat sedikit lega
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -85,28 +92,29 @@ class SettingsView extends StatelessWidget {
             AppRestaurantColors.primary.withOpacity(0.8),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        // Radius Besar standar untuk Card Utama: 16.0
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: AppRestaurantColors.primary.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 8.r,
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Today's Revenue",
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+            style: TextStyle(color: Colors.white70, fontSize: 14.sp),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             formattedRevenue,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 28.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -126,11 +134,11 @@ class SettingsView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Recent Orders',
               style: TextStyle(
                 color: AppRestaurantColors.primary,
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -149,10 +157,13 @@ class SettingsView extends StatelessWidget {
             ),
           ],
         ),
+        // Gap kecil dari judul ke List
+        SizedBox(height: 8.h),
+        
         if (orders.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text(
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            child: const Text(
               'No recent orders.',
               style: TextStyle(color: AppRestaurantColors.secondary),
             ),
@@ -160,20 +171,31 @@ class SettingsView extends StatelessWidget {
         else
           ...orders.map(
             (order) => Card(
-              margin: const EdgeInsets.only(bottom: 8),
+              // Gap standar antar elemen List/Card: 16.0
+              margin: EdgeInsets.only(bottom: 16.h),
+              elevation: 2,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                // Radius Medium standar: 12.0
+                borderRadius: BorderRadius.circular(12.r),
               ),
+              color: AppRestaurantColors.background,
               child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                 leading: const CircleAvatar(
-                  backgroundColor: AppRestaurantColors.accent,
-                  child: Icon(Icons.check, color: Colors.white, size: 16),
+                  backgroundColor: AppRestaurantColors.primary,
+                  child: Icon(Icons.check, color: AppRestaurantColors.background),
                 ),
                 title: Text(
                   'Order #${order['id'].toString().substring(0, 5)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppRestaurantColors.primary,
+                  ),
                 ),
-                subtitle: Text('Total: Rp ${order['total_price']}'),
+                subtitle: Text(
+                  'Total: Rp ${order['total_price']}',
+                  style: const TextStyle(color: AppRestaurantColors.secondary),
+                ),
               ),
             ),
           ),
@@ -186,15 +208,16 @@ class SettingsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'System Management',
           style: TextStyle(
             color: AppRestaurantColors.primary,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
+        // Gap dari judul ke List: 16.0
+        SizedBox(height: 16.h),
         _buildMenuTile(
           Icons.image,
           'Promo Banner Management',
@@ -228,10 +251,16 @@ class SettingsView extends StatelessWidget {
     VoidCallback onTap,
   ) {
     return Card(
-      elevation: 1,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 2,
+      // Gap standar antar elemen List/Card: 16.0
+      margin: EdgeInsets.only(bottom: 16.h),
+      shape: RoundedRectangleBorder(
+        // Radius Medium standar: 12.0
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      color: AppRestaurantColors.background,
       child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         leading: Icon(icon, color: AppRestaurantColors.primary),
         title: Text(
           title,
@@ -242,8 +271,8 @@ class SettingsView extends StatelessWidget {
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: 12.sp,
             color: AppRestaurantColors.secondary,
           ),
         ),
@@ -259,23 +288,47 @@ class SettingsView extends StatelessWidget {
 
   // --- LOGOUT FUNCTION ---
   void _confirmLogout(BuildContext context, SettingsViewModel vm, SessionProvider session) {
-    // Pastikan Anda sudah mendefinisikan 'session' di dalam fungsi build Anda
-    // Contoh: final session = context.read<AuthProvider>();
-
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Log Out of Application?'),
+        backgroundColor: AppRestaurantColors.background,
+        shape: RoundedRectangleBorder(
+          // Radius Besar standar untuk Pop-up / Dialog: 16.0
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'Log Out of Application?',
+          style: TextStyle(
+            color: AppRestaurantColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: const Text(
           'You will need to log in again to access the kitchen.',
+          style: TextStyle(color: AppRestaurantColors.secondary),
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppRestaurantColors.secondary),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () async {
               // 1. Tutup dialognya dulu
               Navigator.pop(ctx);

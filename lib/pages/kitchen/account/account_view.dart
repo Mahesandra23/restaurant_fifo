@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/kitchen/account/repository/account_repository.dart';
@@ -22,9 +23,17 @@ class AccountView extends StatelessWidget {
           appBar: AppBar(
             title: const Text(
               'Kitchen Staff Management',
-              style: TextStyle(color: AppRestaurantColors.accent),
+              style: TextStyle(
+                color: AppRestaurantColors.background,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             backgroundColor: AppRestaurantColors.primary,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppRestaurantColors.background),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
           // --- CREATE BUTTON (PANGGIL BOTTOM SHEET) ---
           floatingActionButton: FloatingActionButton(
@@ -33,9 +42,10 @@ class AccountView extends StatelessWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                backgroundColor: AppRestaurantColors.background,
+                shape: RoundedRectangleBorder(
+                  // Radius Besar standar: 16.0
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
                 ),
                 builder: (ctx) => AdminFormBottomSheet(vm: vm),
               );
@@ -52,122 +62,192 @@ class AccountView extends StatelessWidget {
                   ),
                 )
               : vm.staffList.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No staff found.',
-                    style: TextStyle(color: AppRestaurantColors.secondary),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: vm.staffList.length,
-                  itemBuilder: (ctx, i) {
-                    final staff = vm.staffList[i];
-                    final staffName = staff['display_name'] ?? 'Unknown User';
+                  ? const Center(
+                      child: Text(
+                        'No staff found.',
+                        style: TextStyle(color: AppRestaurantColors.secondary),
+                      ),
+                    )
+                  : ListView.builder(
+                      // Standarisasi padding layar utama: 16.0 (dengan bottom 100 agar aman dari FAB)
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 16.h,
+                        bottom: 100.h,
+                      ),
+                      itemCount: vm.staffList.length,
+                      itemBuilder: (ctx, i) {
+                        final staff = vm.staffList[i];
+                        final staffName = staff['display_name'] ?? 'Unknown User';
 
-                    // PERBAIKAN: Gunakan ID yang sudah dikunci dari ViewModel
-                    final isMe = staff['id'] == vm.originalAdminId;
+                        final isMe = staff['id'] == vm.originalAdminId;
 
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: isMe
-                              ? AppRestaurantColors.accent
-                              : AppRestaurantColors.primary,
-                          child: const Icon(Icons.person, color: Colors.white),
-                        ),
-                        title: Row(
-                          children: [
-                            Text(
-                              staffName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                        return Card(
+                          // Gap antar item Card standar: 16.0
+                          margin: EdgeInsets.only(bottom: 16.h),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            // Radius Medium standar: 12.0
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          color: AppRestaurantColors.background,
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 8.h,
                             ),
-                            if (isMe) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppRestaurantColors.accent2.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  'You',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: AppRestaurantColors.accent,
+                            leading: CircleAvatar(
+                              backgroundColor: isMe
+                                  ? AppRestaurantColors.accent
+                                  : AppRestaurantColors.primary,
+                              child: const Icon(Icons.person, color: Colors.white),
+                            ),
+                            title: Row(
+                              children: [
+                                Text(
+                                  staffName,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    color: AppRestaurantColors.primary,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        subtitle: Text(
-                          'ID: ${staff['id'].toString().substring(0, 8)}...\nRole: Kitchen Admin',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: AppRestaurantColors.secondary),
-                              tooltip: 'Edit Name',
-                              onPressed: () => _showEditDialog(context, vm, staff),
+                                if (isMe) ...[
+                                  SizedBox(width: 8.w),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6.w,
+                                      vertical: 2.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppRestaurantColors.accent2
+                                          .withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(4.r),
+                                    ),
+                                    child: Text(
+                                      'You',
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: AppRestaurantColors.accent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                            if (!isMe)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                tooltip: 'Delete Admin',
-                                onPressed: () => _confirmDelete(context, vm, staff),
+                            subtitle: Text(
+                              'ID: ${staff['id'].toString().substring(0, 8)}...\nRole: Kitchen Admin',
+                              style: TextStyle(
+                                color: AppRestaurantColors.secondary,
+                                fontSize: 13.sp,
                               ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: AppRestaurantColors.secondary),
+                                  tooltip: 'Edit Name',
+                                  onPressed: () =>
+                                      _showEditDialog(context, vm, staff),
+                                ),
+                                if (!isMe)
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    tooltip: 'Delete Admin',
+                                    onPressed: () =>
+                                        _confirmDelete(context, vm, staff),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
         );
       },
     );
   }
 
   // --- DIALOG UPDATE (EDIT NAME) ---
-  void _showEditDialog(BuildContext context, AccountViewModel vm, Map<String, dynamic> staff) {
-    final nameController = TextEditingController(text: staff['display_name']); // Ganti ke display_name
+  void _showEditDialog(
+      BuildContext context, AccountViewModel vm, Map<String, dynamic> staff) {
+    final nameController =
+        TextEditingController(text: staff['display_name']);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Edit Admin Name'),
+        backgroundColor: AppRestaurantColors.background,
+        shape: RoundedRectangleBorder(
+          // Radius Besar standar untuk Dialog/Sheet: 16.0
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'Edit Admin Name',
+          style: TextStyle(
+            color: AppRestaurantColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Full Name',
-            border: OutlineInputBorder(),
+            // Radius Medium standar untuk input form: 12.0
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(color: AppRestaurantColors.primary),
+            ),
           ),
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppRestaurantColors.secondary),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppRestaurantColors.accent),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppRestaurantColors.primary,
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () {
               if (nameController.text.isNotEmpty) {
                 vm.editStaffName(staff['id'], nameController.text);
                 Navigator.pop(ctx);
               }
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: AppRestaurantColors.accent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -175,26 +255,57 @@ class AccountView extends StatelessWidget {
   }
 
   // --- DIALOG DELETE ---
-  void _confirmDelete(BuildContext context, AccountViewModel vm, Map<String, dynamic> staff) {
+  void _confirmDelete(
+      BuildContext context, AccountViewModel vm, Map<String, dynamic> staff) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Admin Account?'),
+        backgroundColor: AppRestaurantColors.background,
+        shape: RoundedRectangleBorder(
+          // Radius Besar standar untuk Dialog/Sheet: 16.0
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'Delete Admin Account?',
+          style: TextStyle(
+            color: AppRestaurantColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(
           'Are you sure you want to delete ${staff['display_name'] ?? 'this user'}? Their profile will be permanently removed.',
+          style: const TextStyle(color: AppRestaurantColors.secondary),
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppRestaurantColors.secondary),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                // Radius Medium standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () {
               vm.deleteAdminAccount(staff['id']);
               Navigator.pop(ctx);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -219,21 +330,43 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
   String formPassword = '';
   String formName = '';
   String formPhone = '';
-  
+
   bool isPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
     final vm = widget.vm;
 
+    // Helper Dekorasi Input agar seragam dan rapi
+    InputDecoration buildInputDecoration(String label, {Widget? suffixIcon}) {
+      return InputDecoration(
+        labelText: label,
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+          // Radius Medium standar: 12.0
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: AppRestaurantColors.primary),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      );
+    }
+
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: 0.85.sh, // Menggunakan .sh pengganti MediaQuery height
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
-          top: 20,
+          // Standarisasi padding Sheet: 16.0
+          left: 16.w,
+          right: 16.w,
+          top: 16.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,10 +375,10 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Add New Kitchen Admin',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
@@ -256,7 +389,8 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            // Gap standar Header ke Form: 24.0
+            SizedBox(height: 24.h),
 
             // --- AREA INPUT TEKS ---
             Expanded(
@@ -266,22 +400,21 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                   children: [
                     TextFormField(
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: buildInputDecoration('Email'),
                       onChanged: (val) => formEmail = val,
                     ),
-                    const SizedBox(height: 12),
-                    
+                    // Gap antar elemen vertikal standar: 16.0
+                    SizedBox(height: 16.h),
+
                     TextFormField(
                       obscureText: isPasswordHidden,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: const OutlineInputBorder(),
+                      decoration: buildInputDecoration(
+                        'Password',
                         suffixIcon: IconButton(
                           icon: Icon(
-                            isPasswordHidden ? Icons.visibility_off : Icons.visibility,
+                            isPasswordHidden
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: AppRestaurantColors.secondary,
                           ),
                           onPressed: () {
@@ -293,26 +426,22 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                       ),
                       onChanged: (val) => formPassword = val,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 16.h),
 
                     TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Display Name',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: buildInputDecoration('Display Name'),
                       onChanged: (val) => formName = val,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 16.h),
 
                     TextFormField(
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: buildInputDecoration('Phone Number'),
                       onChanged: (val) => formPhone = val,
                     ),
-                    const SizedBox(height: 24),
+                    
+                    // Gap section dari form ke tombol aksi bawah: 24.0
+                    SizedBox(height: 24.h),
                   ],
                 ),
               ),
@@ -320,17 +449,21 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
 
             // --- TOMBOL SIMPAN ---
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              // Standarisasi Tinggi Tombol: 55.0
+              height: 35.h,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    // Radius Medium standar: 12.0
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
                 onPressed: () async {
-                  if (formEmail.trim().isEmpty || formPassword.isEmpty || formName.trim().isEmpty) {
+                  if (formEmail.trim().isEmpty ||
+                      formPassword.isEmpty ||
+                      formName.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please fill in all required fields.'),
@@ -339,8 +472,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                     );
                     return;
                   }
-                  
-                  // Panggil fungsi API melalui ViewModel
+
                   try {
                     await vm.createNewAdmin(
                       formEmail.trim(),
@@ -348,12 +480,13 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                       formName.trim(),
                       formPhone.trim(),
                     );
-                    
+
                     if (context.mounted) {
                       Navigator.pop(context); // Tutup BottomSheet
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('New kitchen admin added successfully!'),
+                          content:
+                              Text('New kitchen admin added successfully!'),
                           backgroundColor: AppRestaurantColors.accent,
                         ),
                       );
@@ -369,16 +502,18 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                     }
                   }
                 },
-                child: const Text(
+                child: Text(
                   'Save Admin',
                   style: TextStyle(
                     color: AppRestaurantColors.accent,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            // Ekstra padding bawah
+            SizedBox(height: 20.h),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
@@ -73,13 +74,13 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
     }).toList();
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: 0.85.sh, // Menggunakan .sh
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
-          top: 20,
+          left: 20.w,
+          right: 20.w,
+          top: 20.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,8 +91,8 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
               children: [
                 Text(
                   isEdit ? 'Edit Menu' : 'Add New Menu',
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
@@ -106,18 +107,18 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // --- AREA PEMILIH GAMBAR ---
             Center(
               child: GestureDetector(
                 onTap: _pickImage,
                 child: Container(
-                  height: 100,
-                  width: 100,
+                  height: 100.h,
+                  width: 100.w,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: AppRestaurantColors.primary,
                     ),
@@ -135,14 +136,14 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                   ),
                   child: selectedImageFile == null &&
                           (!isEdit || existingMenu!.imageUrl.isEmpty)
-                      ? const Column(
+                      ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo, color: AppRestaurantColors.secondary, size: 24),
-                            SizedBox(height: 4),
+                            Icon(Icons.add_a_photo, color: AppRestaurantColors.secondary, size: 24.sp),
+                            SizedBox(height: 4.h),
                             Text(
                               'Choose Image',
-                              style: TextStyle(fontSize: 11, color: AppRestaurantColors.secondary),
+                              style: TextStyle(fontSize: 11.sp, color: AppRestaurantColors.secondary),
                             ),
                           ],
                         )
@@ -150,7 +151,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // --- AREA INPUT TEKS ---
             Expanded(
@@ -166,7 +167,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                       ),
                       onChanged: (val) => formName = val,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Row(
                       children: [
                         Expanded(
@@ -181,7 +182,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                             onChanged: (val) => formPrice = int.tryParse(val) ?? 0,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12.w),
                         Expanded(
                           flex: 1,
                           child: DropdownButtonFormField<String>(
@@ -201,7 +202,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     TextFormField(
                       initialValue: formDesc,
                       maxLines: 2,
@@ -211,7 +212,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                       ),
                       onChanged: (val) => formDesc = val,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
 
                     // --- BAGIAN INGREDIENTS DENGAN SEARCH & TAKARAN ---
                     const Text(
@@ -221,15 +222,15 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     
                     // 2. Form Fitur Pencarian Bahan Baku
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Search ingredients...',
-                        prefixIcon: Icon(Icons.search, size: 20),
-                        contentPadding: EdgeInsets.symmetric(vertical: 8),
-                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.search, size: 20.sp),
+                        contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+                        border: const OutlineInputBorder(),
                       ),
                       onChanged: (val) {
                         setState(() {
@@ -237,13 +238,13 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
 
                     Container(
-                      height: 220,
+                      height: 220.h,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Scrollbar(
                         child: ListView.builder(
@@ -253,7 +254,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                             final isSelected = selectedIngQuantities.containsKey(ingredient.id);
                             
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                               child: Row(
                                 children: [
                                   Checkbox(
@@ -274,7 +275,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                                     flex: 3,
                                     child: Text(
                                       ingredient.name,
-                                      style: const TextStyle(fontSize: 14),
+                                      style: TextStyle(fontSize: 14.sp),
                                     ),
                                   ),
                                   // 1. Kolom Input Pengurangan Takaran Bahan
@@ -282,18 +283,18 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                                     Expanded(
                                       flex: 2,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
+                                        padding: EdgeInsets.only(right: 8.w),
                                         child: SizedBox(
-                                          height: 38,
+                                          height: 38.h,
                                           child: TextFormField(
                                             initialValue: selectedIngQuantities[ingredient.id]?.toString() ?? '1',
                                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                            style: const TextStyle(fontSize: 13),
+                                            style: TextStyle(fontSize: 13.sp),
                                             decoration: InputDecoration(
-                                              contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                              contentPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
                                               border: const OutlineInputBorder(),
                                               suffixText: ingredient.unit, // Satuan otomatis dinamis
-                                              suffixStyle: const TextStyle(fontSize: 11, color: Colors.grey),
+                                              suffixStyle: TextStyle(fontSize: 11.sp, color: Colors.grey),
                                             ),
                                             onChanged: (val) {
                                               final double qty = double.tryParse(val) ?? 0.0;
@@ -314,17 +315,17 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
 
             // --- TOMBOL SIMPAN ---
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              height: 40.h,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
                 onPressed: () async {
@@ -355,16 +356,17 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                     Navigator.pop(context);
                   }
                 },
-                child: const Text(
+                child: Text(
                   'Save Menu',
                   style: TextStyle(
                     color: AppRestaurantColors.accent,
                     fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
           ],
         ),
       ),

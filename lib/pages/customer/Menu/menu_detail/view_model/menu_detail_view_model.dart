@@ -1,14 +1,45 @@
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
-import 'package:restaurant_fifo/core/models/menu_model.dart'; // Import model menu Anda
+import 'package:restaurant_fifo/core/models/menu_model.dart';
+import 'package:restaurant_fifo/pages/customer/Menu/menu_detail/repository/menu_detail_repository.dart';
 
 class MenuDetailViewModel extends BaseViewModel {
-  final MenuModel menu; // Menerima data menu dari halaman sebelumnya
-
+  final MenuDetailRepository _repo = MenuDetailRepository();
+  
+  MenuModel menu; 
   int quantity = 1;
   String notes = '';
+  bool isLoading = false;
 
   MenuDetailViewModel(this.menu);
+
+  @override
+  void init() {
+    super.init();
+    getLatestMenuDetails();
+  }
+
+  Future<void> getLatestMenuDetails() async {
+    isLoading = true;
+    notifyListeners();
+
+    final rawMenu = await _repo.fetchMenuDetail(menu.id);
+    if (rawMenu != null) {
+      menu = MenuModel(
+        id: rawMenu['id'].toString(),
+        name: rawMenu['name'].toString(),
+        description: rawMenu['description']?.toString() ?? '',
+        price: rawMenu['price'] as int? ?? 0,
+        imageUrl: rawMenu['image_path']?.toString() ?? '',
+        categoryId: menu.categoryId,
+        categoryName: menu.categoryName,
+        ingredients: menu.ingredients,
+      );
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
 
   void increment() {
     quantity++;
@@ -26,15 +57,10 @@ class MenuDetailViewModel extends BaseViewModel {
     notes = val;
   }
 
-  // Fungsi total harga sementara (Harga x Jumlah)
   int get totalPrice => menu.price * quantity;
 
-  // Fungsi untuk memasukkan ke keranjang
-  // Fungsi untuk memasukkan ke keranjang global (Provider)
   void addToCart(CartProvider cartProvider) {
     cartProvider.addItem(menu, quantity, notes);
-    
-    // Print ini akan muncul di terminal untuk memastikan berhasil
     print('Berhasil masuk Tas Belanja: ${menu.name}, Qty: $quantity, Notes: $notes');
   }
 }

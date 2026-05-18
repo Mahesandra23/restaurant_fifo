@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -14,19 +15,16 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Membaca sesi dari Provider Global
     final session = context.watch<SessionProvider>();
     final user = session.currentUserProfile;
 
     final isGuest =
         Supabase.instance.client.auth.currentUser?.isAnonymous ?? false;
 
-    // Jika user null, berarti dia GUEST
     if (user == null || isGuest) {
-      return _buildGuestView(context);
+      return _buildGuestView(context, session);
     }
 
-    // Jika sudah Login, tampilkan Profile sungguhan
     return MvvmBuilder<ProfileViewModel>(
       viewModel: ProfileViewModel(ProfileRepository(), user.id),
       initOnce: true,
@@ -40,13 +38,11 @@ class ProfileView extends StatelessWidget {
             title: const Text(
               'My Profile',
               style: TextStyle(
-                color: AppRestaurantColors
-                    .accent, // Mengubah warna teks menjadi accent
+                color: AppRestaurantColors.background,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            backgroundColor: AppRestaurantColors
-                .primary, // Mengubah background menjadi primary
+            backgroundColor: AppRestaurantColors.primary,
             elevation: 0,
             centerTitle: true,
           ),
@@ -61,7 +57,8 @@ class ProfileView extends StatelessWidget {
                   onRefresh: () => vm.loadOrderHistory(user.id),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16.0),
+                    // Standarisasi padding layar utama: 16.0
+                    padding: EdgeInsets.all(16.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -73,18 +70,22 @@ class ProfileView extends StatelessWidget {
                           user.email,
                           session,
                         ),
-                        const SizedBox(height: 24),
-                        const Text(
+                        // Gap standar antar section utama: 24.0
+                        SizedBox(height: 16.h),
+                        Text(
                           "Order History",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        // Gap standar elemen teks ke list: 16.0
+                        SizedBox(height: 16.h),
                         _buildOrderHistory(vm),
-                        const SizedBox(height: 40),
+
+                        // Padding ekstra di bagian paling bawah sebelum tombol
+                        SizedBox(height: 16.h),
                         _buildActionButtons(context, vm, session, user.id),
                       ],
                     ),
@@ -98,56 +99,64 @@ class ProfileView extends StatelessWidget {
   // ==========================================
   // TAMPILAN GUEST (BELUM LOGIN)
   // ==========================================
-  Widget _buildGuestView(BuildContext context) {
+  Widget _buildGuestView(BuildContext context, SessionProvider session) {
     return Scaffold(
       backgroundColor: AppRestaurantColors.background,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          // Standarisasi padding: 16.0
+          padding: EdgeInsets.all(16.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.account_circle,
-                size: 100,
+                size: 100.w,
                 color: AppRestaurantColors.secondary.withOpacity(0.5),
               ),
-              const SizedBox(height: 20),
-              const Text(
+              SizedBox(height: 20.h),
+              Text(
                 'Anda masuk sebagai Guest',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.primary,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               const Text(
                 'Login atau buat akun baru untuk mulai memesan makanan dan melihat riwayat transaksi Anda.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppRestaurantColors.secondary),
               ),
-              const SizedBox(height: 32),
+              // Gap standar section: 24.0
+              SizedBox(height: 24.h),
               SizedBox(
-                width: double.infinity,
+                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    // Standarisasi padding tombol: vertical 12.0
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      // Radius standar tombol: 12.0
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                  onPressed: () {
-                    // TODO: Arahkan ke rute Login
-                    Navigator.pushNamed(context, RouteList.AuthSelector);
+                  onPressed: () async {
+                    await session.logout();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RouteList.AuthSelector,
+                      (route) => false,
+                    );
                   },
-                  child: const Text(
+                  child: Text(
                     'Login / Sign Up',
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                     ),
                   ),
                 ),
@@ -172,45 +181,49 @@ class ProfileView extends StatelessWidget {
     SessionProvider session,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      // Padding dalam Card disamakan ke 16.0
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: AppRestaurantColors.accent.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16),
+        // Radius besar untuk Card Utama Profile: 16.0
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: AppRestaurantColors.accent),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: 30.r,
             backgroundColor: AppRestaurantColors.primary,
             child: Text(
               name.isNotEmpty ? name[0].toUpperCase() : 'U',
-              style: const TextStyle(
-                fontSize: 24,
+              style: TextStyle(
+                fontSize: 18.sp,
                 color: AppRestaurantColors.accent,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          // Gap standar elemen horizontal: 16.0
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                // Gap kecil antar teks judul dan subtitle
+                SizedBox(height: 4.h),
                 Text(
                   email,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppRestaurantColors.secondary,
-                    fontSize: 14,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],
@@ -229,11 +242,19 @@ class ProfileView extends StatelessWidget {
   Widget _buildOrderHistory(ProfileViewModel vm) {
     if (vm.orderHistory.isEmpty) {
       return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+        // Standarisasi padding dalam Card: 16.0
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          color: AppRestaurantColors.accent2.withOpacity(
+            0.05,
+          ), // Disamakan warna fill-nya
+          border: Border.all(
+            color: AppRestaurantColors.accent,
+            width: 1,
+          ), // Border accent
+          // Radius standar item list/card kecil: 12.0
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: const Text(
           "Belum ada riwayat pesanan.",
@@ -253,79 +274,96 @@ class ProfileView extends StatelessWidget {
             ? Colors.green
             : Colors.orange;
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          color: AppRestaurantColors.background,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Order #${order.id}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppRestaurantColors.primary,
-                      ),
-                    ),
-                    Text(
-                      order.date,
-                      style: const TextStyle(
-                        color: AppRestaurantColors.secondary,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  order.itemsSummary,
-                  style: const TextStyle(
-                    color: AppRestaurantColors.primary,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Rp ${order.totalPrice}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppRestaurantColors.primary,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        order.status.toUpperCase(),
-                        style: TextStyle(
-                          color: statusColor,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+        // Mengganti Card dengan Container agar bisa custom border color dan fill accent2
+        return Container(
+          // Gap vertikal antar list disamakan ke: 16.0
+          margin: EdgeInsets.only(bottom: 16.h),
+          padding: EdgeInsets.all(
+            16.w,
+          ), // Padding dalam card list standar: 16.0
+          decoration: BoxDecoration(
+            color: AppRestaurantColors.accent2.withOpacity(
+              0.05,
+            ), // Fill / Background warna accent2
+            border: Border.all(
+              color: AppRestaurantColors.accent, // Border warna accent
+              width: 1.2, // Ketebalan border garis kartunya
             ),
+            // Radius standar Card: 12.0
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4.r,
+                offset: Offset(0, 2.h),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order #${order.id}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppRestaurantColors.primary,
+                    ),
+                  ),
+                  Text(
+                    order.date,
+                    style: TextStyle(
+                      color: AppRestaurantColors.secondary,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                order.itemsSummary,
+                style: TextStyle(
+                  color: AppRestaurantColors.primary,
+                  fontSize: 12.sp,
+                ),
+              ),
+              // Gap elemen ke harga/status disamakan: 16.0
+              SizedBox(height: 8.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Rp ${order.totalPrice}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppRestaurantColors.primary,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.2),
+                      // Radius proporsional untuk tag status: 8.0
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Text(
+                      order.status.toUpperCase(),
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -341,13 +379,15 @@ class ProfileView extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          width: double.infinity,
+          width: 1.sw, // Mengubah double.infinity menjadi 1.sw
           child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              // Padding vertical standar tombol: 12.0
+              padding: EdgeInsets.symmetric(vertical: 12.h),
               side: const BorderSide(color: AppRestaurantColors.primary),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                // Radius standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
               ),
             ),
             icon: const Icon(Icons.logout, color: AppRestaurantColors.primary),
@@ -368,10 +408,19 @@ class ProfileView extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 12),
+        // Gap standar antar tombol/elemen: 16.0
+        SizedBox(height: 16.h),
         SizedBox(
-          width: double.infinity,
+          width: 1.sw, // Mengubah double.infinity menjadi 1.sw
           child: TextButton(
+            style: TextButton.styleFrom(
+              // Padding vertical standar tombol: 12.0
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                // Radius standar tombol: 12.0
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () =>
                 _showDeleteConfirmation(context, vm, session, userId),
             child: const Text(
@@ -399,63 +448,73 @@ class ProfileView extends StatelessWidget {
     String currentName,
   ) {
     String newName = currentName;
-    String newPhone =
-        ''; // Asumsi dikosongkan untuk input baru atau ambil dari data jika ada
+    String newPhone = '';
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        // Radius standar besar untuk BottomSheet: 16.0
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (ctx) {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
+            // Padding kanan, kiri, atas disamakan: 16.0
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Edit Profile',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.primary,
                 ),
               ),
-              const SizedBox(height: 16),
+              // Gap standar judul ke form: 16.0
+              SizedBox(height: 16.h),
               TextFormField(
                 initialValue: newName,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nama Lengkap',
-                  border: OutlineInputBorder(),
+                  // Menambahkan radius 12.0 untuk TextField agar seragam dengan SearchBar
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
                 ),
                 onChanged: (val) => newName = val,
               ),
-              const SizedBox(height: 16),
+              // Gap standar antar form: 16.0
+              SizedBox(height: 16.h),
               TextFormField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nomor HP Baru',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
                 ),
                 keyboardType: TextInputType.phone,
                 onChanged: (val) => newPhone = val,
               ),
-              const SizedBox(height: 24),
+              // Gap standar section form ke tombol action: 24.0
+              SizedBox(height: 24.h),
               SizedBox(
-                width: double.infinity,
-                height: 50,
+                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+                height: 50.h,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      // Radius standar tombol: 12.0
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
                   onPressed: () async {
@@ -466,7 +525,6 @@ class ProfileView extends StatelessWidget {
                         newPhone,
                       );
                       if (success) {
-                        // Perbarui data di SessionProvider agar UI Header langsung berubah
                         await session.fetchCurrentUser();
                         Navigator.pop(ctx);
                       }
@@ -481,7 +539,8 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              // Bottom padding ekstra
+              SizedBox(height: 20.h),
             ],
           ),
         );
@@ -499,6 +558,10 @@ class ProfileView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppRestaurantColors.background,
+        shape: RoundedRectangleBorder(
+          // Menambahkan Radius standar 16.0 untuk Dialog Box
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: const Text(
           'Hapus Akun?',
           style: TextStyle(
@@ -511,6 +574,11 @@ class ProfileView extends StatelessWidget {
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () => Navigator.pop(ctx),
             child: const Text(
               'Batal',
@@ -518,10 +586,15 @@ class ProfileView extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
             onPressed: () async {
               await vm.deleteAccount(userId);
-              await session.logout(); // Bersihkan sesi lokal
+              await session.logout();
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 RouteList.AuthSelector,

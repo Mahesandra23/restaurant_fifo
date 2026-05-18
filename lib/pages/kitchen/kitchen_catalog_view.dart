@@ -13,14 +13,14 @@ class KitchenCatalogView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppRestaurantColors.background,
         appBar: AppBar(
-          title: const Text('Catalog & Recipes', style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.accent)),
+          title: const Text('Catalog & Recipes', style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.background)),
           backgroundColor: AppRestaurantColors.primary,
           centerTitle: true,
           elevation: 0,
           bottom: const TabBar(
-            indicatorColor: AppRestaurantColors.accent,
+            indicatorColor: AppRestaurantColors.background,
             indicatorWeight: 3,
-            labelColor: AppRestaurantColors.accent,
+            labelColor: AppRestaurantColors.background,
             unselectedLabelColor: Colors.white54,
             tabs: [
               Tab(icon: Icon(Icons.restaurant_menu), text: 'Menu List'),
