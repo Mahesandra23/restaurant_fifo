@@ -15,6 +15,14 @@ import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart
 class MenuView extends StatelessWidget {
   const MenuView({super.key});
 
+  // --- HELPER FORMAT HARGA ---
+  String _formatPrice(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MvvmBuilder<MenuViewModel>(
@@ -34,7 +42,6 @@ class MenuView extends StatelessWidget {
             floatingActionButton: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Tombol Kelola Kategori (Kecil)
                 FloatingActionButton(
                   heroTag: 'manageCategoryBtn',
                   backgroundColor: AppRestaurantColors.secondary,
@@ -45,9 +52,7 @@ class MenuView extends StatelessWidget {
                     color: AppRestaurantColors.accent,
                   ),
                 ),
-                // Gap antar tombol disamakan ke standar: 16.0
                 SizedBox(height: 16.h),
-                // Tombol Tambah Menu (Besar)
                 FloatingActionButton(
                   heroTag: 'addMenuBtn',
                   backgroundColor: AppRestaurantColors.primary,
@@ -66,15 +71,12 @@ class MenuView extends StatelessWidget {
                       isScrollControlled: true,
                       backgroundColor: AppRestaurantColors.background,
                       shape: RoundedRectangleBorder(
-                        // Radius Besar standar untuk BottomSheet: 16.0
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(16.r),
                         ),
                       ),
                       builder: (context) {
-                        return MenuFormBottomSheet(
-                          vm: vm,
-                        );
+                        return MenuFormBottomSheet(vm: vm);
                       },
                     );
                   },
@@ -86,7 +88,6 @@ class MenuView extends StatelessWidget {
               ],
             ),
 
-            // Menggunakan SafeArea agar Search Bar tidak tertutup status bar HP
             body: SafeArea(
               child: vm.isLoading
                   ? const Center(
@@ -96,30 +97,29 @@ class MenuView extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        // Gap atas sebelum Search Bar: 16.0
                         SizedBox(height: 16.h),
-                        _buildSearchBar(),
-                        // Gap antar section (Search ke List): 24.0
+                        // Menghubungkan Search Bar ke ViewModel
+                        _buildSearchBar(vm),
                         SizedBox(height: 16.h),
                         Expanded(
                           child: vm.groupedMenus.isEmpty
-                              ? const CustomEmptyState(
-                                  icon: Icons.restaurant_menu,
-                                  message: 'There are no menus available yet.',
+                              ? CustomEmptyState(
+                                  // Icon berubah dinamis jika query search tidak menemukan hasil
+                                  icon: vm.searchQuery.isEmpty ? Icons.restaurant_menu : Icons.search_off,
+                                  message: vm.searchQuery.isEmpty 
+                                      ? 'There are no menus available yet.'
+                                      : 'No menus found for "${vm.searchQuery}".',
                                   iconColor: AppRestaurantColors.secondary,
                                 )
                               : SingleChildScrollView(
                                   padding: EdgeInsets.only(
-                                    // Padding layar standar: 16.0
                                     left: 16.w,
                                     right: 16.w,
-                                    bottom: 100.h, // Ekstra bawah agar tidak tertutup FAB
+                                    bottom: 100.h, 
                                   ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: vm.groupedMenus.entries.map((
-                                      entry,
-                                    ) {
+                                    children: vm.groupedMenus.entries.map((entry) {
                                       return _buildMenuSection(
                                         context,
                                         vm,
@@ -139,39 +139,42 @@ class MenuView extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  // --- WIDGET PENCARIAN (SEARCH BAR) ---
+  Widget _buildSearchBar(MenuViewModel vm) {
     return Padding(
-      // Padding horizontal standar: 16.0
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search menus to edit...',
-          prefixIcon: const Icon(
-            Icons.search,
-            color: AppRestaurantColors.secondary,
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(vertical: 0.h),
-          border: OutlineInputBorder(
-            // Radius Medium standar: 12.0
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: AppRestaurantColors.primary),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: AppRestaurantColors.primary),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(color: AppRestaurantColors.primary),
+      child: SizedBox(
+        height: 45.h,
+        child: TextField(
+          onChanged: (value) => vm.searchMenu(value), // Terhubung ke ViewModel
+          decoration: InputDecoration(
+            hintText: 'Search menus to edit...',
+            prefixIcon: const Icon(
+              Icons.search,
+              color: AppRestaurantColors.secondary,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.symmetric(vertical: 0.h),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(color: AppRestaurantColors.primary),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(color: AppRestaurantColors.primary),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(color: AppRestaurantColors.primary),
+            ),
           ),
         ),
       ),
     );
   }
 
-  // --- STYLE CUSTOMER (HORIZONTAL SCROLL) ---
+  // --- STYLE ADMIN KITCHEN (HORIZONTAL SCROLL) ---
   Widget _buildMenuSection(
     BuildContext context,
     MenuViewModel vm,
@@ -222,11 +225,9 @@ class MenuView extends StatelessWidget {
               final item = items[index];
               return Container(
                 width: 130.w,
-                // Gap antar Card item (Horizontal): 16.0
                 margin: EdgeInsets.only(right: 16.w),
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.background,
-                  // Radius Medium standar untuk Card: 12.0
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
@@ -238,7 +239,7 @@ class MenuView extends StatelessWidget {
                 ),
                 child: MenuCardWidget(
                   name: item.name,
-                  formattedPrice: 'Rp ${item.price}',
+                  formattedPrice: 'Rp ${_formatPrice(item.price)}', // Format harga
                   imageUrl: item.imageUrl,
                   onTap: () {
                     if (vm.categories.isEmpty) {
@@ -255,7 +256,6 @@ class MenuView extends StatelessWidget {
                       isScrollControlled: true,
                       backgroundColor: AppRestaurantColors.background,
                       shape: RoundedRectangleBorder(
-                        // Radius Besar standar untuk BottomSheet: 16.0
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(16.r),
                         ),
@@ -273,15 +273,12 @@ class MenuView extends StatelessWidget {
             },
           ),
         ),
-        // Gap antar section kategori: 24.0
         SizedBox(height: 24.h),
       ],
     );
   }
 
-  // ==========================================
-  // BOTTOM SHEET KELOLA KATEGORI
-  // ==========================================
+  // --- BOTTOM SHEET KELOLA KATEGORI ---
   void _showCategoryManager(BuildContext context, MenuViewModel vm) {
     String newCategoryName = '';
 
@@ -290,14 +287,12 @@ class MenuView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
-        // Radius Besar standar: 16.0
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (ctx) {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            // Standarisasi padding Sheet: 16.0
             left: 16.w,
             right: 16.w,
             top: 16.h,
@@ -314,38 +309,31 @@ class MenuView extends StatelessWidget {
                   color: AppRestaurantColors.primary,
                 ),
               ),
-              // Gap judul ke form: 16.0
               SizedBox(height: 16.h),
-
-              // Form Tambah Kategori
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 50.h, // Menyesuaikan tinggi dengan tombol
+                      height: 50.h,
                       child: TextField(
                         decoration: InputDecoration(
                           labelText: 'New Category Name',
-                          // Radius Medium standar: 12.0
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12.w),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                         ),
                         onChanged: (val) => newCategoryName = val,
                       ),
                     ),
                   ),
-                  // Gap standar horizontal antar elemen: 16.0
                   SizedBox(width: 16.w),
                   SizedBox(
-                    height: 50.h,
+                    height: 35.h,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppRestaurantColors.primary,
                         shape: RoundedRectangleBorder(
-                          // Radius Medium standar: 12.0
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                       ),
@@ -363,10 +351,7 @@ class MenuView extends StatelessWidget {
                   ),
                 ],
               ),
-              // Divider berfungsi ganda memberi spacing setara 24.0
               Divider(height: 32.h),
-
-              // Daftar Kategori
               const Text(
                 'Manage Categories:',
                 style: TextStyle(
@@ -396,7 +381,6 @@ class MenuView extends StatelessWidget {
                   },
                 ),
               ),
-              // Ekstra padding bawah agar nyaman di mata
               SizedBox(height: 16.h),
             ],
           ),

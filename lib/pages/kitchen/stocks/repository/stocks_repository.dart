@@ -56,7 +56,7 @@ class StockRepository {
           .select()
           .eq('id', 'default')
           .single();
-      
+
       return {
         'ABC': (response['abc_weight'] as num).toDouble(),
         'FSN': (response['fsn_weight'] as num).toDouble(),
@@ -64,7 +64,9 @@ class StockRepository {
         'HML': (response['hml_weight'] as num).toDouble(),
       };
     } catch (e) {
-      debugPrint('Error fetchSawWeights: $e. Menggunakan fallback nilai default.');
+      debugPrint(
+        'Error fetchSawWeights: $e. Menggunakan fallback nilai default.',
+      );
       return {'ABC': 0.40, 'FSN': 0.30, 'SDE': 0.20, 'HML': 0.10};
     }
   }
@@ -73,7 +75,7 @@ class StockRepository {
   Future<bool> saveSawWeights(Map<String, double> weights) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
-      
+
       // Siapkan payload data berdasarkan skema yang difoto
       final payload = {
         'id': 'default',
@@ -94,6 +96,26 @@ class StockRepository {
     } catch (e) {
       debugPrint('Error ketika menyimpan bobot ke database: $e');
       return false; // Gagal menyimpan
+    }
+  }
+
+  // Update fungsi addStockBatch agar menerima unit
+  Future<bool> addStockBatch(
+    String ingredientId,
+    double quantity,
+    String unit,
+  ) async {
+    try {
+      await _supabase.from('stocks').insert({
+        'ingredient_id': ingredientId,
+        'current_quantity': quantity,
+        'unit': unit, // <--- MENAMBAHKAN KOLOM INI
+        'entry_date': DateTime.now().toIso8601String(),
+      });
+      return true;
+    } catch (e) {
+      debugPrint("Error insert stock batch: $e");
+      return false;
     }
   }
 }

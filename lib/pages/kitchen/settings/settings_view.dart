@@ -31,7 +31,7 @@ class SettingsView extends StatelessWidget {
             backgroundColor: AppRestaurantColors.background,
             appBar: AppBar(
               title: const Text(
-                'Admin Panel',
+                'Kitchen Dashboard',
                 style: TextStyle(
                   color: AppRestaurantColors.background,
                   fontWeight: FontWeight.bold,

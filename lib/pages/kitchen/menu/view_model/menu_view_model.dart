@@ -19,6 +19,10 @@ class MenuViewModel extends BaseViewModel {
   List<CategoryData> categories = [];
   List<MenuIngredient> availableIngredients = [];
   Map<String, List<MenuModel>> groupedMenus = {};
+  
+  // --- VARIABEL UNTUK PENCARIAN ---
+  String searchQuery = '';
+  List<Map<String, dynamic>> _cachedRawMenus = []; // Simpan data asli dari DB
 
   @override
   void init() {
@@ -42,7 +46,7 @@ class MenuViewModel extends BaseViewModel {
           .map((c) => CategoryData(id: c['id'].toString(), name: c['name'].toString()))
           .toList();
 
-      // 2. Parse Ingredients (Ambil Unit)
+      // 2. Parse Ingredients
       availableIngredients = (results[1] as List)
           .map(
             (i) => MenuIngredient(
@@ -53,41 +57,11 @@ class MenuViewModel extends BaseViewModel {
           )
           .toList();
 
-      // 3. Parse Menus & Grouping
-      final rawMenus = results[2] as List;
-      groupedMenus = {};
+      // 3. Simpan data mentah ke Cache & Reset filter pencarian
+      _cachedRawMenus = results[2] as List<Map<String, dynamic>>;
+      searchQuery = '';
+      _filterAndGroupMenus('');
 
-      for (var row in rawMenus) {
-        final catMap = row['menu_categories'] as Map<String, dynamic>?;
-        final catName = catMap?['name'] ?? 'Uncategorized';
-
-        final List<dynamic> rawIng = row['menu_ingredients'] ?? [];
-        final List<MenuIngredient> menuIngs = rawIng.map((item) {
-          final ingMap = item['ingredients'] as Map<String, dynamic>?;
-          return MenuIngredient(
-            id: item['ingredient_id'].toString(),
-            name: ingMap?['name'].toString() ?? '',
-            unit: ingMap?['unit']?.toString() ?? '',
-            quantityNeeded: (item['quantity_needed'] as num?)?.toDouble() ?? 0.0,
-          );
-        }).toList();
-
-        final menu = MenuModel(
-          id: row['id'].toString(),
-          name: row['name'].toString(),
-          description: row['description']?.toString() ?? '',
-          price: row['price'] as int? ?? 0,
-          categoryId: row['category_id']?.toString() ?? '',
-          categoryName: catName,
-          imageUrl: row['image_path']?.toString() ?? '',
-          ingredients: menuIngs,
-        );
-
-        if (!groupedMenus.containsKey(catName)) {
-          groupedMenus[catName] = [];
-        }
-        groupedMenus[catName]!.add(menu);
-      }
     } catch (e) {
       debugPrint("Error fetching kitchen data: $e");
     } finally {
@@ -96,6 +70,61 @@ class MenuViewModel extends BaseViewModel {
     }
   }
 
+  // --- FUNGSI PENCARIAN ---
+  void searchMenu(String query) {
+    searchQuery = query;
+    _filterAndGroupMenus(query);
+    notifyListeners();
+  }
+
+  // --- FUNGSI FILTER & GROUPING LOKAL ---
+  void _filterAndGroupMenus(String query) {
+    Map<String, List<MenuModel>> tempGrouped = {};
+    final lowerQuery = query.toLowerCase().trim();
+
+    for (var row in _cachedRawMenus) {
+      final menuName = row['name'].toString();
+
+      // Lewati (filter out) menu yang namanya tidak mengandung kata kunci pencarian
+      if (lowerQuery.isNotEmpty && !menuName.toLowerCase().contains(lowerQuery)) {
+        continue; 
+      }
+
+      final catMap = row['menu_categories'] as Map<String, dynamic>?;
+      final catName = catMap?['name'] ?? 'Uncategorized';
+
+      final List<dynamic> rawIng = row['menu_ingredients'] ?? [];
+      final List<MenuIngredient> menuIngs = rawIng.map((item) {
+        final ingMap = item['ingredients'] as Map<String, dynamic>?;
+        return MenuIngredient(
+          id: item['ingredient_id'].toString(),
+          name: ingMap?['name'].toString() ?? '',
+          unit: ingMap?['unit']?.toString() ?? '',
+          quantityNeeded: (item['quantity_needed'] as num?)?.toDouble() ?? 0.0,
+        );
+      }).toList();
+
+      final menu = MenuModel(
+        id: row['id'].toString(),
+        name: menuName,
+        description: row['description']?.toString() ?? '',
+        price: row['price'] as int? ?? 0,
+        categoryId: row['category_id']?.toString() ?? '',
+        categoryName: catName,
+        imageUrl: row['image_path']?.toString() ?? '',
+        ingredients: menuIngs,
+      );
+
+      if (!tempGrouped.containsKey(catName)) {
+        tempGrouped[catName] = [];
+      }
+      tempGrouped[catName]!.add(menu);
+    }
+
+    groupedMenus = tempGrouped;
+  }
+
+  // ... (fungsi addCategory, deleteCategory, saveMenu, deleteMenu biarkan seperti semula)
   Future<void> addCategory(String name) async {
     await _repo.addCategory(name);
     await fetchInitialData();
@@ -106,7 +135,6 @@ class MenuViewModel extends BaseViewModel {
     await fetchInitialData();
   }
 
-  // Ganti parameter tipe data ingredientIds menjadi Map
   Future<void> saveMenu({
     String? id, 
     required String name, 

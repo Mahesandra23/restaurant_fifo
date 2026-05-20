@@ -57,7 +57,7 @@ class _KitchenLayoutState extends State<KitchenLayout> {
             _buildNavItem(index: 0, icon: Icons.receipt_long, label: 'Queue'),
             _buildNavItem(index: 1, icon: Icons.fastfood, label: 'Catalog'),
             _buildNavItem(index: 2, icon: Icons.inventory, label: 'Stocks'), 
-            _buildNavItem(index: 3, icon: Icons.person, label: 'User'), 
+            _buildNavItem(index: 3, icon: Icons.dashboard, label: 'Dashboard'), 
           ],
         ),
       ),

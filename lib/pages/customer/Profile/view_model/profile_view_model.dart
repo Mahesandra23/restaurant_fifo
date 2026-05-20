@@ -20,19 +20,30 @@ class OrderHistoryModel {
 
 class ProfileViewModel extends BaseViewModel {
   final ProfileRepository _repo;
-  final String userId; // 1. Tambahkan variabel userId
+  final String userId; 
 
-  // 2. Masukkan userId ke dalam constructor
   ProfileViewModel(this._repo, this.userId);
 
   bool isLoading = false;
   List<OrderHistoryModel> orderHistory = [];
+  
+  // --- VARIABEL BARU: Menyimpan Nomor HP ---
+  String userPhone = ''; 
 
-  // 3. Gunakan override init() bawaan BaseViewModel
   @override
   void init() {
     super.init();
-    loadOrderHistory(userId); // Panggil di sini secara otomatis!
+    loadUserProfile(userId); // Ambil nomor telepon saat halaman dibuka
+    loadOrderHistory(userId); 
+  }
+
+  // --- FUNGSI BARU: Tarik Profil Terbaru ---
+  Future<void> loadUserProfile(String uid) async {
+    final profileData = await _repo.fetchUserProfile(uid);
+    if (profileData != null && profileData['phone'] != null) {
+      userPhone = profileData['phone'].toString();
+      notifyListeners();
+    }
   }
 
   Future<void> loadOrderHistory(String uid) async {
@@ -76,10 +87,40 @@ class ProfileViewModel extends BaseViewModel {
       notifyListeners();
       
       await _repo.updateProfile(uid, name, phone);
+      
+      // Update variabel lokal agar langsung nampil di UI (Card)
+      if (phone.isNotEmpty) {
+        userPhone = phone;
+      }
+
       return true;
     } catch (e) {
       debugPrint("Error update profile: $e");
       return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Fungsi Baru: Update Keamanan (Email & Password)
+  Future<String?> updateSecuritySettings(String currentEmail, String currentPassword, String? newEmail, String? newPassword) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      // 1. Verifikasi Password Saat Ini
+      final isVerified = await _repo.verifyCurrentPassword(currentEmail, currentPassword);
+      if (!isVerified) {
+        return 'Password saat ini salah.'; 
+      }
+
+      // 2. Jika valid, jalankan update
+      await _repo.updateAuthCredentials(newEmail: newEmail, newPassword: newPassword);
+      return null; // Sukses, kembalikan null
+    } catch (e) {
+      debugPrint("Error update security: $e");
+      return 'Gagal memperbarui data keamanan.';
     } finally {
       isLoading = false;
       notifyListeners();

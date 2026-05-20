@@ -8,6 +8,7 @@ import 'package:restaurant_fifo/pages/kitchen/stocks/repository/stocks_repositor
 import 'package:restaurant_fifo/pages/kitchen/stocks/view_model/stocks_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
+import 'package:restaurant_fifo/core/models/ingredients_model.dart'; // Pastikan import model bahan
 
 class StockView extends StatelessWidget {
   const StockView({super.key});
@@ -51,12 +52,9 @@ class StockView extends StatelessWidget {
                     child: CustomScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
-                        // SLIVER 1: Weight Settings Header Box
                         SliverToBoxAdapter(
                           child: _buildWeightSliders(context, vm),
                         ),
-
-                        // SLIVER 2: Empty State or Recommendation Data List
                         if (vm.sawRecommendations.isEmpty)
                           SliverFillRemaining(
                             hasScrollBody: false,
@@ -69,7 +67,6 @@ class StockView extends StatelessWidget {
                           )
                         else
                           SliverPadding(
-                            // Standarisasi padding layar: 16.0 (dengan ekstra ruang di bawah)
                             padding: EdgeInsets.only(
                               left: 16.w,
                               right: 16.w,
@@ -77,8 +74,11 @@ class StockView extends StatelessWidget {
                             ),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
-                                (ctx, i) =>
-                                    _buildResultCard(vm.sawRecommendations[i]),
+                                (ctx, i) => _buildResultCard(
+                                  context,
+                                  vm,
+                                  vm.sawRecommendations[i],
+                                ),
                                 childCount: vm.sawRecommendations.length,
                               ),
                             ),
@@ -93,18 +93,15 @@ class StockView extends StatelessWidget {
   }
 
   Widget _buildWeightSliders(BuildContext context, StockViewModel vm) {
+    // ... [Kode _buildWeightSliders persis sama seperti sebelumnya] ...
     double totalWeight = vm.weights.values.fold(0, (sum, val) => sum + val);
     bool isValid = (totalWeight * 100).round() == 100;
 
     return Card(
-      // Standarisasi margin layar: 16.0 dan Gap section: 24.0 (menuju ke list bawah)
       margin: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.h, bottom: 24.h),
       shape: RoundedRectangleBorder(
-        // Radius Medium standar: 12.0
         borderRadius: BorderRadius.circular(12.r),
-        side: BorderSide(
-          color: AppRestaurantColors.accent,
-        ),
+        side: const BorderSide(color: AppRestaurantColors.accent),
       ),
       elevation: 2,
       child: Theme(
@@ -127,9 +124,7 @@ class StockView extends StatelessWidget {
             ),
           ),
           children: [
-            // --- DROPDOWN INFO / EDUCATION BOX ---
             Padding(
-              // Standarisasi padding elemen internal: 16.0
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Theme(
                 data: Theme.of(
@@ -151,7 +146,6 @@ class StockView extends StatelessWidget {
                     bottom: 12.h,
                   ),
                   shape: RoundedRectangleBorder(
-                    // Radius Medium disamakan dengan standar: 12.0
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   collapsedShape: RoundedRectangleBorder(
@@ -196,8 +190,6 @@ class StockView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // --- SLIDERS ---
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Column(
@@ -285,27 +277,20 @@ class StockView extends StatelessWidget {
     );
   }
 
-  Widget _buildResultCard(SawResult result) {
+  // Parameter ditambah `context` dan `vm` untuk meneruskan fungsi Restock
+  Widget _buildResultCard(
+    BuildContext context,
+    StockViewModel vm,
+    SawResult result,
+  ) {
     final item = result.ingredient;
     final isCritical = item.currentStock <= item.reorderPoint;
 
     return Container(
-      // Gap antar item list tetap aman di luar container
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        // 1. FILL COLOR (Warna Isi)
-        color: AppRestaurantColors.accent2.withOpacity(0.05),
-
-        // 2. RADIUS CORNER
         borderRadius: BorderRadius.circular(12.r),
-
-        // 3. BORDER COLOR (Silakan sesuaikan warnanya sesuka Anda)
-        border: Border.all(
-          color: AppRestaurantColors.accent, // Contoh: border tipis warna primary
-          width: 1.2,
-        ),
-
-        // 4. ELEVATION (Menggantikan elevation: 2 milik Card)
+        border: Border.all(color: AppRestaurantColors.accent, width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -314,85 +299,95 @@ class StockView extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        // Padding internal tetap 16.0
-        padding: EdgeInsets.all(16.w),
-        child: Row(
-          children: [
-            Container(
-              width: 45.w,
-              height: 45.h,
-              decoration: BoxDecoration(
-                color:  AppRestaurantColors.accent,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '${result.rank}',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color:  AppRestaurantColors.primary,
+      // Dibungkus Material & InkWell agar tombol responsif dan memiliki animasi Ripple
+      child: Material(
+        color: AppRestaurantColors.accent2.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12.r),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12.r),
+          onTap: () => _showRestockBottomSheet(context, vm, item),
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              children: [
+                Container(
+                  width: 45.w,
+                  height: 45.h,
+                  decoration: const BoxDecoration(
+                    color: AppRestaurantColors.accent,
+                    shape: BoxShape.circle,
                   ),
-                ),
-              ),
-            ),
-            // Gap elemen horizontal standar: 16.0
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppRestaurantColors.primary,
+                  child: Center(
+                    child: Text(
+                      '${result.rank}',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppRestaurantColors.primary,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 4.h),
-                  Row(
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildStockChip(
-                        'Remaining: ${item.currentStock}',
-                        isCritical ? Colors.red : Colors.orange,
+                      Text(
+                        item.name,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppRestaurantColors.primary,
+                        ),
                       ),
-                      SizedBox(width: 4.w),
-                      _buildStockChip('ROP: ${item.reorderPoint}', Colors.grey),
+                      SizedBox(height: 4.h),
+                      Row(
+                        children: [
+                          _buildStockChip(
+                            'Remaining: ${item.currentStock}',
+                            isCritical ? Colors.red : Colors.orange,
+                          ),
+                          SizedBox(width: 4.w),
+                          _buildStockChip(
+                            'ROP: ${item.reorderPoint}',
+                            Colors.grey,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Criteria: ABC(${item.abcClass}) HML(${item.hmlClass}) SDE(${item.sdeClass}) FSN(${item.fsnClass})',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: AppRestaurantColors.secondary,
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'Criteria: ABC(${item.abcClass}) HML(${item.hmlClass}) SDE(${item.sdeClass}) FSN(${item.fsnClass})',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppRestaurantColors.secondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                Text(
-                  'Vi Score',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    color: AppRestaurantColors.secondary,
-                  ),
                 ),
-                Text(
-                  result.score.toStringAsFixed(3),
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppRestaurantColors.primary,
-                  ),
+                Column(
+                  children: [
+                    Text(
+                      'Vi Score',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: AppRestaurantColors.secondary,
+                      ),
+                    ),
+                    Text(
+                      result.score.toStringAsFixed(3),
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppRestaurantColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -414,6 +409,132 @@ class StockView extends StatelessWidget {
           color: color,
         ),
       ),
+    );
+  }
+
+  void _showRestockBottomSheet(
+    BuildContext context,
+    StockViewModel vm,
+    IngredientModel ingredient,
+  ) {
+    double inputQuantity = 0.0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppRestaurantColors.background,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            left: 16.w,
+            right: 16.w,
+            top: 24.h,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Stock: ${ingredient.name}',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppRestaurantColors.primary,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'Current Stock: ${ingredient.currentStock} ${ingredient.unit}', // Ditampilkan di sini
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppRestaurantColors.secondary,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              TextFormField(
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'Quantity to Add',
+                  // Menambahkan unit sebagai suffix agar user tahu satuan inputnya
+                  suffixText: ingredient.unit,
+                  suffixStyle: TextStyle(
+                    color: AppRestaurantColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: const BorderSide(
+                      color: AppRestaurantColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                onChanged: (val) {
+                  inputQuantity = double.tryParse(val) ?? 0.0;
+                },
+              ),
+              SizedBox(height: 24.h),
+              SizedBox(
+                width: 1.sw,
+                height: 50.h,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppRestaurantColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (inputQuantity <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Quantity must be greater than 0'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Mengirim objek ingredient utuh agar Repository bisa mengambil 'unit'
+                    bool success = await vm.restockIngredient(
+                      ingredient,
+                      inputQuantity,
+                    );
+
+                    if (success && ctx.mounted) {
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Successfully restocked $inputQuantity ${ingredient.unit} of ${ingredient.name}!',
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'SUBMIT RESTOCK',
+                    style: TextStyle(
+                      color: AppRestaurantColors.accent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
+          ),
+        );
+      },
     );
   }
 }

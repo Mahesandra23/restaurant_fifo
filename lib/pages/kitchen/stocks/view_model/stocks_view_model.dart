@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/core/models/ingredients_model.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
 import 'package:restaurant_fifo/core/services/saw_restock_service.dart';
@@ -42,7 +43,7 @@ class StockViewModel extends BaseViewModel {
 
     allIngredients = results[0] as List<IngredientModel>;
     weights = results[1] as Map<String, double>;
-    
+
     runSawSpk();
 
     isLoading = false;
@@ -50,19 +51,49 @@ class StockViewModel extends BaseViewModel {
   }
 
   void runSawSpk() {
-    sawRecommendations = _sawService.calculateRecommendations(allIngredients, weights);
+    sawRecommendations = _sawService.calculateRecommendations(
+      allIngredients,
+      weights,
+    );
     notifyListeners();
   }
 
-  // --- UBAH JADI FUTURE<BOOL> ---
   Future<bool> saveCurrentWeightsToDb() async {
     double totalWeight = weights.values.fold(0, (sum, val) => sum + val);
-    
+
     if ((totalWeight * 100).round() == 100) {
       return await _repo.saveSawWeights(weights);
     }
-    
-    // Kembalikan false jika bobot bukan 100% (belum waktunya nge-save)
-    return false; 
+
+    return false;
+  }
+
+  // Di StockViewModel, update fungsi restockIngredient
+  Future<bool> restockIngredient(
+    IngredientModel ingredient,
+    double addedQuantity,
+  ) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // Mengirim `ingredient.unit` ke repository
+      final success = await _repo.addStockBatch(
+        ingredient.id,
+        addedQuantity,
+        ingredient.unit, // <--- Mengirim unit dari model
+      );
+
+      if (success) {
+        await fetchStockData();
+      }
+      return success;
+    } catch (e) {
+      debugPrint("Error restock ingredient: $e");
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }
