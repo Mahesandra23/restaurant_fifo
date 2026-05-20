@@ -49,7 +49,7 @@ class PaymentView extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             title: const Text(
-              'Pembayaran',
+              'Payment',
               style: TextStyle(
                 color: AppRestaurantColors.background,
                 fontWeight: FontWeight.bold,
@@ -85,7 +85,7 @@ class PaymentView extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Total Tagihan',
+                      'Total Payment',
                       style: TextStyle(color: Colors.white70, fontSize: 16.sp),
                     ),
                     SizedBox(height: 8.h),
@@ -110,7 +110,7 @@ class PaymentView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Pilih Metode Pembayaran',
+                        'Choose Payment Method',
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -122,7 +122,7 @@ class PaymentView extends StatelessWidget {
                       _buildPaymentCard(vm, 'QRIS', Icons.qr_code_scanner),
                       _buildPaymentCard(
                         vm,
-                        'Tunai / Cash (Di Kasir)',
+                        'Cash (At Counter)',
                         Icons.payments,
                       ),
                       _buildPaymentCard(
@@ -132,7 +132,7 @@ class PaymentView extends StatelessWidget {
                       ),
                       _buildPaymentCard(
                         vm,
-                        'Transfer Bank',
+                        'Bank Transfer',
                         Icons.account_balance,
                       ),
 
@@ -140,7 +140,7 @@ class PaymentView extends StatelessWidget {
                       SizedBox(height: 24.h),
 
                       Text(
-                        'Metode Makan',
+                        'Order Type',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
@@ -293,7 +293,7 @@ class PaymentView extends StatelessWidget {
                         TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            labelText: 'Masukkan Nomor Meja',
+                            labelText: 'Input Table Number',
                             prefixIcon: const Icon(
                               Icons.table_restaurant,
                               color: AppRestaurantColors.secondary,
@@ -369,7 +369,7 @@ class PaymentView extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              'BAYAR SEKARANG',
+                              'PAY NOW',
                               style: TextStyle(
                                 color: AppRestaurantColors.accent,
                                 fontWeight: FontWeight.bold,
@@ -523,7 +523,7 @@ class PaymentView extends StatelessWidget {
               // Gap standar section dialog: 24.0
               SizedBox(height: 24.h),
               Text(
-                'Pembayaran Berhasil!',
+                'Payment Successful!',
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -533,7 +533,7 @@ class PaymentView extends StatelessWidget {
               // Gap elemen standar: 16.0
               SizedBox(height: 16.h),
               const Text(
-                'Pesanan Anda sedang dikirim ke dapur. Silakan tunggu makanan Anda disajikan.',
+                'Your order is being sent to the kitchen. Please wait while we prepare your food.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black54, height: 1.5),
               ),
@@ -554,7 +554,7 @@ class PaymentView extends StatelessWidget {
                     Navigator.popUntil(context, (route) => route.isFirst);
                   },
                   child: Text(
-                    'KEMBALI KE BERANDA',
+                    'BACK TO HOMEPAGE',
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
