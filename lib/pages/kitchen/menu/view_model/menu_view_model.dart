@@ -19,10 +19,10 @@ class MenuViewModel extends BaseViewModel {
   List<CategoryData> categories = [];
   List<MenuIngredient> availableIngredients = [];
   Map<String, List<MenuModel>> groupedMenus = {};
-  
+
   // --- VARIABEL UNTUK PENCARIAN ---
   String searchQuery = '';
-  List<Map<String, dynamic>> _cachedRawMenus = []; // Simpan data asli dari DB
+  List<Map<String, dynamic>> _cachedRawMenus = [];
 
   @override
   void init() {
@@ -43,7 +43,12 @@ class MenuViewModel extends BaseViewModel {
 
       // 1. Parse Categories
       categories = (results[0] as List)
-          .map((c) => CategoryData(id: c['id'].toString(), name: c['name'].toString()))
+          .map(
+            (c) => CategoryData(
+              id: c['id'].toString(),
+              name: c['name'].toString(),
+            ),
+          )
           .toList();
 
       // 2. Parse Ingredients
@@ -61,7 +66,6 @@ class MenuViewModel extends BaseViewModel {
       _cachedRawMenus = results[2] as List<Map<String, dynamic>>;
       searchQuery = '';
       _filterAndGroupMenus('');
-
     } catch (e) {
       debugPrint("Error fetching kitchen data: $e");
     } finally {
@@ -77,6 +81,21 @@ class MenuViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  // UBAH JADI PUBLIK AGAR BISA DIPANGGIL DARI VIEW
+  String formatRupiah(num amount) {
+    String numStr = amount.toInt().toString();
+    String result = '';
+    int count = 0;
+    for (int i = numStr.length - 1; i >= 0; i--) {
+      result = numStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
   // --- FUNGSI FILTER & GROUPING LOKAL ---
   void _filterAndGroupMenus(String query) {
     Map<String, List<MenuModel>> tempGrouped = {};
@@ -86,8 +105,9 @@ class MenuViewModel extends BaseViewModel {
       final menuName = row['name'].toString();
 
       // Lewati (filter out) menu yang namanya tidak mengandung kata kunci pencarian
-      if (lowerQuery.isNotEmpty && !menuName.toLowerCase().contains(lowerQuery)) {
-        continue; 
+      if (lowerQuery.isNotEmpty &&
+          !menuName.toLowerCase().contains(lowerQuery)) {
+        continue;
       }
 
       final catMap = row['menu_categories'] as Map<String, dynamic>?;
@@ -108,7 +128,8 @@ class MenuViewModel extends BaseViewModel {
         id: row['id'].toString(),
         name: menuName,
         description: row['description']?.toString() ?? '',
-        price: row['price'] as int? ?? 0,
+        // KEMBALIKAN KE BENTUK ANGKA AGAR TIDAK ERROR
+        price: (row['price'] as num?)?.toInt() ?? 0,
         categoryId: row['category_id']?.toString() ?? '',
         categoryName: catName,
         imageUrl: row['image_path']?.toString() ?? '',
@@ -124,7 +145,6 @@ class MenuViewModel extends BaseViewModel {
     groupedMenus = tempGrouped;
   }
 
-  // ... (fungsi addCategory, deleteCategory, saveMenu, deleteMenu biarkan seperti semula)
   Future<void> addCategory(String name) async {
     await _repo.addCategory(name);
     await fetchInitialData();
@@ -136,18 +156,18 @@ class MenuViewModel extends BaseViewModel {
   }
 
   Future<void> saveMenu({
-    String? id, 
-    required String name, 
-    required String desc, 
-    required int price, 
-    required String categoryId, 
+    String? id,
+    required String name,
+    required String desc,
+    required String price,
+    required String categoryId,
     required Map<String, double> ingredientQuantities,
-    File? imageFile, 
-    String? existingImageUrl, 
+    File? imageFile,
+    String? existingImageUrl,
   }) async {
     isLoading = true;
     notifyListeners();
-    
+
     String? finalImageUrl = existingImageUrl;
 
     try {
@@ -159,13 +179,15 @@ class MenuViewModel extends BaseViewModel {
       }
 
       final menuData = {
-        'name': name, 
-        'description': desc, 
-        'price': price, 
+        'name': name,
+        'description': desc,
+        // UBAH STRING INPUT MENJADI ANGKA SEBELUM DISIMPAN KE DATABASE
+        'price': int.tryParse(price) ?? 0,
         'category_id': categoryId,
-        if (finalImageUrl != null && finalImageUrl.isNotEmpty) 'image_path': finalImageUrl,
+        if (finalImageUrl != null && finalImageUrl.isNotEmpty)
+          'image_path': finalImageUrl,
       };
-      
+
       if (id == null) {
         await _repo.addMenu(menuData, ingredientQuantities);
       } else {

@@ -10,11 +10,7 @@ class MenuFormBottomSheet extends StatefulWidget {
   final MenuViewModel vm;
   final MenuModel? existingMenu;
 
-  const MenuFormBottomSheet({
-    super.key,
-    required this.vm,
-    this.existingMenu,
-  });
+  const MenuFormBottomSheet({super.key, required this.vm, this.existingMenu});
 
   @override
   State<MenuFormBottomSheet> createState() => _MenuFormBottomSheetState();
@@ -26,7 +22,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
   late String formDesc;
   late int formPrice;
   late String formCatId;
-  
+
   // Menggunakan Map untuk mencatat id_bahan -> takaran_porsi
   late Map<String, double> selectedIngQuantities;
   String searchQuery = ''; // State untuk filter pencarian bahan baku
@@ -41,11 +37,16 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
     formPrice = isEdit ? widget.existingMenu!.price : 0;
     formCatId = isEdit
         ? widget.existingMenu!.categoryId
-        : (widget.vm.categories.isNotEmpty ? widget.vm.categories.first.id : '');
-        
+        : (widget.vm.categories.isNotEmpty
+              ? widget.vm.categories.first.id
+              : '');
+
     // Inisialisasi Map dari data menu yang diedit jika ada
     selectedIngQuantities = isEdit
-        ? { for (var e in widget.existingMenu!.ingredients) e.id : e.quantityNeeded }
+        ? {
+            for (var e in widget.existingMenu!.ingredients)
+              e.id: e.quantityNeeded,
+          }
         : {};
   }
 
@@ -119,31 +120,37 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: AppRestaurantColors.primary,
-                    ),
+                    border: Border.all(color: AppRestaurantColors.primary),
                     image: selectedImageFile != null
                         ? DecorationImage(
                             image: FileImage(selectedImageFile!),
                             fit: BoxFit.cover,
                           )
                         : (isEdit && existingMenu!.imageUrl.isNotEmpty)
-                            ? DecorationImage(
-                                image: NetworkImage(existingMenu.imageUrl),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        ? DecorationImage(
+                            image: NetworkImage(existingMenu.imageUrl),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  child: selectedImageFile == null &&
+                  child:
+                      selectedImageFile == null &&
                           (!isEdit || existingMenu!.imageUrl.isEmpty)
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo, color: AppRestaurantColors.secondary, size: 24.sp),
+                            Icon(
+                              Icons.add_a_photo,
+                              color: AppRestaurantColors.secondary,
+                              size: 24.sp,
+                            ),
                             SizedBox(height: 4.h),
                             Text(
                               'Choose Image',
-                              style: TextStyle(fontSize: 11.sp, color: AppRestaurantColors.secondary),
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: AppRestaurantColors.secondary,
+                              ),
                             ),
                           ],
                         )
@@ -173,13 +180,16 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                         Expanded(
                           flex: 1,
                           child: TextFormField(
-                            initialValue: formPrice > 0 ? formPrice.toString() : '',
+                            initialValue: formPrice > 0
+                                ? formPrice.toString()
+                                : '',
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                               labelText: 'Price (Rp)',
                               border: OutlineInputBorder(),
                             ),
-                            onChanged: (val) => formPrice = int.tryParse(val) ?? 0,
+                            onChanged: (val) =>
+                                formPrice = int.tryParse(val) ?? 0,
                           ),
                         ),
                         SizedBox(width: 12.w),
@@ -192,12 +202,15 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                               border: OutlineInputBorder(),
                             ),
                             items: vm.categories
-                                .map((c) => DropdownMenuItem(
-                                      value: c.id,
-                                      child: Text(c.name),
-                                    ))
+                                .map(
+                                  (c) => DropdownMenuItem(
+                                    value: c.id,
+                                    child: Text(c.name),
+                                  ),
+                                )
                                 .toList(),
-                            onChanged: (val) => setState(() => formCatId = val!),
+                            onChanged: (val) =>
+                                setState(() => formCatId = val!),
                           ),
                         ),
                       ],
@@ -223,7 +236,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    
+
                     // 2. Form Fitur Pencarian Bahan Baku
                     TextFormField(
                       decoration: InputDecoration(
@@ -251,10 +264,14 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                           itemCount: filteredIngredients.length,
                           itemBuilder: (context, index) {
                             final ingredient = filteredIngredients[index];
-                            final isSelected = selectedIngQuantities.containsKey(ingredient.id);
-                            
+                            final isSelected = selectedIngQuantities
+                                .containsKey(ingredient.id);
+
                             return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4.w,
+                                vertical: 2.h,
+                              ),
                               child: Row(
                                 children: [
                                   Checkbox(
@@ -264,9 +281,12 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                                       setState(() {
                                         if (checked == true) {
                                           // Set default porsi awal 1.0 saat dicek
-                                          selectedIngQuantities[ingredient.id] = 1.0;
+                                          selectedIngQuantities[ingredient.id] =
+                                              1.0;
                                         } else {
-                                          selectedIngQuantities.remove(ingredient.id);
+                                          selectedIngQuantities.remove(
+                                            ingredient.id,
+                                          );
                                         }
                                       });
                                     },
@@ -287,18 +307,37 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                                         child: SizedBox(
                                           height: 38.h,
                                           child: TextFormField(
-                                            initialValue: selectedIngQuantities[ingredient.id]?.toString() ?? '1',
-                                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                            initialValue:
+                                                selectedIngQuantities[ingredient
+                                                        .id]
+                                                    ?.toString() ??
+                                                '1',
+                                            keyboardType:
+                                                const TextInputType.numberWithOptions(
+                                                  decimal: true,
+                                                ),
                                             style: TextStyle(fontSize: 13.sp),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-                                              border: const OutlineInputBorder(),
-                                              suffixText: ingredient.unit, // Satuan otomatis dinamis
-                                              suffixStyle: TextStyle(fontSize: 11.sp, color: Colors.grey),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                    horizontal: 6.w,
+                                                    vertical: 4.h,
+                                                  ),
+                                              border:
+                                                  const OutlineInputBorder(),
+                                              suffixText: ingredient
+                                                  .unit, // Satuan otomatis dinamis
+                                              suffixStyle: TextStyle(
+                                                fontSize: 11.sp,
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                             onChanged: (val) {
-                                              final double qty = double.tryParse(val) ?? 0.0;
-                                              selectedIngQuantities[ingredient.id] = qty;
+                                              final double qty =
+                                                  double.tryParse(val) ?? 0.0;
+                                              selectedIngQuantities[ingredient
+                                                      .id] =
+                                                  qty;
                                             },
                                           ),
                                         ),
@@ -331,24 +370,31 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                 onPressed: () async {
                   if (formName.trim().isEmpty || formPrice <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Name and Price must be filled and valid!')),
+                      const SnackBar(
+                        content: Text(
+                          'Name and Price must be filled and valid!',
+                        ),
+                      ),
                     );
                     return;
                   }
                   if (selectedIngQuantities.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please select at least one ingredient!')),
+                      const SnackBar(
+                        content: Text('Please select at least one ingredient!'),
+                      ),
                     );
                     return;
                   }
-                  
+
                   await vm.saveMenu(
                     id: isEdit ? existingMenu!.id : null,
                     name: formName,
                     desc: formDesc,
-                    price: formPrice,
+                    price: vm.formatRupiah(formPrice),
                     categoryId: formCatId,
-                    ingredientQuantities: selectedIngQuantities, // Kirim map data bahan & takaran
+                    ingredientQuantities:
+                        selectedIngQuantities, // Kirim map data bahan & takaran
                     imageFile: selectedImageFile,
                     existingImageUrl: isEdit ? existingMenu!.imageUrl : null,
                   );

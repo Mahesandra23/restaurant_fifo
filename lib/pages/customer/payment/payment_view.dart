@@ -90,7 +90,7 @@ class PaymentView extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'Rp ${vm.totalAmount}',
+                      vm.formattedTotalAmount,
                       style: TextStyle(
                         color: AppRestaurantColors.accent,
                         fontSize: 26.sp,

@@ -193,7 +193,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 subtitle: Text(
-                  'Total: Rp ${order['total_price']}',
+                  'Total: ${order['formatted_price'] ?? order['total_price']}',
                   style: const TextStyle(color: AppRestaurantColors.secondary),
                 ),
               ),

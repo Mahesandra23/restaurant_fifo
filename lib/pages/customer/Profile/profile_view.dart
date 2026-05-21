@@ -292,7 +292,7 @@ class ProfileView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Rp ${order.totalPrice}',
+                    order.totalPrice,
                     style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14.sp),
                   ),
                   Container(

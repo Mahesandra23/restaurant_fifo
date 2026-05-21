@@ -87,6 +87,7 @@ class MenuMainView extends StatelessWidget {
                                   context,
                                   categoryName,
                                   menuItems,
+                                  vm,
                                 );
                               }),
 
@@ -178,6 +179,7 @@ class MenuMainView extends StatelessWidget {
     BuildContext context,
     String title,
     List<MenuModel> items,
+    MenuMainViewModel vm,
   ) {
     if (items.isEmpty) return const SizedBox.shrink();
 
@@ -235,7 +237,7 @@ class MenuMainView extends StatelessWidget {
                 ),
                 child: MenuCardWidget(
                   name: item.name,
-                  formattedPrice: 'Rp ${item.price}',
+                  formattedPrice: vm.formatRupiah(item.price),
                   imageUrl: item.imageUrl,
                   onTap: () {
                     Navigator.push(

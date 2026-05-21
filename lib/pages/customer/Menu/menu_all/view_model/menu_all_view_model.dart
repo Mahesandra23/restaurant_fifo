@@ -33,6 +33,21 @@ class MenuAllViewModel extends BaseViewModel {
     });
   }
 
+  String formatRupiah(num amount) {
+    String numStr = amount.toInt().toString();
+    String result = '';
+    int count = 0;
+
+    for (int i = numStr.length - 1; i >= 0; i--) {
+      result = numStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
   Future<void> fetchMenus() async {
     isLoading = true;
     notifyListeners();

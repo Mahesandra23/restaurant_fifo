@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
-import 'package:restaurant_fifo/ui/themes/typography/text_style_app.dart';
+// import 'package:restaurant_fifo/ui/themes/typography/text_style_app.dart';
 
 /// ini adalah tampilan untuk text field dengan label dan hint. Di gunakan pada halaman setup profile, add new room, dan setting.
 class LabeledTextField extends StatefulWidget {
@@ -59,12 +59,16 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           controller: controller,
           onChanged: widget.onChanged,
           obscureText: _isObscure,
-          style: AppTextStyle.bodyXs.regular.copyWith(
+          style: TextStyle(
+            fontSize: 12.sp, // Ukuran font dari bodyXs
+            fontWeight: FontWeight.w500,
             color: AppRestaurantColors.secondary,
           ),
           decoration: InputDecoration(
             hintText: widget.hint,
-            hintStyle: AppTextStyle.bodyXs.regular.copyWith(
+            hintStyle: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
               color: AppRestaurantColors.secondary,
             ),
             filled: true,

@@ -15,14 +15,6 @@ import 'package:restaurant_fifo/ui/themes/reuseable_widget/menu_card_widget.dart
 class MenuView extends StatelessWidget {
   const MenuView({super.key});
 
-  // --- HELPER FORMAT HARGA ---
-  String _formatPrice(int price) {
-    return price.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return MvvmBuilder<MenuViewModel>(
@@ -239,7 +231,7 @@ class MenuView extends StatelessWidget {
                 ),
                 child: MenuCardWidget(
                   name: item.name,
-                  formattedPrice: 'Rp ${_formatPrice(item.price)}', // Format harga
+                  formattedPrice: vm.formatRupiah(item.price), // Format harga
                   imageUrl: item.imageUrl,
                   onTap: () {
                     if (vm.categories.isEmpty) {

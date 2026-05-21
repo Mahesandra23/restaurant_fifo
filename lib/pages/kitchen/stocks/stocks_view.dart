@@ -223,7 +223,7 @@ class StockView extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Weights successfully saved!'),
-                                  backgroundColor: AppRestaurantColors.accent,
+                                  backgroundColor: Colors.green,
                                   duration: Duration(seconds: 1),
                                 ),
                               );

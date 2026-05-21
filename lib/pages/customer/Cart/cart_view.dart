@@ -92,7 +92,7 @@ class CartView extends StatelessWidget {
                               // Gap kecil antar teks judul dan harga
                               SizedBox(height: 4.h),
                               Text(
-                                'Rp ${item.menu.price}',
+                                vm.formatRupiah(item.menu.price),
                                 style: TextStyle(
                                   color: AppRestaurantColors.secondary,
                                   fontSize: 12.sp,
@@ -165,7 +165,7 @@ class CartView extends StatelessWidget {
                   // Gap kecil untuk pemisah teks
                   SizedBox(height: 4.h),
                   Text(
-                    'Rp ${vm.totalPrice}',
+                    vm.formatRupiah(vm.totalPrice),
                     style: TextStyle(
                       color: AppRestaurantColors.primary,
                       fontSize: 16.sp,

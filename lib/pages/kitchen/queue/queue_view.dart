@@ -365,7 +365,7 @@ class QueueView extends StatelessWidget {
                             content: Text(
                               '${order.id} Started Cooking! and Stock Updated!',
                             ),
-                            backgroundColor: AppRestaurantColors.accent,
+                            backgroundColor: AppRestaurantColors.primary,
                           ),
                         );
                       }

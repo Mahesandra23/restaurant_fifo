@@ -131,7 +131,7 @@ class MenuAllView extends StatelessWidget {
                               final item = vm.menus[index];
                               return MenuCardWidget(
                                 name: item.name,
-                                formattedPrice: item.formattedPrice, 
+                                formattedPrice: vm.formatRupiah(item.price), 
                                 imageUrl: item.imageUrl,
                                 onTap: () {
                                   if (isKitchen && kitchenVm != null) {

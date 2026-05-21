@@ -24,6 +24,21 @@ class MenuMainViewModel extends BaseViewModel {
     fetchData();
   }
 
+  String formatRupiah(num amount) {
+    String numStr = amount.toInt().toString();
+    String result = '';
+    int count = 0;
+    
+    for (int i = numStr.length - 1; i >= 0; i--) {
+      result = numStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
   Future<void> fetchData() async {
     isLoading = true;
     notifyListeners();
@@ -80,7 +95,7 @@ class MenuMainViewModel extends BaseViewModel {
       final item = MenuModel(
         id: row['id'].toString(),
         name: menuName,
-        price: (row['price'] as num).toInt(), // Lebih aman dari error casting
+        price: (row['price'] as num).toInt(), 
         imageUrl: row['image_path']?.toString() ?? '',
         description: row['description']?.toString() ?? '',
       );

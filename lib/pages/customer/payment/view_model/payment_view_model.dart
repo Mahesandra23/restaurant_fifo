@@ -23,6 +23,25 @@ class PaymentViewModel extends BaseViewModel {
     required this.customerId,
   });
 
+  // --- TAMBAHKAN GETTER UNTUK TOTAL AMOUNT YANG SUDAH DIFORMAT ---
+  String get formattedTotalAmount => _formatRupiah(totalAmount);
+
+  // --- FUNGSI FORMAT RUPIAH ---
+  String _formatRupiah(num amount) {
+    String numStr = amount.toInt().toString();
+    String result = '';
+    int count = 0;
+
+    for (int i = numStr.length - 1; i >= 0; i--) {
+      result = numStr[i] + result;
+      count++;
+      if (count % 3 == 0 && i != 0) {
+        result = '.$result';
+      }
+    }
+    return 'Rp $result';
+  }
+
   void selectMethod(String method) {
     selectedMethod = method;
     notifyListeners();
@@ -50,7 +69,7 @@ class PaymentViewModel extends BaseViewModel {
         : (tableInput.isEmpty ? 'Meja ?' : 'Meja $tableInput');
 
     final success = await _repository.createOrder(
-      totalAmount,
+      totalAmount, // Tetap kirim angka int/aslinya ke repository/database
       selectedMethod,
       cartItems,
       finalTableNumber,

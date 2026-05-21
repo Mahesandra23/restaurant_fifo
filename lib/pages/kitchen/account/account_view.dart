@@ -128,7 +128,7 @@ class AccountView extends StatelessWidget {
                                       'You',
                                       style: TextStyle(
                                         fontSize: 10.sp,
-                                        color: AppRestaurantColors.accent,
+                                        color: AppRestaurantColors.secondary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -487,7 +487,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                         const SnackBar(
                           content:
                               Text('New kitchen admin added successfully!'),
-                          backgroundColor: AppRestaurantColors.accent,
+                          backgroundColor: Colors.green,
                         ),
                       );
                     }
