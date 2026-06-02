@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/kitchen/account/repository/account_repository.dart';
@@ -45,7 +44,7 @@ class AccountView extends StatelessWidget {
                 backgroundColor: AppRestaurantColors.background,
                 shape: RoundedRectangleBorder(
                   // Radius Besar standar: 16.0
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 builder: (ctx) => AdminFormBottomSheet(vm: vm),
               );
@@ -71,10 +70,10 @@ class AccountView extends StatelessWidget {
                   : ListView.builder(
                       // Standarisasi padding layar utama: 16.0 (dengan bottom 100 agar aman dari FAB)
                       padding: EdgeInsets.only(
-                        left: 16.w,
-                        right: 16.w,
-                        top: 16.h,
-                        bottom: 100.h,
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 100,
                       ),
                       itemCount: vm.staffList.length,
                       itemBuilder: (ctx, i) {
@@ -85,17 +84,17 @@ class AccountView extends StatelessWidget {
 
                         return Card(
                           // Gap antar item Card standar: 16.0
-                          margin: EdgeInsets.only(bottom: 16.h),
+                          margin: EdgeInsets.only(bottom: 16),
                           elevation: 2,
                           shape: RoundedRectangleBorder(
                             // Radius Medium standar: 12.0
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           color: AppRestaurantColors.background,
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
+                              horizontal: 16,
+                              vertical: 8,
                             ),
                             leading: CircleAvatar(
                               backgroundColor: isMe
@@ -113,21 +112,21 @@ class AccountView extends StatelessWidget {
                                   ),
                                 ),
                                 if (isMe) ...[
-                                  SizedBox(width: 8.w),
+                                  SizedBox(width: 8),
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 6.w,
-                                      vertical: 2.h,
+                                      horizontal: 6,
+                                      vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
                                       color: AppRestaurantColors.accent2
                                           .withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(4.r),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       'You',
                                       style: TextStyle(
-                                        fontSize: 10.sp,
+                                        fontSize: 10,
                                         color: AppRestaurantColors.secondary,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -140,7 +139,7 @@ class AccountView extends StatelessWidget {
                               'ID: ${staff['id'].toString().substring(0, 8)}...\nRole: Kitchen Admin',
                               style: TextStyle(
                                 color: AppRestaurantColors.secondary,
-                                fontSize: 13.sp,
+                                fontSize: 13,
                               ),
                             ),
                             trailing: Row(
@@ -186,7 +185,7 @@ class AccountView extends StatelessWidget {
         backgroundColor: AppRestaurantColors.background,
         shape: RoundedRectangleBorder(
           // Radius Besar standar untuk Dialog/Sheet: 16.0
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         title: const Text(
           'Edit Admin Name',
@@ -201,14 +200,14 @@ class AccountView extends StatelessWidget {
             labelText: 'Full Name',
             // Radius Medium standar untuk input form: 12.0
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppRestaurantColors.primary),
             ),
           ),
@@ -218,7 +217,7 @@ class AccountView extends StatelessWidget {
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                 // Radius Medium standar tombol: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () => Navigator.pop(ctx),
@@ -232,7 +231,7 @@ class AccountView extends StatelessWidget {
               backgroundColor: AppRestaurantColors.primary,
               shape: RoundedRectangleBorder(
                 // Radius Medium standar tombol: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () {
@@ -263,7 +262,7 @@ class AccountView extends StatelessWidget {
         backgroundColor: AppRestaurantColors.background,
         shape: RoundedRectangleBorder(
           // Radius Besar standar untuk Dialog/Sheet: 16.0
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         title: const Text(
           'Delete Admin Account?',
@@ -281,7 +280,7 @@ class AccountView extends StatelessWidget {
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                 // Radius Medium standar tombol: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () => Navigator.pop(ctx),
@@ -295,7 +294,7 @@ class AccountView extends StatelessWidget {
               backgroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(
                 // Radius Medium standar tombol: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () {
@@ -344,29 +343,29 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           // Radius Medium standar: 12.0
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppRestaurantColors.primary),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       );
     }
 
     return SizedBox(
-      height: 0.85.sh, // Menggunakan .sh pengganti MediaQuery height
+      height: 0.85 * MediaQuery.of(context).size.height, // Menggunakan .sh pengganti MediaQuery height
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
           // Standarisasi padding Sheet: 16.0
-          left: 16.w,
-          right: 16.w,
-          top: 16.h,
+          left: 16,
+          right: 16,
+          top: 16,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,7 +377,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                 Text(
                   'Add New Kitchen Admin',
                   style: TextStyle(
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
@@ -390,7 +389,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
               ],
             ),
             // Gap standar Header ke Form: 24.0
-            SizedBox(height: 24.h),
+            SizedBox(height: 24),
 
             // --- AREA INPUT TEKS ---
             Expanded(
@@ -404,7 +403,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                       onChanged: (val) => formEmail = val,
                     ),
                     // Gap antar elemen vertikal standar: 16.0
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     TextFormField(
                       obscureText: isPasswordHidden,
@@ -426,13 +425,13 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                       ),
                       onChanged: (val) => formPassword = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     TextFormField(
                       decoration: buildInputDecoration('Display Name'),
                       onChanged: (val) => formName = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     TextFormField(
                       keyboardType: TextInputType.phone,
@@ -441,7 +440,7 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                     ),
                     
                     // Gap section dari form ke tombol aksi bawah: 24.0
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -449,15 +448,15 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
 
             // --- TOMBOL SIMPAN ---
             SizedBox(
-              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              width: double.infinity, // Mengubah double.infinity menjadi double.infinity
               // Standarisasi Tinggi Tombol: 55.0
-              height: 35.h,
+              height: 35,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   shape: RoundedRectangleBorder(
                     // Radius Medium standar: 12.0
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: () async {
@@ -507,13 +506,13 @@ class _AdminFormBottomSheetState extends State<AdminFormBottomSheet> {
                   style: TextStyle(
                     color: AppRestaurantColors.accent,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
             // Ekstra padding bawah
-            SizedBox(height: 20.h),
+            SizedBox(height: 20),
           ],
         ),
       ),

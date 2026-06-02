@@ -1,6 +1,5 @@
 import 'dart:async'; // Tambahkan ini untuk Timer
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -51,8 +50,8 @@ class MenuMainView extends StatelessWidget {
                         child: SingleChildScrollView(
                           // Standarisasi padding layar utama: 16.0
                           padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 16.h, 
+                            horizontal: 16,
+                            vertical: 16, 
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,13 +60,13 @@ class MenuMainView extends StatelessWidget {
                               _buildSearchBar(vm),
                               
                               // Gap antar Search Bar dan Banner
-                              SizedBox(height: 8.h),
+                              SizedBox(height: 8),
 
                               // 2. Promo Banner
                               _buildPromoBanner(vm),
                               
                               // Gap antar section utama (Banner ke List Menu)
-                              SizedBox(height: 16.h),
+                              SizedBox(height: 16),
 
                               // 3. Daftar Kategori & Menu
                               if (vm.groupedMenus.isEmpty)
@@ -92,7 +91,7 @@ class MenuMainView extends StatelessWidget {
                               }),
 
                               // Padding ekstra di bagian paling bawah
-                              SizedBox(height: 40.h),
+                              SizedBox(height: 40),
                             ],
                           ),
                         ),
@@ -108,35 +107,35 @@ class MenuMainView extends StatelessWidget {
   // Search Bar dipindah ke dalam body
   Widget _buildSearchBar(MenuMainViewModel vm) {
     return SizedBox(
-      height: 45.h, // Tinggi distandarkan sedikit lebih besar agar nyaman
+      height: 45, // Tinggi distandarkan sedikit lebih besar agar nyaman
       child: TextField(
         onChanged: (value) => vm.searchMenu(value),
         decoration: InputDecoration(
           hintText: 'Search menu...',
-          hintStyle: TextStyle(fontSize: 14.sp, color: Colors.grey),
+          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
           prefixIcon: Icon(
             Icons.search,
-            size: 20.sp,
+            size: 20,
             color: AppRestaurantColors.secondary,
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 0.h),
+          contentPadding: EdgeInsets.symmetric(vertical: 0),
           filled: true,
           fillColor: Colors.white, // Warna fill diubah jadi putih agar lebih terlihat
           border: OutlineInputBorder(
             // Radius standar TextField: 12.0
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(12),
            borderSide: const BorderSide(
               color: AppRestaurantColors.primary,
             ), // Border default dengan warna primary yang lebih terang
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(
               color: AppRestaurantColors.primary,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(
               color: AppRestaurantColors.primary,
             ),
@@ -149,12 +148,12 @@ class MenuMainView extends StatelessWidget {
   Widget _buildPromoBanner(MenuMainViewModel vm) {
     if (vm.bannerUrls.isEmpty) {
       return Container(
-        width: 1.sw, // Menggunakan 1.sw pengganti double.infinity
-        height: 120.h,
+        width: double.infinity, // Menggunakan double.infinity pengganti double.infinity
+        height: 120,
         decoration: BoxDecoration(
           color: AppRestaurantColors.secondary.withOpacity(0.2),
           // Radius standar Banner besar: 16.0
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: const Center(
           child: Text(
@@ -170,7 +169,7 @@ class MenuMainView extends StatelessWidget {
 
     return ClipRRect(
       // Radius standar Banner besar: 16.0
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(16),
       child: _PromoBannerCarousel(imageUrls: vm.bannerUrls),
     );
   }
@@ -192,7 +191,7 @@ class MenuMainView extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppRestaurantColors.primary,
               ),
@@ -213,25 +212,25 @@ class MenuMainView extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 140.h,
+          height: 140,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
               return Container(
-                width: 130.w,
+                width: 130,
                 // Gap antar Card item (Horizontal): 16.0
-                margin: EdgeInsets.only(right: 16.w, bottom: 8.h), // Margin bawah untuk memberikan jarak ke bawah
+                margin: EdgeInsets.only(right: 16, bottom: 8), // Margin bawah untuk memberikan jarak ke bawah
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.background,
                   // Radius standar Card: 12.0
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5.r,
-                      offset: Offset(0, 2.h),
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
@@ -253,7 +252,7 @@ class MenuMainView extends StatelessWidget {
           ),
         ),
         // Gap antar Section Kategori (Bawah ListView ke Kategori Selanjutnya): 24.0
-        SizedBox(height: 24.h),
+        SizedBox(height: 24),
       ],
     );
   }
@@ -307,8 +306,8 @@ class _PromoBannerCarouselState extends State<_PromoBannerCarousel> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 140.h,
-      width: 1.sw, // Menggunakan 1.sw pengganti double.infinity
+      height: 140,
+      width: double.infinity, // Menggunakan double.infinity pengganti double.infinity
       child: PageView.builder(
         controller: _pageController,
         itemCount: widget.imageUrls.length,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/pages/auth/login/login_view.dart';
 import 'package:restaurant_fifo/pages/auth/signup/signup_view.dart';
 import 'package:restaurant_fifo/pages/auth/widget/auto_background_carousel.dart';
@@ -25,7 +24,7 @@ class _AuthLayoutState extends State<AuthLayout> {
   Widget build(BuildContext context) {
     // 1. Tentukan tinggi carousel secara kondisional
     // Misal: Login butuh gambar besar (250), Signup gambar kecil (150) agar form muat
-    double currentHeight = _isLogin ? 250.h : 200.h;
+    double currentHeight = _isLogin ? 250 : 200;
 
     return Scaffold(
       backgroundColor: AppRestaurantColors.primary,

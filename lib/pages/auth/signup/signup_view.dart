@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/pages/auth/signup/repository/signup_repository.dart';
 import 'package:restaurant_fifo/pages/auth/signup/view_model/signup_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
@@ -22,22 +21,22 @@ class SignupView extends StatelessWidget {
           return SingleChildScrollView(
             physics: const ClampingScrollPhysics(),
             child: Container(
-              width: 1.sw,
+              width: double.infinity,
               constraints: BoxConstraints(
-                minHeight: 1.sh - 140.h, // Disesuaikan agar lebih compact
+                minHeight: double.infinity - 140, // Disesuaikan agar lebih compact
               ),
-              margin: EdgeInsets.only(top: 190.h), // Disesuaikan agar lebih compact
+              margin: EdgeInsets.only(top: 190), // Disesuaikan agar lebih compact
               padding: EdgeInsets.only(
-                left: 16.w,
-                right: 16.w,
-                top: 20.h, // Diperkecil dari 24
-                bottom: 20.h + MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 20, // Diperkecil dari 24
+                bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
               ),
               decoration: BoxDecoration(
                 color: AppRestaurantColors.background,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
               ),
               child: Column(
@@ -46,21 +45,21 @@ class SignupView extends StatelessWidget {
                   Text(
                     "RestaurantApp",
                     style: TextStyle(
-                      fontSize: 24.sp, // Diperkecil dari 28
+                      fontSize: 24, // Diperkecil dari 28
                       fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 6),
                   Text(
                     "Create your account",
                     style: TextStyle(
-                      fontSize: 14.sp, // Diperkecil dari 16
+                      fontSize: 14, // Diperkecil dari 16
                       fontWeight: FontWeight.w600,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20.h), // Diperkecil dari 24
+                  SizedBox(height: 20), // Diperkecil dari 24
                   LabeledTextField(
                     label: 'Username',
                     hint: 'Username',
@@ -69,21 +68,21 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 12.h), // Diperkecil dari 16
+                  SizedBox(height: 12), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Email',
                     hint: 'Email address',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.email, value),
                   ),
-                  SizedBox(height: 12.h), // Diperkecil dari 16
+                  SizedBox(height: 12), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Phone Number',
                     hint: 'Phone Number',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.phone, value),
                   ),
-                  SizedBox(height: 12.h), // Diperkecil dari 16
+                  SizedBox(height: 12), // Diperkecil dari 16
                   LabeledTextField(
                     label: 'Password',
                     hint: 'Password',
@@ -93,21 +92,21 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 20.h), // Diperkecil dari 24
+                  SizedBox(height: 20), // Diperkecil dari 24
 
-                  // Tombol Signup diperkecil ukurannya menjadi 45.h
+                  // Tombol Signup diperkecil ukurannya menjadi 45
                   SizedBox(
-                    height: 35.h,
-                    width: 1.sw,
+                    height: 35,
+                    width: double.infinity,
                     child: GradientButton(
-                      width: 1.sw,
+                      width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         onPressed: vm.isLoading
@@ -120,7 +119,7 @@ class SignupView extends StatelessWidget {
                             : Text(
                                 'Register',
                                 style: TextStyle(
-                                  fontSize: 14.sp, // Teks dalam tombol diperkecil
+                                  fontSize: 14, // Teks dalam tombol diperkecil
                                   fontWeight: FontWeight.bold,
                                   color: AppRestaurantColors.accent,
                                 ),
@@ -128,20 +127,20 @@ class SignupView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 20),
                   Center(
                     child: RichText(
                       text: TextSpan(
                         text: "Already have an account? ",
                         style: TextStyle(
-                          fontSize: 12.sp, // Diperkecil dari 14
+                          fontSize: 12, // Diperkecil dari 14
                           color: AppRestaurantColors.secondary,
                         ),
                         children: [
                           TextSpan(
                             text: "Login here",
                             style: TextStyle(
-                              fontSize: 12.sp, // Diperkecil dari 14
+                              fontSize: 12, // Diperkecil dari 14
                               fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.accent,
                             ),

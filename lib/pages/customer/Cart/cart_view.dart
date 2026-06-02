@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/pages/customer/payment/payment_view.dart';
@@ -35,22 +34,22 @@ class CartView extends StatelessWidget {
             )
           : SafeArea(
               child: ListView.builder(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(16),
                 itemCount: vm.items.length,
                 itemBuilder: (context, index) {
                   final item = vm.items[index];
                   return Container(
-                    margin: EdgeInsets.only(bottom: 16.h),
-                    padding: EdgeInsets.all(16.w),
+                    margin: EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppRestaurantColors.accent2.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppRestaurantColors.accent),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
-                          blurRadius: 5.r,
-                          offset: Offset(0, 2.h),
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
@@ -58,14 +57,14 @@ class CartView extends StatelessWidget {
                       children: [
                         // --- BAGIAN GAMBAR YANG SUDAH DIPERBAIKI ---
                         Container(
-                          height: 60.h,
-                          width: 60.w,
+                          height: 60,
+                          width: 60,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(8),
                             child: item.menu.imageUrl.isNotEmpty
                                 ? Image.network(
                                     item.menu.imageUrl,
@@ -90,7 +89,7 @@ class CartView extends StatelessWidget {
                           ),
                         ),
                         // -------------------------------------------
-                        SizedBox(width: 16.w),
+                        SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,16 +98,16 @@ class CartView extends StatelessWidget {
                                 item.menu.name,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   color: AppRestaurantColors.primary,
                                 ),
                               ),
-                              SizedBox(height: 4.h),
+                              SizedBox(height: 4),
                               Text(
                                 vm.formatRupiah(item.menu.price),
                                 style: TextStyle(
                                   color: AppRestaurantColors.secondary,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -128,7 +127,7 @@ class CartView extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppRestaurantColors.primary,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             ),
                             IconButton(
@@ -147,14 +146,14 @@ class CartView extends StatelessWidget {
               ),
             ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10.r,
-              offset: Offset(0, -5.h),
+              blurRadius: 10,
+              offset: Offset(0, -5),
             ),
           ],
         ),
@@ -170,15 +169,15 @@ class CartView extends StatelessWidget {
                     'Total Price',
                     style: TextStyle(
                       color: AppRestaurantColors.secondary,
-                      fontSize: 12.sp,
+                      fontSize: 12,
                     ),
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 4),
                   Text(
                     vm.formatRupiah(vm.totalPrice),
                     style: TextStyle(
                       color: AppRestaurantColors.primary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -188,11 +187,11 @@ class CartView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   padding: EdgeInsets.symmetric(
-                    horizontal: 32.w,
-                    vertical: 10.h,
+                    horizontal: 32,
+                    vertical: 10,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: vm.items.isEmpty

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class LabeledTextField extends StatefulWidget {
@@ -58,21 +57,21 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           onChanged: widget.onChanged,
           obscureText: _isObscure,
           style: TextStyle(
-            fontSize: 12.sp, // Ukuran font dari bodyXs
+            fontSize: 12, // Ukuran font dari bodyXs
             fontWeight: FontWeight.w500,
             color: AppRestaurantColors.secondary,
           ),
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: TextStyle(
-              fontSize: 12.sp,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
               color: AppRestaurantColors.secondary,
             ),
             filled: true,
             fillColor: AppRestaurantColors.accent2,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.r),
+              borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide.none,
             ),
             // 2. SOLUSI TOMBOL MATA (HIDE/UNHIDE)
@@ -82,7 +81,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
                     icon: Icon(
                       _isObscure ? Icons.visibility_off : Icons.visibility,
                       color: AppRestaurantColors.primary, // Warna ikon mata
-                      size: 20.sp,
+                      size: 20,
                     ),
                     onPressed: () {
                       // Mengubah state untuk membalikkan nilai _isObscure

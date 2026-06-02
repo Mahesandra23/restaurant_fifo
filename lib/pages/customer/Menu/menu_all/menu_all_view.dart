@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/customer/Menu/menu_all/repository/menu_all_repository.dart';
@@ -55,12 +54,12 @@ class MenuAllView extends StatelessWidget {
           body: Column(
             children: [
               // Gap standar dari AppBar ke konten pertama (Search Bar): 16.0
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // Search Bar
               Padding(
                 // Standarisasi padding horizontal layar: 16.0
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   onChanged: vm.onSearchChanged,
                   decoration: InputDecoration(
@@ -71,18 +70,18 @@ class MenuAllView extends StatelessWidget {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(vertical: 0.h),
+                    contentPadding: EdgeInsets.symmetric(vertical: 0),
                     border: OutlineInputBorder(
                       // Radius Medium standar: 12.0
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppRestaurantColors.primary,
                       ),
@@ -92,7 +91,7 @@ class MenuAllView extends StatelessWidget {
               ),
 
               // Gap standar antar section (Search Bar ke Grid Menu): 24.0
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
 
               // Grid Daftar Makanan
               Expanded(
@@ -114,17 +113,17 @@ class MenuAllView extends StatelessWidget {
                         : GridView.builder(
                             // Padding kiri-kanan 16.0, ditambah padding bawah ekstra 40.0
                             padding: EdgeInsets.only(
-                              left: 16.w,
-                              right: 16.w,
-                              bottom: 40.h,
+                              left: 16,
+                              right: 16,
+                              bottom: 40,
                             ),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 0.8,
                               // Gap antar elemen standar: 16.0
-                              crossAxisSpacing: 16.w,
-                              mainAxisSpacing: 16.h,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
                             ),
                             itemCount: vm.menus.length,
                             itemBuilder: (context, index) {
@@ -155,7 +154,7 @@ class MenuAllView extends StatelessWidget {
                                       shape: RoundedRectangleBorder(
                                         // Radius Besar standar untuk BottomSheet: 16.0
                                         borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16.r),
+                                          top: Radius.circular(16),
                                         ),
                                       ),
                                       builder: (context) {

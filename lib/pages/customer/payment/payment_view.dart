@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -61,24 +60,24 @@ class PaymentView extends StatelessWidget {
             children: [
               // --- KOTAK TOTAL TAGIHAN ---
               Container(
-                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+                width: double.infinity, // Mengubah double.infinity menjadi double.infinity
                 // Margin standar 16.0 di kiri, kanan, atas. Bottom 24.0 sebagai gap antar section
                 margin: EdgeInsets.only(
-                  left: 16.w,
-                  right: 16.w,
-                  top: 16.h,
-                  bottom: 24.h,
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                  bottom: 24,
                 ),
-                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.primary,
                   // Radius Besar standar: 16.0
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: AppRestaurantColors.primary.withOpacity(0.3),
-                      blurRadius: 15.r,
-                      offset: Offset(0, 5.h),
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
                     ),
                   ],
                 ),
@@ -86,14 +85,14 @@ class PaymentView extends StatelessWidget {
                   children: [
                     Text(
                       'Total Payment',
-                      style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                     Text(
                       vm.formattedTotalAmount,
                       style: TextStyle(
                         color: AppRestaurantColors.accent,
-                        fontSize: 26.sp,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -105,20 +104,20 @@ class PaymentView extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   // Standarisasi padding layar: 16.0
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Choose Payment Method',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
                         ),
                       ),
                       // Gap antar elemen standar: 16.0
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 16),
                       _buildPaymentCard(vm, 'QRIS', Icons.qr_code_scanner),
                       _buildPaymentCard(
                         vm,
@@ -137,18 +136,18 @@ class PaymentView extends StatelessWidget {
                       ),
 
                       // Gap antar section utama: 24.0
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 24),
 
                       Text(
                         'Order Type',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                         ),
                       ),
                       // Gap antar elemen standar: 16.0
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 16),
 
                       // --- OPSI KARTU METODE MAKAN BER-BORDER (DINE IN & TAKEAWAY) ---
                       Column(
@@ -159,9 +158,9 @@ class PaymentView extends StatelessWidget {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               margin: EdgeInsets.only(
-                                bottom: 16.h,
+                                bottom: 16,
                               ), // Spacing disamakan dengan metode pembayaran
-                              padding: EdgeInsets.all(8.w),
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: vm.isTakeaway == true
                                     ? AppRestaurantColors.accent2.withOpacity(
@@ -174,12 +173,12 @@ class PaymentView extends StatelessWidget {
                                       : Colors.grey.shade200,
                                   width: vm.isTakeaway == true ? 2 : 1,
                                 ),
-                                borderRadius: BorderRadius.circular(12.r),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(8.w),
+                                    padding: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: vm.isTakeaway == true
                                           ? AppRestaurantColors.primary
@@ -192,10 +191,10 @@ class PaymentView extends StatelessWidget {
                                       color: vm.isTakeaway == true
                                           ? AppRestaurantColors.primary
                                           : AppRestaurantColors.secondary,
-                                      size: 24.sp,
+                                      size: 24,
                                     ),
                                   ),
-                                  SizedBox(width: 16.w),
+                                  SizedBox(width: 16),
                                   Expanded(
                                     child: Text(
                                       'Takeaway',
@@ -206,7 +205,7 @@ class PaymentView extends StatelessWidget {
                                         color: vm.isTakeaway == true
                                             ? AppRestaurantColors.primary
                                             : Colors.black87,
-                                        fontSize: 15.sp,
+                                        fontSize: 15,
                                       ),
                                     ),
                                   ),
@@ -225,8 +224,8 @@ class PaymentView extends StatelessWidget {
                             onTap: () => vm.toggleOrderType(false),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              margin: EdgeInsets.only(bottom: 16.h),
-                              padding: EdgeInsets.all(8.w),
+                              margin: EdgeInsets.only(bottom: 16),
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: vm.isTakeaway == false
                                     ? AppRestaurantColors.accent2.withOpacity(
@@ -239,12 +238,12 @@ class PaymentView extends StatelessWidget {
                                       : Colors.grey.shade200,
                                   width: vm.isTakeaway == false ? 2 : 1,
                                 ),
-                                borderRadius: BorderRadius.circular(12.r),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(8.w),
+                                    padding: EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: vm.isTakeaway == false
                                           ? AppRestaurantColors.primary
@@ -257,10 +256,10 @@ class PaymentView extends StatelessWidget {
                                       color: vm.isTakeaway == false
                                           ? AppRestaurantColors.primary
                                           : AppRestaurantColors.secondary,
-                                      size: 24.sp,
+                                      size: 24,
                                     ),
                                   ),
-                                  SizedBox(width: 16.w),
+                                  SizedBox(width: 16),
                                   Expanded(
                                     child: Text(
                                       'Dine In (Meja)',
@@ -271,7 +270,7 @@ class PaymentView extends StatelessWidget {
                                         color: vm.isTakeaway == false
                                             ? AppRestaurantColors.primary
                                             : Colors.black87,
-                                        fontSize: 15.sp,
+                                        fontSize: 15,
                                       ),
                                     ),
                                   ),
@@ -289,7 +288,7 @@ class PaymentView extends StatelessWidget {
 
                       // 2. TextField Kondisional (HANYA MUNCUL JIKA DINE IN DIPILIH)
                       if (!vm.isTakeaway) ...[
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 8),
                         TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -299,10 +298,10 @@ class PaymentView extends StatelessWidget {
                               color: AppRestaurantColors.secondary,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
                                 color: AppRestaurantColors.primary,
                                 width: 2,
@@ -314,7 +313,7 @@ class PaymentView extends StatelessWidget {
                       ],
 
                       // Memberikan padding tambahan di bawah agar tidak menempel tombol bayar
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -323,31 +322,31 @@ class PaymentView extends StatelessWidget {
               // --- TOMBOL BAYAR ---
               Container(
                 // Standarisasi padding layar bawah: 16.0
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10.r,
-                      offset: Offset(0, -5.h),
+                      blurRadius: 10,
+                      offset: Offset(0, -5),
                     ),
                   ],
                   borderRadius: BorderRadius.vertical(
                     // Radius Besar standar: 16.0
-                    top: Radius.circular(16.r),
+                    top: Radius.circular(16),
                   ),
                 ),
                 child: SafeArea(
                   child: SizedBox(
-                    width: 1.sw, // Mengubah double.infinity menjadi 1.sw
-                    height: 45.h,
+                    width: double.infinity, // Mengubah double.infinity menjadi double.infinity
+                    height: 45,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppRestaurantColors.primary,
                         shape: RoundedRectangleBorder(
                           // Radius Medium standar tombol: 12.0
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: vm.isProcessing
@@ -361,8 +360,8 @@ class PaymentView extends StatelessWidget {
                             },
                       child: vm.isProcessing
                           ? SizedBox(
-                              height: 24.h,
-                              width: 24.w,
+                              height: 24,
+                              width: 24,
                               child: const CircularProgressIndicator(
                                 color: AppRestaurantColors.accent,
                                 strokeWidth: 3,
@@ -373,7 +372,7 @@ class PaymentView extends StatelessWidget {
                               style: TextStyle(
                                 color: AppRestaurantColors.accent,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.sp,
+                                fontSize: 16,
                               ),
                             ),
                     ),
@@ -395,8 +394,8 @@ class PaymentView extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         // Gap antar elemen (Card list) standar: 16.0
-        margin: EdgeInsets.only(bottom: 16.h),
-        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isSelected
               ? AppRestaurantColors.accent2.withOpacity(0.05)
@@ -408,12 +407,12 @@ class PaymentView extends StatelessWidget {
             width: isSelected ? 2 : 1,
           ),
           // Radius Medium standar: 12.0
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppRestaurantColors.primary.withOpacity(0.1)
@@ -425,11 +424,11 @@ class PaymentView extends StatelessWidget {
                 color: isSelected
                     ? AppRestaurantColors.primary
                     : AppRestaurantColors.secondary,
-                size: 24.sp,
+                size: 24,
               ),
             ),
             // Gap antar elemen horizontal standar: 16.0
-            SizedBox(width: 16.w),
+            SizedBox(width: 16),
             Expanded(
               child: Text(
                 method,
@@ -438,7 +437,7 @@ class PaymentView extends StatelessWidget {
                   color: isSelected
                       ? AppRestaurantColors.primary
                       : Colors.black87,
-                  fontSize: 15.sp,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -464,7 +463,7 @@ class PaymentView extends StatelessWidget {
   //     onTap: onTap,
   //     child: AnimatedContainer(
   //       duration: const Duration(milliseconds: 200),
-  //       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+  //       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
   //       decoration: BoxDecoration(
   //         color: isSelected
   //             ? AppRestaurantColors.accent2.withOpacity(0.05)
@@ -475,7 +474,7 @@ class PaymentView extends StatelessWidget {
   //               : Colors.grey.shade200,
   //           width: isSelected ? 2 : 1,
   //         ),
-  //         borderRadius: BorderRadius.circular(12.r),
+  //         borderRadius: BorderRadius.circular(12),
   //       ),
   //       child: Row(
   //         mainAxisAlignment: MainAxisAlignment.center,
@@ -485,13 +484,13 @@ class PaymentView extends StatelessWidget {
   //             color: isSelected
   //                 ? AppRestaurantColors.primary
   //                 : AppRestaurantColors.secondary,
-  //             size: 20.sp,
+  //             size: 20,
   //           ),
-  //           SizedBox(width: 8.w),
+  //           SizedBox(width: 8),
   //           Text(
   //             title,
   //             style: TextStyle(
-  //               fontSize: 14.sp,
+  //               fontSize: 14,
   //               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
   //               color: isSelected
   //                   ? AppRestaurantColors.primary
@@ -513,41 +512,41 @@ class PaymentView extends StatelessWidget {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             // Radius Besar standar untuk Dialog/Sheet: 16.0
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(16),
           ),
-          contentPadding: EdgeInsets.all(24.w),
+          contentPadding: EdgeInsets.all(24),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 80.sp),
+              Icon(Icons.check_circle, color: Colors.green, size: 80),
               // Gap standar section dialog: 24.0
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               Text(
                 'Payment Successful!',
                 style: TextStyle(
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.primary,
                 ),
               ),
               // Gap elemen standar: 16.0
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               const Text(
                 'Your order is being sent to the kitchen. Please wait while we prepare your food.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black54, height: 1.5),
               ),
               // Gap section standar ke tombol action: 24.0
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               SizedBox(
-                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
-                height: 45.h,
+                width: double.infinity, // Mengubah double.infinity menjadi double.infinity
+                height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,
                     shape: RoundedRectangleBorder(
                       // Radius Medium standar tombol: 12.0
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: () {
@@ -558,7 +557,7 @@ class PaymentView extends StatelessWidget {
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                     ),
                   ),
                 ),

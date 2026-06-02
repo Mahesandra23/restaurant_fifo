@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
@@ -44,7 +43,7 @@ class MenuView extends StatelessWidget {
                     color: AppRestaurantColors.accent,
                   ),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 16),
                 FloatingActionButton(
                   heroTag: 'addMenuBtn',
                   backgroundColor: AppRestaurantColors.primary,
@@ -64,7 +63,7 @@ class MenuView extends StatelessWidget {
                       backgroundColor: AppRestaurantColors.background,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16.r),
+                          top: Radius.circular(16),
                         ),
                       ),
                       builder: (context) {
@@ -89,10 +88,10 @@ class MenuView extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                         // Menghubungkan Search Bar ke ViewModel
                         _buildSearchBar(vm),
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                         Expanded(
                           child: vm.groupedMenus.isEmpty
                               ? CustomEmptyState(
@@ -107,9 +106,9 @@ class MenuView extends StatelessWidget {
                                 )
                               : SingleChildScrollView(
                                   padding: EdgeInsets.only(
-                                    left: 16.w,
-                                    right: 16.w,
-                                    bottom: 100.h,
+                                    left: 16,
+                                    right: 16,
+                                    bottom: 100,
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
@@ -139,9 +138,9 @@ class MenuView extends StatelessWidget {
   // --- WIDGET PENCARIAN (SEARCH BAR) ---
   Widget _buildSearchBar(MenuViewModel vm) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-        height: 45.h,
+        height: 45,
         child: TextField(
           onChanged: (value) => vm.searchMenu(value), // Terhubung ke ViewModel
           decoration: InputDecoration(
@@ -152,17 +151,17 @@ class MenuView extends StatelessWidget {
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: EdgeInsets.symmetric(vertical: 0.h),
+            contentPadding: EdgeInsets.symmetric(vertical: 0),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppRestaurantColors.primary),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppRestaurantColors.primary),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppRestaurantColors.primary),
             ),
           ),
@@ -189,7 +188,7 @@ class MenuView extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppRestaurantColors.primary,
               ),
@@ -214,23 +213,23 @@ class MenuView extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 140.h,
+          height: 140,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
               return Container(
-                width: 130.w,
-                margin: EdgeInsets.only(right: 16.w, bottom: 8.h),
+                width: 130,
+                margin: EdgeInsets.only(right: 16, bottom: 8),
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.background,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5.r,
-                      offset: Offset(0, 2.h),
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
@@ -254,7 +253,7 @@ class MenuView extends StatelessWidget {
                       backgroundColor: AppRestaurantColors.background,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16.r),
+                          top: Radius.circular(16),
                         ),
                       ),
                       builder: (context) {
@@ -267,7 +266,7 @@ class MenuView extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: 24),
       ],
     );
   }
@@ -282,15 +281,15 @@ class MenuView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: 16.w,
-            right: 16.w,
-            top: 16.h,
+            left: 16,
+            right: 16,
+            top: 16,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -299,26 +298,26 @@ class MenuView extends StatelessWidget {
               Text(
                 'Manage Categories',
                 style: TextStyle(
-                  fontSize: 18.sp,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.primary,
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 35.h,
+                      height: 35,
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'New Category Name',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
+                            horizontal: 12,
                             vertical: 0,
                           ),
                         ),
@@ -326,16 +325,16 @@ class MenuView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 16.w),
+                  SizedBox(width: 16),
                   SizedBox(
-                    height: 35.h,
+                    height: 35,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppRestaurantColors.primary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                       ),
                       onPressed: () {
                         if (newCategoryName.trim().isNotEmpty) {
@@ -354,7 +353,7 @@ class MenuView extends StatelessWidget {
                   ),
                 ],
               ),
-              Divider(height: 32.h),
+              Divider(height: 32),
               const Text(
                 'Manage Categories (Hold & Drag to Reorder):',
                 style: TextStyle(
@@ -362,11 +361,11 @@ class MenuView extends StatelessWidget {
                   color: AppRestaurantColors.secondary,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               
               // MENGGUNAKAN REORDERABLE LIST VIEW
               SizedBox(
-                height: 250.h, // Ditinggikan sedikit agar lebih leluasa saat menggeser
+                height: 250, // Ditinggikan sedikit agar lebih leluasa saat menggeser
                 child: ReorderableListView.builder(
                   shrinkWrap: true,
                   itemCount: vm.categories.length,
@@ -392,7 +391,7 @@ class MenuView extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
             ],
           ),
         );

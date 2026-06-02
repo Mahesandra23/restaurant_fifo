@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; 
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -55,7 +54,7 @@ class ProfileView extends StatelessWidget {
                   onRefresh: () => vm.loadOrderHistory(user.id),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -68,18 +67,18 @@ class ProfileView extends StatelessWidget {
                           currentPhone, // Memasukkan nomor telepon ke Profile Card
                           session,
                         ),
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                         Text(
                           "Order History",
                           style: TextStyle(
-                            fontSize: 18.sp,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary,
                           ),
                         ),
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                         _buildOrderHistory(vm),
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                         _buildActionButtons(context, vm, session, user.id),
                       ],
                     ),
@@ -95,39 +94,39 @@ class ProfileView extends StatelessWidget {
       backgroundColor: AppRestaurantColors.background,
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.account_circle,
-                size: 100.w,
+                size: 100,
                 color: AppRestaurantColors.secondary.withOpacity(0.5),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 20),
               Text(
                 'You are logged in as a Guest',
                 style: TextStyle(
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.primary,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               const Text(
                 'Login to your account or create a new one to view your profile and order history.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppRestaurantColors.secondary),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               SizedBox(
-                width: 1.sw,
+                width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: () async {
@@ -139,7 +138,7 @@ class ProfileView extends StatelessWidget {
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -161,27 +160,27 @@ class ProfileView extends StatelessWidget {
     SessionProvider session,
   ) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppRestaurantColors.accent.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppRestaurantColors.accent),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 30.r,
+            radius: 30,
             backgroundColor: AppRestaurantColors.primary,
             child: Text(
               name.isNotEmpty ? name[0].toUpperCase() : 'U',
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: 18,
                 color: AppRestaurantColors.accent,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,27 +188,27 @@ class ProfileView extends StatelessWidget {
                 Text(
                   name,
                   style: TextStyle(
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 4),
                 Text(
                   email,
                   style: TextStyle(
                     color: AppRestaurantColors.secondary,
-                    fontSize: 12.sp,
+                    fontSize: 12,
                   ),
                 ),
                 // Menampilkan Nomor HP jika ada
                 if (phone.isNotEmpty) ...[
-                  SizedBox(height: 2.h),
+                  SizedBox(height: 2),
                   Text(
                     phone,
                     style: TextStyle(
                       color: AppRestaurantColors.secondary,
-                      fontSize: 12.sp,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -228,12 +227,12 @@ class ProfileView extends StatelessWidget {
   Widget _buildOrderHistory(ProfileViewModel vm) {
     if (vm.orderHistory.isEmpty) {
       return Container(
-        width: 1.sw,
-        padding: EdgeInsets.all(16.w),
+        width: double.infinity,
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppRestaurantColors.accent2.withOpacity(0.05),
           border: Border.all(color: AppRestaurantColors.accent, width: 1),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
           "Belum ada riwayat pesanan.",
@@ -252,17 +251,17 @@ class ProfileView extends StatelessWidget {
         Color statusColor = order.status == 'completed' ? Colors.green : Colors.orange;
 
         return Container(
-          margin: EdgeInsets.only(bottom: 16.h),
-          padding: EdgeInsets.all(16.w),
+          margin: EdgeInsets.only(bottom: 16),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppRestaurantColors.accent2.withOpacity(0.05),
             border: Border.all(color: AppRestaurantColors.accent, width: 1.2),
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
-                blurRadius: 4.r,
-                offset: Offset(0, 2.h),
+                blurRadius: 4,
+                offset: Offset(0, 2),
               ),
             ],
           ),
@@ -274,36 +273,36 @@ class ProfileView extends StatelessWidget {
                 children: [
                   Text(
                     'Order #${order.id}',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14.sp),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14),
                   ),
                   Text(
                     order.date,
-                    style: TextStyle(color: AppRestaurantColors.secondary, fontSize: 12.sp),
+                    style: TextStyle(color: AppRestaurantColors.secondary, fontSize: 12),
                   ),
                 ],
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               Text(
                 order.itemsSummary,
-                style: TextStyle(color: AppRestaurantColors.primary, fontSize: 12.sp),
+                style: TextStyle(color: AppRestaurantColors.primary, fontSize: 12),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     order.totalPrice,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14.sp),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       order.status.toUpperCase(),
-                      style: TextStyle(color: statusColor, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -319,12 +318,12 @@ class ProfileView extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          width: 1.sw,
+          width: double.infinity,
           child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
+              padding: EdgeInsets.symmetric(vertical: 12),
               side: const BorderSide(color: AppRestaurantColors.primary),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             icon: const Icon(Icons.logout, color: AppRestaurantColors.primary),
             label: const Text(
@@ -337,13 +336,13 @@ class ProfileView extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         SizedBox(
-          width: 1.sw,
+          width: double.infinity,
           child: TextButton(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+              padding: EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () => _showDeleteConfirmation(context, vm, session, userId),
             child: const Text(
@@ -380,7 +379,7 @@ class ProfileView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) {
         // Gunakan StatefulBuilder agar bisa melakukan setState secara lokal di dalam BottomSheet
@@ -389,9 +388,9 @@ class ProfileView extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(ctx).viewInsets.bottom,
-                left: 16.w,
-                right: 16.w,
-                top: 16.h,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -401,68 +400,68 @@ class ProfileView extends StatelessWidget {
                     Text(
                       'Edit Profile',
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     // --- DATA PROFIL UMUM ---
                     TextFormField(
                       initialValue: newName,
                       decoration: InputDecoration(
                         labelText: 'Username',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onChanged: (val) => newName = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     TextFormField(
                       initialValue: newPhone,
                       decoration: InputDecoration(
                         labelText: 'New Phone Number',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       keyboardType: TextInputType.phone,
                       onChanged: (val) => newPhone = val,
                     ),
                     
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                     Divider(color: Colors.grey.shade300),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     // --- PENGATURAN KEAMANAN (SENSITIF) ---
                     Text(
                       'Security Settings',
                       style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                     Text(
                       'Fill out this section only if you want to change your email or password.',
-                      style: TextStyle(fontSize: 12.sp, color: AppRestaurantColors.secondary),
+                      style: TextStyle(fontSize: 12, color: AppRestaurantColors.secondary),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: 'New Email',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (val) => newEmail = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     
                     // --- PASSWORD BARU DENGAN TOGGLE EYE ---
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: 'New Password',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         suffixIcon: IconButton(
                           icon: Icon(
                             obscureNewPassword ? Icons.visibility_off : Icons.visibility,
@@ -478,18 +477,18 @@ class ProfileView extends StatelessWidget {
                       obscureText: obscureNewPassword,
                       onChanged: (val) => newPassword = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     
                     // --- PASSWORD SAAT INI DENGAN TOGGLE EYE ---
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Current Password (Required for Verification)',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(color: Colors.orangeAccent),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(color: Colors.orangeAccent, width: 2),
                         ),
                         suffixIcon: IconButton(
@@ -508,15 +507,15 @@ class ProfileView extends StatelessWidget {
                       onChanged: (val) => currentPassword = val,
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                     SizedBox(
-                      width: 1.sw,
-                      height: 35.h,
+                      width: double.infinity,
+                      height: 35,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppRestaurantColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         onPressed: () async {
@@ -574,7 +573,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -595,7 +594,7 @@ class ProfileView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppRestaurantColors.background,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Delete Account?',
           style: TextStyle(color: AppRestaurantColors.primary, fontWeight: FontWeight.bold),
@@ -605,14 +604,14 @@ class ProfileView extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r))),
+            style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel', style: TextStyle(color: AppRestaurantColors.secondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () async {
               await vm.deleteAccount(userId);

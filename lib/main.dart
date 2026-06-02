@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -74,8 +74,12 @@ class MainApp extends StatelessWidget {
               canvasColor: Colors.white,
 
               appBarTheme: const AppBarTheme(
-                iconTheme: IconThemeData(color: Colors.white), // Tombol back & ikon kiri otomatis putih
-                actionsIconTheme: IconThemeData(color: Colors.white), // Ikon menu kanan otomatis putih
+                iconTheme: IconThemeData(
+                  color: Colors.white,
+                ), // Tombol back & ikon kiri otomatis putih
+                actionsIconTheme: IconThemeData(
+                  color: Colors.white,
+                ), // Ikon menu kanan otomatis putih
               ),
 
               // 2. MENGUBAH WARNA CARD/LIST MENJADI PUTIH BERSIH
@@ -110,18 +114,40 @@ class MainApp extends StatelessWidget {
             onGenerateRoute: Routes.getRouteGenerate,
             navigatorObservers: [routeObserver],
             builder: (context, child) {
-              return MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                child: Builder(
-                  builder: (context) => SafeArea(
-                    top: false,
-                    bottom: Platform.isAndroid,
-                    child: child ?? const SizedBox.shrink(),
-                  ),
+              final mediaQuery = MediaQuery.of(context);
+
+              final bool forceMobileAppView = mediaQuery.size.width > 600;
+
+              Widget app = MediaQuery(
+                data: mediaQuery.copyWith(
+                  textScaler: const TextScaler.linear(1.0),
+                ),
+                child: SafeArea(
+                  top: false,
+                  bottom: !kIsWeb,
+                  child: child ?? const SizedBox.shrink(),
                 ),
               );
+
+              if (forceMobileAppView) {
+                return Container(
+                  color: const Color(0xFFE5E5E5),
+                  child: Center(
+                    child: SizedBox(
+                      width: 430,
+                      height: mediaQuery.size.height,
+                      child: Material(
+                        elevation: 8,
+                        clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(12),
+                        child: app,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return app;
             },
           );
         },

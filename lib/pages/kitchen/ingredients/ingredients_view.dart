@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -47,7 +46,7 @@ class IngredientsView extends StatelessWidget {
                         )
                       : ListView.builder(
                           padding: EdgeInsets.only(
-                              left: 16.w, right: 16.w, top: 16.h, bottom: 100.h),
+                              left: 16, right: 16, top: 16, bottom: 100),
                           itemCount: vm.groupedIngredients.keys.length,
                           itemBuilder: (context, index) {
                             String categoryName =
@@ -56,9 +55,9 @@ class IngredientsView extends StatelessWidget {
                                 vm.groupedIngredients[categoryName]!;
 
                             return Card(
-                              margin: EdgeInsets.only(bottom: 16.h),
+                              margin: EdgeInsets.only(bottom: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               color: AppRestaurantColors.background,
                               elevation: 2,
@@ -85,13 +84,13 @@ class IngredientsView extends StatelessWidget {
                                     key: ValueKey(item.id),
                                     children: [
                                       Divider(
-                                          height: 1.h,
-                                          indent: 16.w,
-                                          endIndent: 16.w,
+                                          height: 1,
+                                          indent: 16,
+                                          endIndent: 16,
                                           color: AppRestaurantColors.secondary),
                                       ListTile(
                                         contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 16.w, vertical: 4.h),
+                                            horizontal: 16, vertical: 4),
                                         title: Text(
                                           item.name,
                                           style: const TextStyle(
@@ -102,7 +101,7 @@ class IngredientsView extends StatelessWidget {
                                         subtitle: Text(
                                           'Stok saat ini: ${item.currentStock} ${item.unit}',
                                           style: TextStyle(
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                             color: AppRestaurantColors.secondary,
                                           ),
                                         ),
@@ -164,16 +163,16 @@ class IngredientsView extends StatelessWidget {
     InputDecoration buildInputDecoration(String label) {
       return InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppRestaurantColors.primary),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       );
     }
 
@@ -182,35 +181,18 @@ class IngredientsView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            Widget buildBulletInfo(String title, String desc) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 4.h),
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(fontSize: 12.sp, color: Colors.black87),
-                    children: [
-                      TextSpan(
-                          text: '$title ',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: desc),
-                    ],
-                  ),
-                ),
-              );
-            }
-
             return Container(
-              height: 0.85.sh,
+              height: 0.85 * MediaQuery.of(context).size.height,
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
-                left: 16.w,
-                right: 16.w,
-                top: 16.h,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -219,12 +201,12 @@ class IngredientsView extends StatelessWidget {
                     Text(
                       isEdit ? 'Edit Ingredient' : 'Add Ingredient & Parameters',
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
 
                     // Pakai TextFormField + initialValue agar data terisi otomatis
                     TextFormField(
@@ -232,7 +214,7 @@ class IngredientsView extends StatelessWidget {
                       decoration: buildInputDecoration('Ingredient Name'),
                       onChanged: (val) => name = val,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -251,7 +233,7 @@ class IngredientsView extends StatelessWidget {
                                 setState(() => selectedCategory = val!),
                           ),
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: 16),
                         Expanded(
                           flex: 1,
                           child: DropdownButtonFormField<String>(
@@ -267,13 +249,13 @@ class IngredientsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
 
                     const Text('Stock Settings',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     Row(
                       children: [
@@ -290,7 +272,7 @@ class IngredientsView extends StatelessWidget {
                                 currentStock = double.tryParse(val) ?? 0,
                           ),
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: 16),
                         Expanded(
                           child: TextFormField(
                             initialValue: reorderPoint.toString(),
@@ -304,19 +286,19 @@ class IngredientsView extends StatelessWidget {
                     ),
                     if (isEdit)
                       Padding(
-                        padding: EdgeInsets.only(top: 8.h),
+                        padding: EdgeInsets.only(top: 8),
                         child: Text(
                           '*Stok FIFO hanya dapat diubah melalui menu transaksi/penyesuaian stok.',
-                          style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
                         ),
                       ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
 
                     const Text('Priority Criteria (SAW Method)',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
 
                     Row(
                       children: [
@@ -333,7 +315,7 @@ class IngredientsView extends StatelessWidget {
                             onChanged: (val) => setState(() => abcClass = val!),
                           ),
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: 16),
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             isExpanded: true, // Fix Overflow
@@ -349,7 +331,7 @@ class IngredientsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -365,7 +347,7 @@ class IngredientsView extends StatelessWidget {
                             onChanged: (val) => setState(() => sdeClass = val!),
                           ),
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: 16),
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             isExpanded: true, // Fix Overflow (Utama)
@@ -390,16 +372,16 @@ class IngredientsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
 
                     SizedBox(
-                      width: 1.sw,
-                      height: 40.h,
+                      width: double.infinity,
+                      height: 40,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppRestaurantColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         onPressed: () {
@@ -446,12 +428,12 @@ class IngredientsView extends StatelessWidget {
                           style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class MenuCardWidget extends StatelessWidget {
@@ -23,13 +22,13 @@ class MenuCardWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
-          // Radius standar: 12.r
-          borderRadius: BorderRadius.circular(12.r),
+          // Radius standar: 12
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 5.r,
-              offset: Offset(0, 2.h),
+              blurRadius: 5,
+              offset: Offset(0, 2),
             )
           ],
         ),
@@ -39,10 +38,10 @@ class MenuCardWidget extends StatelessWidget {
             // Gunakan Expanded agar area gambar mengisi sisa ruang secara fleksibel
             Expanded(
               child: Container(
-                width: 1.sw,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                   image: imageUrl.isNotEmpty
                       ? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover)
                       : null,
@@ -52,14 +51,14 @@ class MenuCardWidget extends StatelessWidget {
                         child: Icon(
                           Icons.fastfood,
                           color: AppRestaurantColors.secondary,
-                          size: 24.sp, // Ukuran icon dibuat dinamis
+                          size: 24, // Ukuran icon dibuat dinamis
                         ),
                       )
                     : null,
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,18 +66,18 @@ class MenuCardWidget extends StatelessWidget {
                     name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       color: AppRestaurantColors.primary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 4),
                   Text(
                     formattedPrice,
                     style: TextStyle(
                       color: AppRestaurantColors.primary,
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

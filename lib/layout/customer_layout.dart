@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/pages/customer/Cart/cart_view.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
@@ -40,7 +39,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
         children: _pages,
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
+        padding: EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
           boxShadow: [
@@ -70,7 +69,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
     // Menentukan warna berdasarkan status aktif
     final Color iconColor = isActive ? AppRestaurantColors.primary : AppRestaurantColors.secondary;
 
-    Widget iconWidget = Icon(icon, color: iconColor, size: 24.w);
+    Widget iconWidget = Icon(icon, color: iconColor, size: 24);
 
     if (label == 'Cart') {
       iconWidget = Badge(
@@ -86,17 +85,17 @@ class _CustomerLayoutState extends State<CustomerLayout> {
       behavior: HitTestBehavior.opaque, // Agar area klik lebih luas
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           // Latar belakang kapsul menggunakan warna Accent saat aktif
           color: isActive ? AppRestaurantColors.accent : Colors.transparent,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             iconWidget, 
-            SizedBox(height: 4.h),
+            SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(

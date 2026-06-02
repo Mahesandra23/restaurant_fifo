@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/pages/kitchen/kitchen_catalog_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/queue/queue_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/settings/settings_view.dart';
 import 'package:restaurant_fifo/pages/kitchen/stocks/stocks_view.dart';
-import 'package:restaurant_fifo/ui/themes/app_colors.dart'; // Import App Colors
+import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class KitchenLayout extends StatefulWidget {
   const KitchenLayout({super.key, this.initialIndex = 0});
@@ -40,7 +39,7 @@ class _KitchenLayoutState extends State<KitchenLayout> {
         children: _pages,
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
+        padding: EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
           boxShadow: [
@@ -75,17 +74,17 @@ class _KitchenLayoutState extends State<KitchenLayout> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           // Latar belakang kapsul menggunakan warna Accent saat aktif
           color: isActive ? AppRestaurantColors.accent : Colors.transparent,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: iconColor, size: 24.w),
-            SizedBox(height: 4.h),
+            Icon(icon, color: iconColor, size: 24),
+            SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
+// import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -67,10 +67,10 @@ class BannerView extends StatelessWidget {
               : ListView.builder(
                   // Standarisasi padding layar: 16.0 (dengan bottom 100 agar aman dari FAB)
                   padding: EdgeInsets.only(
-                    left: 16.w,
-                    right: 16.w,
-                    top: 16.h,
-                    bottom: 100.h,
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 100,
                   ),
                   itemCount: vm.banners.length,
                   itemBuilder: (ctx, i) {
@@ -83,23 +83,23 @@ class BannerView extends StatelessWidget {
                       // Clip agar gambar mengikuti radius Card
                       clipBehavior: Clip.antiAlias,
                       // Gap standar antar item list/card: 16.0
-                      margin: EdgeInsets.only(bottom: 16.h),
+                      margin: EdgeInsets.only(bottom: 16),
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         // Radius Medium standar: 12.0
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.network(
                             banner['image_url'],
-                            height: 160.h,
+                            height: 160,
                             width:
-                                1.sw, // Mengubah double.infinity menjadi 1.sw
+                                double.infinity, // Mengubah double.infinity menjadi double.infinity
                             fit: BoxFit.cover,
                             errorBuilder: (c, e, s) => Container(
-                              height: 160.h,
+                              height: 160,
                               color: Colors.grey.shade300,
                               child: const Center(
                                 child: Icon(Icons.broken_image),
@@ -108,8 +108,8 @@ class BannerView extends StatelessWidget {
                           ),
                           ListTile(
                             contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
+                              horizontal: 16,
+                              vertical: 8,
                             ),
                             title: Text(
                               banner['title'],
@@ -124,7 +124,7 @@ class BannerView extends StatelessWidget {
                                 color: banner['is_active']
                                     ? Colors.green
                                     : Colors.red,
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 height: 1.5,
                               ),
                             ),
@@ -167,7 +167,7 @@ class BannerView extends StatelessWidget {
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
         // Radius Besar standar: 16.0
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) => BannerFormBottomSheet(vm: vm),
     );
@@ -184,7 +184,7 @@ class BannerView extends StatelessWidget {
         backgroundColor: AppRestaurantColors.background,
         shape: RoundedRectangleBorder(
           // Radius Besar standar untuk Dialog/Sheet: 16.0
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         title: const Text(
           'Delete Banner?',
@@ -202,7 +202,7 @@ class BannerView extends StatelessWidget {
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                 // Radius Medium standar: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () => Navigator.pop(ctx),
@@ -216,7 +216,7 @@ class BannerView extends StatelessWidget {
               backgroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(
                 // Radius Medium standar: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () {
@@ -279,14 +279,14 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
     final vm = widget.vm;
 
     return SizedBox(
-      height: 0.85.sh, // Menggunakan .sh
+      height: 0.85 * MediaQuery.of(context).size.height,
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
           // Standarisasi padding Sheet: 16.0
-          left: 16.w,
-          right: 16.w,
-          top: 16.h,
+          left: 16,
+          right: 16,
+          top: 16,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,7 +298,7 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                 Text(
                   'Add New Banner',
                   style: TextStyle(
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppRestaurantColors.primary,
                   ),
@@ -310,19 +310,19 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
               ],
             ),
             // Gap antar section utama (Header ke Image Picker): 24.0
-            SizedBox(height: 24.h),
+            SizedBox(height: 24),
 
             // --- IMAGE PICKER AREA ---
             Center(
               child: GestureDetector(
                 onTap: _pickImage,
                 child: Container(
-                  height: 120.h,
-                  width: 1.sw, // Menggunakan .sw untuk penuh layar
+                  height: 120,
+                  width: double.infinity, // Menggunakan .sw untuk penuh layar
                   decoration: BoxDecoration(
                     color: Colors.grey.shade100,
                     // Radius Medium standar: 12.0
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: AppRestaurantColors.primary.withOpacity(0.5),
                       style: BorderStyle.solid,
@@ -341,13 +341,13 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                             Icon(
                               Icons.add_a_photo,
                               color: AppRestaurantColors.secondary,
-                              size: 30.sp,
+                              size: 30,
                             ),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8),
                             Text(
                               'Choose Banner Image',
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 color: AppRestaurantColors.secondary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -359,7 +359,7 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
               ),
             ),
             // Gap antar section utama (Image Picker ke Text Input): 24.0
-            SizedBox(height: 24.h),
+            SizedBox(height: 24),
 
             // --- TEXT INPUT AREA ---
             Expanded(
@@ -373,26 +373,26 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                         labelText: 'Banner Title',
                         // Radius Medium standar untuk input form: 12.0
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: Colors.grey.shade300),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppRestaurantColors.primary,
                           ),
                         ),
                         contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 14.h,
+                          horizontal: 16,
+                          vertical: 14,
                         ),
                       ),
                     ),
                     // Gap ekstra untuk ruang aman scroll
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -400,15 +400,15 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
 
             // --- SAVE BUTTON ---
             SizedBox(
-              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              width: double.infinity, // Mengubah double.infinity menjadi double.infinity
               // Standarisasi Tinggi Tombol: 55.0
-              height: 35.h,
+              height: 35,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,
                   shape: RoundedRectangleBorder(
                     // Radius Medium standar: 12.0
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: () async {
@@ -443,13 +443,13 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
                   style: TextStyle(
                     color: AppRestaurantColors.accent,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
             // Ekstra padding bawah
-            SizedBox(height: 20.h),
+            SizedBox(height: 20),
           ],
         ),
       ),

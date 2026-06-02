@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
@@ -58,19 +57,19 @@ class SettingsView extends StatelessWidget {
                     onRefresh: () => vm.fetchDashboardData(),
                     child: ListView(
                       // Standarisasi padding layar utama: 16.0
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(16),
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         _buildDailyReportCard(vm.formattedDailyRevenue),
                         // Gap antar section utama: 24.0
-                        SizedBox(height: 24.h),
+                        SizedBox(height: 24),
                         _buildRecentOrdersSection(context, vm.recentOrders),
                         // Gap antar section utama: 24.0
-                        SizedBox(height: 24.h),
+                        SizedBox(height: 24),
                         _buildManagementMenu(context),
                         
                         // Ekstra padding bawah agar nyaman di-scroll
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                       ],
                     ),
                   ),
@@ -84,7 +83,7 @@ class SettingsView extends StatelessWidget {
   Widget _buildDailyReportCard(String formattedRevenue) {
     return Container(
       // Padding di dalam Card Utama, kita buat sedikit lega
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -93,12 +92,12 @@ class SettingsView extends StatelessWidget {
           ],
         ),
         // Radius Besar standar untuk Card Utama: 16.0
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppRestaurantColors.primary.withOpacity(0.3),
-            blurRadius: 8.r,
-            offset: Offset(0, 4.h),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -107,14 +106,14 @@ class SettingsView extends StatelessWidget {
         children: [
           Text(
             "Today's Revenue",
-            style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 8),
           Text(
             formattedRevenue,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 28.sp,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -138,7 +137,7 @@ class SettingsView extends StatelessWidget {
               'Recent Orders',
               style: TextStyle(
                 color: AppRestaurantColors.primary,
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -158,11 +157,11 @@ class SettingsView extends StatelessWidget {
           ],
         ),
         // Gap kecil dari judul ke List
-        SizedBox(height: 8.h),
+        SizedBox(height: 8),
         
         if (orders.isEmpty)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.h),
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: const Text(
               'No recent orders.',
               style: TextStyle(color: AppRestaurantColors.secondary),
@@ -172,15 +171,15 @@ class SettingsView extends StatelessWidget {
           ...orders.map(
             (order) => Card(
               // Gap standar antar elemen List/Card: 16.0
-              margin: EdgeInsets.only(bottom: 16.h),
+              margin: EdgeInsets.only(bottom: 16),
               elevation: 2,
               shape: RoundedRectangleBorder(
                 // Radius Medium standar: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
               color: AppRestaurantColors.background,
               child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 leading: const CircleAvatar(
                   backgroundColor: AppRestaurantColors.primary,
                   child: Icon(Icons.check, color: AppRestaurantColors.background),
@@ -212,12 +211,12 @@ class SettingsView extends StatelessWidget {
           'System Management',
           style: TextStyle(
             color: AppRestaurantColors.primary,
-            fontSize: 16.sp,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         // Gap dari judul ke List: 16.0
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         _buildMenuTile(
           Icons.image,
           'Promo Banner Management',
@@ -253,14 +252,14 @@ class SettingsView extends StatelessWidget {
     return Card(
       elevation: 2,
       // Gap standar antar elemen List/Card: 16.0
-      margin: EdgeInsets.only(bottom: 16.h),
+      margin: EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         // Radius Medium standar: 12.0
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(12),
       ),
       color: AppRestaurantColors.background,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(icon, color: AppRestaurantColors.primary),
         title: Text(
           title,
@@ -272,7 +271,7 @@ class SettingsView extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            fontSize: 12.sp,
+            fontSize: 12,
             color: AppRestaurantColors.secondary,
           ),
         ),
@@ -294,7 +293,7 @@ class SettingsView extends StatelessWidget {
         backgroundColor: AppRestaurantColors.background,
         shape: RoundedRectangleBorder(
           // Radius Besar standar untuk Pop-up / Dialog: 16.0
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
         ),
         title: const Text(
           'Log Out of Application?',
@@ -312,7 +311,7 @@ class SettingsView extends StatelessWidget {
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                 // Radius Medium standar: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () => Navigator.pop(ctx),
@@ -326,7 +325,7 @@ class SettingsView extends StatelessWidget {
               backgroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(
                 // Radius Medium standar: 12.0
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: () async {

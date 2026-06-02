@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/models/menu_model.dart';
 import 'package:restaurant_fifo/core/providers/cart_provider.dart';
@@ -34,11 +33,11 @@ class MenuDetailView extends StatelessWidget {
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 200.h, 
+                expandedHeight: 200, 
                 pinned: true,
                 backgroundColor: AppRestaurantColors.primary,
                 leading: Container(
-                  margin: EdgeInsets.all(8.w), 
+                  margin: EdgeInsets.all(8), 
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.3),
                     shape: BoxShape.circle,
@@ -55,7 +54,7 @@ class MenuDetailView extends StatelessWidget {
                           color: Colors.grey.shade300,
                           child: Icon(
                             Icons.fastfood,
-                            size: 80.sp, 
+                            size: 80, 
                             color: AppRestaurantColors.secondary,
                           ),
                         ),
@@ -65,7 +64,7 @@ class MenuDetailView extends StatelessWidget {
               // Detail Konten
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -78,17 +77,17 @@ class MenuDetailView extends StatelessWidget {
                             child: Text(
                               vm.menu.name, 
                               style: TextStyle(
-                                fontSize: 20.sp,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: AppRestaurantColors.primary,
                               ),
                             ),
                           ),
-                          SizedBox(width: 16.w),
+                          SizedBox(width: 16),
                           Text(
                             'Rp ${_formatPrice(vm.menu.price)}', // Menggunakan format manual
                             style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.primary,
                             ),
@@ -96,18 +95,18 @@ class MenuDetailView extends StatelessWidget {
                         ],
                       ),
                       
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 24),
 
                       // Deskripsi
                       Text(
                         'Menu Description',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
                         ),
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 8),
                       
                       Text(
                         vm.menu.description.isNotEmpty 
@@ -119,40 +118,40 @@ class MenuDetailView extends StatelessWidget {
                         ),
                       ),
                       
-                      SizedBox(height: 24.h),
-                      Divider(height: 1.h, color: Colors.grey.shade300),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 24),
+                      Divider(height: 1, color: Colors.grey.shade300),
+                      SizedBox(height: 24),
 
                       // Input Catatan (Notes)
                       Text(
                         'Special Notes (Optional)',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppRestaurantColors.primary,
                         ),
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 8),
                       TextField(
                         maxLines: 2,
                         decoration: InputDecoration(
                           hintText: 'E.g.: No onions, medium spice...',
                           hintStyle: TextStyle(
                             color: Colors.grey,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
                               color: AppRestaurantColors.primary,
                             ),
@@ -161,7 +160,7 @@ class MenuDetailView extends StatelessWidget {
                         onChanged: vm.updateNotes,
                       ),
                       
-                      SizedBox(height: 40.h), 
+                      SizedBox(height: 40), 
                     ],
                   ),
                 ),
@@ -171,18 +170,18 @@ class MenuDetailView extends StatelessWidget {
 
           // --- TOMBOL BAWAH (QTY & ADD TO CART) ---
           bottomNavigationBar: Container(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10.r,
-                  offset: Offset(0, -5.h),
+                  blurRadius: 10,
+                  offset: Offset(0, -5),
                 ),
               ],
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(16.r),
+                top: Radius.circular(16),
               ),
             ),
             child: SafeArea(
@@ -190,10 +189,10 @@ class MenuDetailView extends StatelessWidget {
                 children: [
                   // Pengatur Jumlah (Quantity)
                   Container(
-                    height: 35.h, 
+                    height: 35, 
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
@@ -207,7 +206,7 @@ class MenuDetailView extends StatelessWidget {
                         Text(
                           '${vm.quantity}',
                           style: TextStyle(
-                            fontSize: 18.sp,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary,
                           ),
@@ -223,17 +222,17 @@ class MenuDetailView extends StatelessWidget {
                     ),
                   ),
                   
-                  SizedBox(width: 16.w),
+                  SizedBox(width: 16),
 
                   // Tombol Masukkan Keranjang
                   Expanded(
                     child: SizedBox(
-                      height: 35.h, 
+                      height: 35, 
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppRestaurantColors.primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         onPressed: () {
@@ -256,7 +255,7 @@ class MenuDetailView extends StatelessWidget {
                           style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                         ),
                       ),

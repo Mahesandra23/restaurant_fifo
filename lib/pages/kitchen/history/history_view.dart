@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
 import 'package:provider/provider.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -43,15 +42,15 @@ class HistoryView extends StatelessWidget {
             body: Column(
               children: [
                 // Gap awal dari AppBar: 16.0
-                SizedBox(height: 16.h),
+                SizedBox(height: 16),
                 _buildFilters(vm),
                 
                 // Gap antar section utama (Filter ke Revenue Card): 24.0
-                SizedBox(height: 24.h),
+                SizedBox(height: 24),
                 _buildRevenueCard(vm.formattedTotalRevenue),
                 
                 // Gap antar section utama (Revenue Card ke List): 24.0
-                SizedBox(height: 24.h),
+                SizedBox(height: 24),
                 
                 Expanded(
                   child: vm.isLoading
@@ -67,25 +66,25 @@ class HistoryView extends StatelessWidget {
                           : ListView.builder(
                               // Standarisasi padding layar utama: 16.0
                               padding: EdgeInsets.only(
-                                left: 16.w,
-                                right: 16.w,
-                                bottom: 40.h, // Ruang bawah ekstra
+                                left: 16,
+                                right: 16,
+                                bottom: 40, // Ruang bawah ekstra
                               ),
                               itemCount: vm.orders.length,
                               itemBuilder: (ctx, i) {
                                 final order = vm.orders[i];
                                 return Card(
                                   // Gap antar item list standar: 16.0
-                                  margin: EdgeInsets.only(bottom: 16.h),
+                                  margin: EdgeInsets.only(bottom: 16),
                                   elevation: 2,
                                   shape: RoundedRectangleBorder(
                                     // Radius Medium standar: 12.0
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                   color: AppRestaurantColors.background,
                                   child: ListTile(
                                     contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16.w, vertical: 8.h),
+                                        horizontal: 16, vertical: 8),
                                     leading: const CircleAvatar(
                                       backgroundColor: AppRestaurantColors.primary,
                                       child: Icon(Icons.receipt_long, color: AppRestaurantColors.background),
@@ -105,7 +104,7 @@ class HistoryView extends StatelessWidget {
                                       style: TextStyle(
                                         color: AppRestaurantColors.primary,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp, // Menggunakan .sp
+                                        fontSize: 14, // Menggunakan 
                                       ),
                                     ),
                                   ),
@@ -126,17 +125,17 @@ class HistoryView extends StatelessWidget {
     InputDecoration buildDropdownDecoration(String label) {
       return InputDecoration(
         labelText: label,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppRestaurantColors.primary),
         ),
         filled: true,
@@ -146,7 +145,7 @@ class HistoryView extends StatelessWidget {
 
     return Padding(
       // Standarisasi padding horizontal: 16.0
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(
@@ -160,7 +159,7 @@ class HistoryView extends StatelessWidget {
             ),
           ),
           // Gap antar elemen horizontal standar: 16.0
-          SizedBox(width: 16.w),
+          SizedBox(width: 16),
           Expanded(
             child: DropdownButtonFormField<int>(
               decoration: buildDropdownDecoration('Month'),
@@ -179,18 +178,18 @@ class HistoryView extends StatelessWidget {
   Widget _buildRevenueCard(String formattedRevenue) {
     return Container(
       // Margin layar standar: 16.0
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      width: 1.sw, // Mengubah double.infinity menjadi 1.sw
-      padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      width: double.infinity, // Mengubah double.infinity menjadi double.infinity
+      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
         color: AppRestaurantColors.primary,
         // Radius Besar standar untuk Card Utama: 16.0
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppRestaurantColors.primary.withOpacity(0.3),
-            blurRadius: 8.r,
-            offset: Offset(0, 4.h),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -198,13 +197,13 @@ class HistoryView extends StatelessWidget {
         children: [
           Text(
             'Total Revenue',
-            style: TextStyle(fontSize: 14.sp, color: Colors.white70), // Menggunakan .sp
+            style: TextStyle(fontSize: 14, color: Colors.white70), // Menggunakan 
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 8),
           Text(
             formattedRevenue,
             style: TextStyle(
-              fontSize: 32.sp, // Menggunakan .sp
+              fontSize: 32, // Menggunakan 
               fontWeight: FontWeight.bold,
               color: AppRestaurantColors.background,
             ),

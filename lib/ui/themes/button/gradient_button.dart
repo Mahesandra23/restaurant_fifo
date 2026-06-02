@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
 class GradientButton extends StatelessWidget {
@@ -28,7 +27,7 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double radiusValue = borderRadius ?? 100.r;
+    final double radiusValue = borderRadius ?? 100;
 
     return Container(
       width: width,

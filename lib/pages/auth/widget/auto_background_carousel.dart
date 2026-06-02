@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/auth/widget/repository/carousel_repository.dart';
@@ -26,7 +25,7 @@ class AutoBackgroundCarousel extends StatelessWidget {
         if (vm.isLoading) {
           return SizedBox(
             height: height,
-            width: 1.sw,
+            width: double.infinity,
             child: const Center(
               child: CircularProgressIndicator(color: AppRestaurantColors.primary),
             ),
@@ -37,7 +36,7 @@ class AutoBackgroundCarousel extends StatelessWidget {
         if (vm.bannerUrls.isEmpty) {
           return SizedBox(
             height: height,
-            width: 1.sw,
+            width: double.infinity,
             child: Container(
               color: Colors.grey.shade300,
               child: const Center(
@@ -104,7 +103,7 @@ class _CarouselSliderState extends State<_CarouselSlider> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.height,
-      width: 1.sw,
+      width: double.infinity,
       child: PageView.builder(
         controller: _pageController,
         itemCount: widget.imageUrls.length,

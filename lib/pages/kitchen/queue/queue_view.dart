@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -50,7 +49,7 @@ class QueueView extends StatelessWidget {
                         ? SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             child: SizedBox(
-                              height: 300.h,
+                              height: 300,
                               child: const CustomEmptyState(
                                 icon: Icons.check_circle_outline,
                                 message:
@@ -62,7 +61,7 @@ class QueueView extends StatelessWidget {
                         : ListView.builder(
                             physics: const AlwaysScrollableScrollPhysics(),
                             // Standarisasi padding layar utama: 16.0
-                            padding: EdgeInsets.all(16.w),
+                            padding: EdgeInsets.all(16),
                             itemCount: vm.activeOrders.length,
                             itemBuilder: (context, index) {
                               final order = vm.activeOrders[index];
@@ -84,11 +83,11 @@ class QueueView extends StatelessWidget {
     final bool isCooking = order.status == 'cooking';
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
+      margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: AppRestaurantColors.accent2.withOpacity(0.05),
         // Radius standar Card: 12.0
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(12),
         // Border kuning tipis hanya muncul jika statusnya COOKING (sesuai gambar)
         // Menggunakan warna transparent saat PENDING agar ukuran card tidak bergeser/lompat
         border: isCooking
@@ -97,9 +96,9 @@ class QueueView extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 5.r,
+            blurRadius: 5,
             // Offset disamakan dengan card di menu utama
-            offset: Offset(0, 2.h),
+            offset: Offset(0, 2),
           ),  
         ],
       ),
@@ -109,11 +108,11 @@ class QueueView extends StatelessWidget {
         child: InkWell(
           onTap: () => _showOrderDetails(context, order, vm),
           borderRadius: BorderRadius.circular(
-            12.r,
+            12,
           ), // Menjaga efek klik tetap di dalam radius
           child: Padding(
             // Padding dalam Card disamakan ke 16.0
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -125,26 +124,26 @@ class QueueView extends StatelessWidget {
                         Text(
                           order.id,
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.secondary,
                           ),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: 8),
                         // Badge Status
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.h,
+                            horizontal: 6,
+                            vertical: 2,
                           ),
                           decoration: BoxDecoration(
                             color: AppRestaurantColors.background,
-                            borderRadius: BorderRadius.circular(4.r),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             isCooking ? 'COOKING' : 'PENDING',
                             style: TextStyle(
-                              fontSize: 10.sp,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.primary,
                             ),
@@ -152,20 +151,20 @@ class QueueView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 4),
                     Text(
                       '${order.customerName} - ${order.tableNumber}',
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 4),
                     Text(
                       '${order.items.length} Items',
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         color: AppRestaurantColors.secondary,
                       ),
                     ),
@@ -177,14 +176,14 @@ class QueueView extends StatelessWidget {
                     Icon(
                       Icons.access_time,
                       color: AppRestaurantColors.secondary,
-                      size: 20.sp,
+                      size: 20,
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 4),
                     Text(
                       order.orderTime,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
@@ -211,14 +210,14 @@ class QueueView extends StatelessWidget {
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
         // Radius Besar standar untuk BottomSheet: 16.0
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return Container(
           // Standarisasi padding layar: 16.0
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(16),
           constraints: BoxConstraints(
-            maxHeight: 0.7.sh, // Menggunakan .sh pengganti MediaQuery height
+            maxHeight: 0.7 * MediaQuery.of(context).size.height,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,16 +225,16 @@ class QueueView extends StatelessWidget {
               // Drag Handle
               Center(
                 child: Container(
-                  width: 40.w,
-                  height: 5.h,
+                  width: 40,
+                  height: 5,
                   decoration: BoxDecoration(
                     color: AppRestaurantColors.secondary.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(10.r),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
               // Gap standar: 16.0
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // Header Details
               Row(
@@ -244,7 +243,7 @@ class QueueView extends StatelessWidget {
                   Text(
                     'Detail ${order.id}',
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
                     ),
@@ -252,17 +251,17 @@ class QueueView extends StatelessWidget {
                   Text(
                     order.orderTime,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       color: AppRestaurantColors.secondary,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: 4),
               Text(
                 order.customerName,
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   color: AppRestaurantColors.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -270,7 +269,7 @@ class QueueView extends StatelessWidget {
 
               // Divider berfungsi ganda memberi spacing vertikal setara 16.0 atas-bawah
               Divider(
-                height: 32.h,
+                height: 32,
                 thickness: 1,
                 color: AppRestaurantColors.secondary,
               ),
@@ -283,18 +282,18 @@ class QueueView extends StatelessWidget {
                     final item = order.items[index];
                     return Padding(
                       // Gap standar antar item list: 16.0
-                      padding: EdgeInsets.only(bottom: 16.h),
+                      padding: EdgeInsets.only(bottom: 16),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 4.h,
+                              horizontal: 12,
+                              vertical: 4,
                             ),
                             decoration: BoxDecoration(
                               color: AppRestaurantColors.accent,
-                              borderRadius: BorderRadius.circular(8.r),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               '${item.quantity}x',
@@ -305,7 +304,7 @@ class QueueView extends StatelessWidget {
                             ),
                           ),
                           // Gap standar horizontal antar elemen: 16.0
-                          SizedBox(width: 16.w),
+                          SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,7 +312,7 @@ class QueueView extends StatelessWidget {
                                 Text(
                                   item.name,
                                   style: TextStyle(
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: AppRestaurantColors.primary,
                                   ),
@@ -323,7 +322,7 @@ class QueueView extends StatelessWidget {
                                     '* ${item.notes}',
                                     style: TextStyle(
                                       color: Colors.redAccent,
-                                      fontSize: 13.sp,
+                                      fontSize: 13,
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
@@ -338,13 +337,13 @@ class QueueView extends StatelessWidget {
               ),
 
               // Gap section utama (List ke Action Button): 24.0
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
 
               // --- TOMBOL AKSI DINAMIS BERDASARKAN STATUS ---
               SizedBox(
-                width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+                width: double.infinity, // Mengubah double.infinity menjadi double.infinity
                 height: 35
-                    .h, // Disamakan dengan tinggi tombol di halaman lain (55.0)
+                    , // Disamakan dengan tinggi tombol di halaman lain (55.0)
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isPending
@@ -352,7 +351,7 @@ class QueueView extends StatelessWidget {
                         : AppRestaurantColors.primary,
                     shape: RoundedRectangleBorder(
                       // Radius Medium standar: 12.0
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: () async {
@@ -389,7 +388,7 @@ class QueueView extends StatelessWidget {
                       color: isPending
                           ? AppRestaurantColors.primary
                           : AppRestaurantColors.accent,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -397,7 +396,7 @@ class QueueView extends StatelessWidget {
               ),
 
               // Memberikan ruang bawah ekstra jika HP tidak memiliki SafeArea
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
             ],
           ),
         );
