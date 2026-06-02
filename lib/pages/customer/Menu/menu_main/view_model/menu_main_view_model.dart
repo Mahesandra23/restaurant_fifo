@@ -78,10 +78,19 @@ class MenuMainViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+// --- LOGIKA GROUPING YANG DIUBAH AGAR MENGHARGAI URUTAN ---
   void _filterAndGroupMenus(String query) {
     Map<String, List<MenuModel>> tempGrouped = {};
     final lowerQuery = query.toLowerCase().trim();
 
+    // 1. Inisialisasi urutan map menggunakan daftar kategori yang sudah berurutan dari database
+    for (var catName in filterCategories) {
+      tempGrouped[catName] = [];
+    }
+    // Tambahkan 'Uncategorized' di urutan paling bawah untuk berjaga-jaga
+    tempGrouped['Uncategorized'] = [];
+
+    // 2. Masukkan makanan ke kandang kategorinya masing-masing
     for (var row in _cachedRawMenus) {
       final menuName = row['name'].toString();
 
@@ -100,12 +109,16 @@ class MenuMainViewModel extends BaseViewModel {
         description: row['description']?.toString() ?? '',
       );
 
+      // Jika ada kategori usang, daftarkan
       if (!tempGrouped.containsKey(categoryName)) {
         tempGrouped[categoryName] = [];
       }
 
       tempGrouped[categoryName]!.add(item);
     }
+
+    // 3. Bersihkan (hapus) kategori yang kosong, agar tidak muncul judul kategori tanpa makanan di layar Customer
+    tempGrouped.removeWhere((key, value) => value.isEmpty);
 
     groupedMenus = tempGrouped;
   }

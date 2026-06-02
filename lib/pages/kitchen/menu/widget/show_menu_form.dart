@@ -23,9 +23,8 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
   late int formPrice;
   late String formCatId;
 
-  // Menggunakan Map untuk mencatat id_bahan -> takaran_porsi
   late Map<String, double> selectedIngQuantities;
-  String searchQuery = ''; // State untuk filter pencarian bahan baku
+  String searchQuery = '';
   File? selectedImageFile;
 
   @override
@@ -41,7 +40,6 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
               ? widget.vm.categories.first.id
               : '');
 
-    // Inisialisasi Map dari data menu yang diedit jika ada
     selectedIngQuantities = isEdit
         ? {
             for (var e in widget.existingMenu!.ingredients)
@@ -69,13 +67,21 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
     final vm = widget.vm;
     final existingMenu = widget.existingMenu;
 
-    // Filter list bahan berdasarkan input pencarian pengguna
     final filteredIngredients = vm.availableIngredients.where((ing) {
       return ing.name.toLowerCase().contains(searchQuery.toLowerCase());
     }).toList();
 
+    filteredIngredients.sort((a, b) {
+      final aSelected = selectedIngQuantities.containsKey(a.id);
+      final bSelected = selectedIngQuantities.containsKey(b.id);
+
+      if (aSelected && !bSelected) return -1;
+      if (!aSelected && bSelected) return 1;
+      return a.name.compareTo(b.name);
+    });
+
     return SizedBox(
-      height: 0.85.sh, // Menggunakan .sh
+      height: 0.85.sh,
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -110,62 +116,67 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
             ),
             SizedBox(height: 16.h),
 
-            // --- AREA PEMILIH GAMBAR ---
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 100.h,
-                  width: 100.w,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: AppRestaurantColors.primary),
-                    image: selectedImageFile != null
-                        ? DecorationImage(
-                            image: FileImage(selectedImageFile!),
-                            fit: BoxFit.cover,
-                          )
-                        : (isEdit && existingMenu!.imageUrl.isNotEmpty)
-                        ? DecorationImage(
-                            image: NetworkImage(existingMenu.imageUrl),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child:
-                      selectedImageFile == null &&
-                          (!isEdit || existingMenu!.imageUrl.isEmpty)
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_a_photo,
-                              color: AppRestaurantColors.secondary,
-                              size: 24.sp,
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              'Choose Image',
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color: AppRestaurantColors.secondary,
-                              ),
-                            ),
-                          ],
-                        )
-                      : null,
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // --- AREA INPUT TEKS ---
+            // --- AREA SCROLL (FOTO + INPUT TEKS) ---
             Expanded(
               child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // --- AREA PEMILIH GAMBAR DIPINDAH KE SINI ---
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          height: 100.h,
+                          width: 100.w,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(
+                              color: AppRestaurantColors.primary,
+                            ),
+                            image: selectedImageFile != null
+                                ? DecorationImage(
+                                    image: FileImage(selectedImageFile!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : (isEdit && existingMenu!.imageUrl.isNotEmpty)
+                                ? DecorationImage(
+                                    image: NetworkImage(existingMenu.imageUrl),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                          ),
+                          child:
+                              selectedImageFile == null &&
+                                  (!isEdit || existingMenu!.imageUrl.isEmpty)
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_a_photo,
+                                      color: AppRestaurantColors.secondary,
+                                      size: 24.sp,
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      'Choose Image',
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: AppRestaurantColors.secondary,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // --- AREA INPUT TEKS ---
                     TextFormField(
                       initialValue: formName,
                       decoration: const InputDecoration(
@@ -196,6 +207,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                         Expanded(
                           flex: 1,
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true,
                             value: formCatId.isNotEmpty ? formCatId : null,
                             decoration: const InputDecoration(
                               labelText: 'Category',
@@ -205,7 +217,10 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                                 .map(
                                   (c) => DropdownMenuItem(
                                     value: c.id,
-                                    child: Text(c.name),
+                                    child: Text(
+                                      c.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 )
                                 .toList(),
@@ -237,7 +252,6 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                     ),
                     SizedBox(height: 8.h),
 
-                    // 2. Form Fitur Pencarian Bahan Baku
                     TextFormField(
                       decoration: InputDecoration(
                         hintText: 'Search ingredients...',
@@ -254,100 +268,101 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                     SizedBox(height: 8.h),
 
                     Container(
-                      height: 220.h,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: Scrollbar(
-                        child: ListView.builder(
-                          itemCount: filteredIngredients.length,
-                          itemBuilder: (context, index) {
-                            final ingredient = filteredIngredients[index];
-                            final isSelected = selectedIngQuantities
-                                .containsKey(ingredient.id);
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: filteredIngredients.length,
+                        itemBuilder: (context, index) {
+                          final ingredient = filteredIngredients[index];
+                          final isSelected = selectedIngQuantities.containsKey(
+                            ingredient.id,
+                          );
 
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 4.w,
-                                vertical: 2.h,
-                              ),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: isSelected,
-                                    activeColor: AppRestaurantColors.primary,
-                                    onChanged: (bool? checked) {
-                                      setState(() {
-                                        if (checked == true) {
-                                          // Set default porsi awal 1.0 saat dicek
-                                          selectedIngQuantities[ingredient.id] =
-                                              1.0;
-                                        } else {
-                                          selectedIngQuantities.remove(
-                                            ingredient.id,
-                                          );
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      ingredient.name,
-                                      style: TextStyle(fontSize: 14.sp),
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 4.w,
+                              vertical: 2.h,
+                            ),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: isSelected,
+                                  activeColor: AppRestaurantColors.primary,
+                                  onChanged: (bool? checked) {
+                                    setState(() {
+                                      if (checked == true) {
+                                        selectedIngQuantities[ingredient.id] =
+                                            1.0;
+                                      } else {
+                                        selectedIngQuantities.remove(
+                                          ingredient.id,
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    ingredient.name,
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
                                     ),
                                   ),
-                                  // 1. Kolom Input Pengurangan Takaran Bahan
-                                  if (isSelected)
-                                    Expanded(
-                                      flex: 2,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 8.w),
-                                        child: SizedBox(
-                                          height: 38.h,
-                                          child: TextFormField(
-                                            initialValue:
-                                                selectedIngQuantities[ingredient
-                                                        .id]
-                                                    ?.toString() ??
-                                                '1',
-                                            keyboardType:
-                                                const TextInputType.numberWithOptions(
-                                                  decimal: true,
-                                                ),
-                                            style: TextStyle(fontSize: 13.sp),
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                    horizontal: 6.w,
-                                                    vertical: 4.h,
-                                                  ),
-                                              border:
-                                                  const OutlineInputBorder(),
-                                              suffixText: ingredient
-                                                  .unit, // Satuan otomatis dinamis
-                                              suffixStyle: TextStyle(
-                                                fontSize: 11.sp,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            onChanged: (val) {
-                                              final double qty =
-                                                  double.tryParse(val) ?? 0.0;
+                                ),
+                                if (isSelected)
+                                  Expanded(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 8.w),
+                                      child: SizedBox(
+                                        height: 38.h,
+                                        child: TextFormField(
+                                          initialValue:
                                               selectedIngQuantities[ingredient
-                                                      .id] =
-                                                  qty;
-                                            },
+                                                      .id]
+                                                  ?.toString() ??
+                                              '1',
+                                          keyboardType:
+                                              const TextInputType.numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                          style: TextStyle(fontSize: 13.sp),
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                  horizontal: 6.w,
+                                                  vertical: 4.h,
+                                                ),
+                                            border: const OutlineInputBorder(),
+                                            suffixText: ingredient.unit,
+                                            suffixStyle: TextStyle(
+                                              fontSize: 11.sp,
+                                              color: Colors.grey,
+                                            ),
                                           ),
+                                          onChanged: (val) {
+                                            final double qty =
+                                                double.tryParse(val) ?? 0.0;
+                                            selectedIngQuantities[ingredient
+                                                    .id] =
+                                                qty;
+                                          },
                                         ),
                                       ),
                                     ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -358,7 +373,7 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
 
             // --- TOMBOL SIMPAN ---
             SizedBox(
-              width: 1.sw, // Mengubah double.infinity menjadi 1.sw
+              width: 1.sw,
               height: 40.h,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -391,10 +406,9 @@ class _MenuFormBottomSheetState extends State<MenuFormBottomSheet> {
                     id: isEdit ? existingMenu!.id : null,
                     name: formName,
                     desc: formDesc,
-                    price: vm.formatRupiah(formPrice),
+                    price: formPrice.toString(),
                     categoryId: formCatId,
-                    ingredientQuantities:
-                        selectedIngQuantities, // Kirim map data bahan & takaran
+                    ingredientQuantities: selectedIngQuantities,
                     imageFile: selectedImageFile,
                     existingImageUrl: isEdit ? existingMenu!.imageUrl : null,
                   );

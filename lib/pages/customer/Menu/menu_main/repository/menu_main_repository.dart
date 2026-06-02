@@ -20,7 +20,8 @@ class MenuMainRepository {
     final response = await _supabase
         .from('menu_categories')
         .select('name')
-        .order('name');
+        // UBAH BAGIAN INI: urutkan berdasarkan sort_order layaknya di Kitchen
+        .order('sort_order', ascending: true); 
         
     return response;
   }
@@ -33,7 +34,7 @@ class MenuMainRepository {
           .select('image_url')
           .eq('is_active', true)
           .order('created_at', ascending: false)
-          .limit(3); // Batasi maksimal 3 gambar
+          .limit(3); 
 
       List<String> imageUrls = [];
       for (var row in response) {

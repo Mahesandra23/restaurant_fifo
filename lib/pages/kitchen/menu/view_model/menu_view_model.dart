@@ -7,7 +7,9 @@ import 'dart:io';
 class CategoryData {
   final String id;
   final String name;
-  CategoryData({required this.id, required this.name});
+  final int sortOrder; // 1. TAMBAH VARIABEL INI
+  
+  CategoryData({required this.id, required this.name, this.sortOrder = 0});
 }
 
 class MenuViewModel extends BaseViewModel {
@@ -47,6 +49,7 @@ class MenuViewModel extends BaseViewModel {
             (c) => CategoryData(
               id: c['id'].toString(),
               name: c['name'].toString(),
+              sortOrder: c['sort_order'] ?? 0,
             ),
           )
           .toList();
@@ -96,15 +99,21 @@ class MenuViewModel extends BaseViewModel {
     return 'Rp $result';
   }
 
-  // --- FUNGSI FILTER & GROUPING LOKAL ---
+  // LOGIKA PENGELOMPOKAN YANG SUDAH TERURUT
   void _filterAndGroupMenus(String query) {
     Map<String, List<MenuModel>> tempGrouped = {};
     final lowerQuery = query.toLowerCase().trim();
 
+    // Inisialisasi Map menggunakan urutan 'categories' yang sudah diurutkan dari database
+    for (var cat in categories) {
+      tempGrouped[cat.name] = [];
+    }
+    // Tambahkan 'Uncategorized' di paling bawah jika ada yang tidak punya kategori
+    tempGrouped['Uncategorized'] = [];
+
     for (var row in _cachedRawMenus) {
       final menuName = row['name'].toString();
 
-      // Lewati (filter out) menu yang namanya tidak mengandung kata kunci pencarian
       if (lowerQuery.isNotEmpty &&
           !menuName.toLowerCase().contains(lowerQuery)) {
         continue;
@@ -128,7 +137,6 @@ class MenuViewModel extends BaseViewModel {
         id: row['id'].toString(),
         name: menuName,
         description: row['description']?.toString() ?? '',
-        // KEMBALIKAN KE BENTUK ANGKA AGAR TIDAK ERROR
         price: (row['price'] as num?)?.toInt() ?? 0,
         categoryId: row['category_id']?.toString() ?? '',
         categoryName: catName,
@@ -136,17 +144,54 @@ class MenuViewModel extends BaseViewModel {
         ingredients: menuIngs,
       );
 
+      // Jaga-jaga jika ada data kategori usang, buatkan list-nya
       if (!tempGrouped.containsKey(catName)) {
         tempGrouped[catName] = [];
       }
       tempGrouped[catName]!.add(menu);
     }
 
+    // Hapus kategori yang kosong (tidak punya menu di dalamnya) agar UI lebih bersih
+    tempGrouped.removeWhere((key, value) => value.isEmpty);
+
     groupedMenus = tempGrouped;
   }
 
+  // --- FUNGSI BARU: DRAG AND DROP KATEGORI ---
+  Future<void> reorderCategories(int oldIndex, int newIndex) async {
+    // Penyesuaian index bawaan flutter ReorderableListView
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    
+    // 1. Ubah urutan di List lokal (UI) agar animasi terasa instan & mulus
+    final CategoryData movedItem = categories.removeAt(oldIndex);
+    categories.insert(newIndex, movedItem);
+    notifyListeners(); 
+
+    // 2. Siapkan data untuk dikirim ke Supabase
+    List<Map<String, dynamic>> updates = [];
+    for (int i = 0; i < categories.length; i++) {
+      updates.add({
+        'id': categories[i].id,
+        'sort_order': i, // Index baru menjadi urutan (sort_order)
+      });
+    }
+
+    // 3. Simpan ke database
+    try {
+      await _repo.updateCategoryOrders(updates);
+      // Panggil _filterAndGroupMenus lagi agar data Menu ikut bergeser sesuai kategori baru
+      _filterAndGroupMenus(searchQuery); 
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error reordering categories: $e");
+    }
+  }
+
   Future<void> addCategory(String name) async {
-    await _repo.addCategory(name);
+    final newOrder = categories.length;
+    await _repo.addCategory(name, newOrder);
     await fetchInitialData();
   }
 

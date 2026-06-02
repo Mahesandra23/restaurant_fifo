@@ -97,8 +97,10 @@ class MenuView extends StatelessWidget {
                           child: vm.groupedMenus.isEmpty
                               ? CustomEmptyState(
                                   // Icon berubah dinamis jika query search tidak menemukan hasil
-                                  icon: vm.searchQuery.isEmpty ? Icons.restaurant_menu : Icons.search_off,
-                                  message: vm.searchQuery.isEmpty 
+                                  icon: vm.searchQuery.isEmpty
+                                      ? Icons.restaurant_menu
+                                      : Icons.search_off,
+                                  message: vm.searchQuery.isEmpty
                                       ? 'There are no menus available yet.'
                                       : 'No menus found for "${vm.searchQuery}".',
                                   iconColor: AppRestaurantColors.secondary,
@@ -107,11 +109,14 @@ class MenuView extends StatelessWidget {
                                   padding: EdgeInsets.only(
                                     left: 16.w,
                                     right: 16.w,
-                                    bottom: 100.h, 
+                                    bottom: 100.h,
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: vm.groupedMenus.entries.map((entry) {
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: vm.groupedMenus.entries.map((
+                                      entry,
+                                    ) {
                                       return _buildMenuSection(
                                         context,
                                         vm,
@@ -217,7 +222,7 @@ class MenuView extends StatelessWidget {
               final item = items[index];
               return Container(
                 width: 130.w,
-                margin: EdgeInsets.only(right: 16.w),
+                margin: EdgeInsets.only(right: 16.w, bottom: 8.h),
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.background,
                   borderRadius: BorderRadius.circular(12.r),
@@ -253,10 +258,7 @@ class MenuView extends StatelessWidget {
                         ),
                       ),
                       builder: (context) {
-                        return MenuFormBottomSheet(
-                          vm: vm,
-                          existingMenu: item, 
-                        );
+                        return MenuFormBottomSheet(vm: vm, existingMenu: item);
                       },
                     );
                   },
@@ -271,6 +273,7 @@ class MenuView extends StatelessWidget {
   }
 
   // --- BOTTOM SHEET KELOLA KATEGORI ---
+// --- BOTTOM SHEET KELOLA KATEGORI ---
   void _showCategoryManager(BuildContext context, MenuViewModel vm) {
     String newCategoryName = '';
 
@@ -303,17 +306,21 @@ class MenuView extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 50.h,
+                      height: 35.h,
                       child: TextField(
                         decoration: InputDecoration(
-                          labelText: 'New Category Name',
+                          hintText: 'New Category Name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 0,
+                          ),
                         ),
                         onChanged: (val) => newCategoryName = val,
                       ),
@@ -328,6 +335,7 @@ class MenuView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                       ),
                       onPressed: () {
                         if (newCategoryName.trim().isNotEmpty) {
@@ -337,7 +345,10 @@ class MenuView extends StatelessWidget {
                       },
                       child: const Text(
                         'Add Category',
-                        style: TextStyle(color: AppRestaurantColors.accent),
+                        style: TextStyle(
+                          color: AppRestaurantColors.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -345,22 +356,30 @@ class MenuView extends StatelessWidget {
               ),
               Divider(height: 32.h),
               const Text(
-                'Manage Categories:',
+                'Manage Categories (Hold & Drag to Reorder):',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppRestaurantColors.secondary,
                 ),
               ),
               SizedBox(height: 8.h),
+              
+              // MENGGUNAKAN REORDERABLE LIST VIEW
               SizedBox(
-                height: 200.h,
-                child: ListView.builder(
+                height: 250.h, // Ditinggikan sedikit agar lebih leluasa saat menggeser
+                child: ReorderableListView.builder(
                   shrinkWrap: true,
                   itemCount: vm.categories.length,
+                  onReorder: (oldIndex, newIndex) {
+                    vm.reorderCategories(oldIndex, newIndex);
+                  },
                   itemBuilder: (context, index) {
                     final cat = vm.categories[index];
                     return ListTile(
+                      // KEY WAJIB ADA UNTUK REORDERABLE LIST
+                      key: ValueKey(cat.id), 
                       contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.drag_handle, color: Colors.grey),
                       title: Text(cat.name),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.redAccent),

@@ -6,32 +6,47 @@ class MenuRepository {
 
   // --- KATEGORI ---
   Future<List<Map<String, dynamic>>> fetchCategories() async {
-    return await _supabase.from('menu_categories').select().order('name');
+    // Ubah urutan berdasarkan sort_order
+    return await _supabase.from('menu_categories').select().order('sort_order', ascending: true);
   }
 
-  Future<void> addCategory(String name) async {
-    await _supabase.from('menu_categories').insert({'name': name});
+  Future<void> addCategory(String name, int sortOrder) async {
+    // Masukkan kategori baru beserta urutannya
+    await _supabase.from('menu_categories').insert({
+      'name': name,
+      'sort_order': sortOrder, 
+    });
+  }
+
+  // --- FUNGSI BARU UNTUK UPDATE URUTAN KATEGORI BATCH ---
+  Future<void> updateCategoryOrders(List<Map<String, dynamic>> updates) async {
+    // Kita melakukan looping update berdasarkan ID
+    for (var update in updates) {
+      await _supabase
+          .from('menu_categories')
+          .update({'sort_order': update['sort_order']})
+          .eq('id', update['id']);
+    }
   }
 
   Future<void> deleteCategory(String id) async {
     await _supabase.from('menu_categories').delete().eq('id', id);
   }
 
-  // --- INGREDIENTS (Ambil kolom unit juga) ---
+  // --- INGREDIENTS ---
   Future<List<Map<String, dynamic>>> fetchIngredients() async {
     return await _supabase.from('ingredients').select('id, name, unit').order('name');
   }
 
-  // --- MENU (Ambil quantity_needed dan unit dari relasi) ---
+  // --- MENU ---
   Future<List<Map<String, dynamic>>> fetchMenus() async {
     return await _supabase.from('menus').select('''
       id, name, description, price, image_path, category_id,
-      menu_categories(name),
+      menu_categories(name, sort_order), 
       menu_ingredients(ingredient_id, quantity_needed, ingredients(name, unit))
     ''').order('created_at', ascending: false);
   }
 
-  // Ganti List<String> ke Map<String, double> untuk menampung ID dan Jumlah takarannya
   Future<void> addMenu(Map<String, dynamic> menuData, Map<String, double> ingredientQuantities) async {
     final response = await _supabase.from('menus').insert(menuData).select('id').single();
     final newMenuId = response['id'];

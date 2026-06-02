@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Tambahkan ScreenUtil
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -29,10 +29,10 @@ class IngredientsView extends StatelessWidget {
             floatingActionButton: FloatingActionButton(
               heroTag: 'addIngredientBtn',
               backgroundColor: AppRestaurantColors.primary,
-              onPressed: () => _showAddIngredientSheet(context, vm),
+              // Panggil sheet tanpa data untuk ADD
+              onPressed: () => _showIngredientSheet(context, vm),
               child: const Icon(Icons.add, color: AppRestaurantColors.accent),
             ),
-            // Menggunakan SafeArea untuk menghindari status bar HP
             body: SafeArea(
               child: vm.isLoading
                   ? const Center(
@@ -46,7 +46,6 @@ class IngredientsView extends StatelessWidget {
                           iconColor: AppRestaurantColors.secondary,
                         )
                       : ListView.builder(
-                          // Standarisasi padding layar: 16.0, bottom 100 agar aman dari FAB
                           padding: EdgeInsets.only(
                               left: 16.w, right: 16.w, top: 16.h, bottom: 100.h),
                           itemCount: vm.groupedIngredients.keys.length,
@@ -57,10 +56,8 @@ class IngredientsView extends StatelessWidget {
                                 vm.groupedIngredients[categoryName]!;
 
                             return Card(
-                              // Gap vertikal antar Card List: 16.0
                               margin: EdgeInsets.only(bottom: 16.h),
                               shape: RoundedRectangleBorder(
-                                // Radius Medium standar: 12.0
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               color: AppRestaurantColors.background,
@@ -93,10 +90,8 @@ class IngredientsView extends StatelessWidget {
                                           endIndent: 16.w,
                                           color: AppRestaurantColors.secondary),
                                       ListTile(
-                                        // Padding dalam item list standar: 16.0 horizontal
-                                        contentPadding:
-                                            EdgeInsets.symmetric(
-                                                horizontal: 16.w, vertical: 4.h),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 16.w, vertical: 4.h),
                                         title: Text(
                                           item.name,
                                           style: const TextStyle(
@@ -111,12 +106,28 @@ class IngredientsView extends StatelessWidget {
                                             color: AppRestaurantColors.secondary,
                                           ),
                                         ),
-                                        trailing: IconButton(
-                                          icon: const Icon(
-                                              Icons.remove_circle_outline,
-                                              color: Colors.redAccent),
-                                          onPressed: () =>
-                                              vm.removeIngredient(item.id),
+                                        // Ubah trailing menjadi Row untuk tombol Edit & Delete
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.edit_outlined,
+                                                color: Colors.blueAccent,
+                                              ),
+                                              // Panggil sheet dan lempar data item untuk EDIT
+                                              onPressed: () => _showIngredientSheet(
+                                                  context, vm,
+                                                  ingredient: item),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                  Icons.remove_circle_outline,
+                                                  color: Colors.redAccent),
+                                              onPressed: () =>
+                                                  vm.removeIngredient(item.id),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -133,28 +144,27 @@ class IngredientsView extends StatelessWidget {
     );
   }
 
-  void _showAddIngredientSheet(BuildContext context, IngredientsViewModel vm) {
-    String name = '';
-    String selectedCategory = vm.categories.first;
-    String unit = 'kg'; // Default
+  // Fungsi Sheet diubah agar bisa menerima opsional parameter ingredient
+  void _showIngredientSheet(BuildContext context, IngredientsViewModel vm,
+      {IngredientItem? ingredient}) {
+    // Cek apakah ini mode Edit
+    bool isEdit = ingredient != null;
 
-    // Variabel Input Stok
-    double currentStock = 0;
-    double reorderPoint = 0;
+    // Isi state dengan data existing jika mode Edit
+    String name = ingredient?.name ?? '';
+    String selectedCategory = ingredient?.category ?? vm.categories.first;
+    String unit = ingredient?.unit ?? 'kg';
+    double currentStock = ingredient?.currentStock ?? 0;
+    double reorderPoint = ingredient?.reorderPoint ?? 0;
+    String abcClass = ingredient?.abcClass ?? 'C';
+    String hmlClass = ingredient?.hmlClass ?? 'L';
+    String sdeClass = ingredient?.sdeClass ?? 'E';
+    String fsnClass = ingredient?.fsnClass ?? 'N';
 
-    // Variabel SAW MCDM
-    String abcClass = 'C';
-    String hmlClass = 'L';
-    String sdeClass = 'E';
-    String fsnClass = 'N';
-
-    // Helper Dekorasi Input agar seragam dan rapi
     InputDecoration buildInputDecoration(String label) {
       return InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -172,7 +182,6 @@ class IngredientsView extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppRestaurantColors.background,
       shape: RoundedRectangleBorder(
-        // Radius Besar standar untuk BottomSheet: 16.0
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (context) {
@@ -196,10 +205,9 @@ class IngredientsView extends StatelessWidget {
             }
 
             return Container(
-              height: 0.85.sh, // Menggunakan .sh
+              height: 0.85.sh,
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
-                // Standarisasi padding Sheet: 16.0
                 left: 16.w,
                 right: 16.w,
                 top: 16.h,
@@ -209,30 +217,28 @@ class IngredientsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Add Ingredient & Parameters',
+                      isEdit ? 'Edit Ingredient' : 'Add Ingredient & Parameters',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: AppRestaurantColors.primary,
                       ),
                     ),
-                    // Gap judul ke form pertama: 24.0
                     SizedBox(height: 24.h),
 
-                    // ==========================================
-                    // --- 1. BASIC INFO ---
-                    // ==========================================
-                    TextField(
+                    // Pakai TextFormField + initialValue agar data terisi otomatis
+                    TextFormField(
+                      initialValue: name,
                       decoration: buildInputDecoration('Ingredient Name'),
                       onChanged: (val) => name = val,
                     ),
-                    // Gap antar elemen form vertikal: 16.0
                     SizedBox(height: 16.h),
                     Row(
                       children: [
                         Expanded(
                           flex: 2,
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true, // Fix Overflow
                             value: selectedCategory,
                             decoration: buildInputDecoration('Category'),
                             items: vm.categories
@@ -245,87 +251,49 @@ class IngredientsView extends StatelessWidget {
                                 setState(() => selectedCategory = val!),
                           ),
                         ),
-                        // Gap antar elemen form horizontal: 16.0
                         SizedBox(width: 16.w),
                         Expanded(
                           flex: 1,
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true,
                             value: unit,
                             decoration: buildInputDecoration('Unit'),
                             items: ['kg', 'gram', 'liter', 'ml', 'pcs', 'ikat']
-                                .map((u) =>
-                                    DropdownMenuItem(value: u, child: Text(u)))
+                                .map((u) => DropdownMenuItem(
+                                    value: u, child: Text(u)))
                                 .toList(),
                             onChanged: (val) => setState(() => unit = val!),
                           ),
                         ),
                       ],
                     ),
-                    // Gap antar section utama (Basic ke Stock): 24.0
                     SizedBox(height: 24.h),
 
-                    // ==========================================
-                    // --- 2. STOCK INFO & INPUT ---
-                    // ==========================================
                     const Text('Stock Settings',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
-                    // Gap judul sub-section ke elemen: 16.0
                     SizedBox(height: 16.h),
 
-                    Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        backgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        collapsedBackgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        tilePadding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 0),
-                        childrenPadding: EdgeInsets.only(
-                            left: 16.w, right: 16.w, bottom: 16.h),
-                        shape: RoundedRectangleBorder(
-                          // Radius Medium standar: 12.0
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        collapsedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        leading: Icon(Icons.lightbulb_outline,
-                            color: AppRestaurantColors.primary, size: 20.sp),
-                        title: Text(
-                          'What is the Reorder Point (ROP)?',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppRestaurantColors.primary,
-                              fontSize: 13.sp),
-                        ),
-                        children: [
-                          Text(
-                            'The Reorder Point is the minimum safety stock level. When current stock drops below this number, the system will automatically alert you to restock the ingredient before it runs out completely.',
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.black87),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Gap antar elemen vertikal: 16.0
-                    SizedBox(height: 16.h),
                     Row(
                       children: [
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
+                            initialValue: currentStock.toString(),
                             keyboardType: TextInputType.number,
-                            decoration: buildInputDecoration('Current Stock'),
+                            readOnly: isEdit, // Disable di mode Edit
+                            decoration: buildInputDecoration('Current Stock').copyWith(
+                              fillColor: isEdit ? Colors.grey.shade200 : null,
+                              filled: isEdit,
+                            ),
                             onChanged: (val) =>
                                 currentStock = double.tryParse(val) ?? 0,
                           ),
                         ),
                         SizedBox(width: 16.w),
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
+                            initialValue: reorderPoint.toString(),
                             keyboardType: TextInputType.number,
                             decoration: buildInputDecoration('Reorder Point'),
                             onChanged: (val) =>
@@ -334,98 +302,49 @@ class IngredientsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // Gap antar section utama (Stock ke SAW): 24.0
+                    if (isEdit)
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Text(
+                          '*Stok FIFO hanya dapat diubah melalui menu transaksi/penyesuaian stok.',
+                          style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                        ),
+                      ),
                     SizedBox(height: 24.h),
 
-                    // ==========================================
-                    // --- 3. SAW CRITERIA INFO & INPUT ---
-                    // ==========================================
                     const Text('Priority Criteria (SAW Method)',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
                     SizedBox(height: 16.h),
 
-                    Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        backgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        collapsedBackgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        tilePadding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 0),
-                        childrenPadding: EdgeInsets.only(
-                            left: 16.w, right: 16.w, bottom: 16.h),
-                        shape: RoundedRectangleBorder(
-                          // Radius Medium standar: 12.0
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        collapsedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        leading: Icon(Icons.lightbulb_outline,
-                            color: AppRestaurantColors.primary, size: 20.sp),
-                        title: Text(
-                          'How to classify these parameters?',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppRestaurantColors.primary,
-                              fontSize: 13.sp),
-                        ),
-                        children: [
-                          Text(
-                            'Select the appropriate metrics for this ingredient. The DSS algorithm uses these values to calculate priority rankings:',
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.black87),
-                          ),
-                          SizedBox(height: 8.h),
-                          buildBulletInfo('• ABC (Usage):',
-                              'A (High kitchen usage), B (Medium), C (Low/Rare).'),
-                          buildBulletInfo('• HML (Price):',
-                              'H (High/Expensive), M (Medium), L (Low/Cheap).'),
-                          buildBulletInfo('• SDE (Scarcity):',
-                              'S (Scarce/Hard to find), D (Difficult), E (Easy to buy).'),
-                          buildBulletInfo('• FSN (Movement):',
-                              'F (Fast depletion), S (Slow depletion), N (Non-moving).'),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
                     Row(
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true, // Fix Overflow
                             value: abcClass,
                             decoration: buildInputDecoration('ABC (Usage)'),
                             items: const [
-                              DropdownMenuItem(
-                                  value: 'A', child: Text('A (High)')),
-                              DropdownMenuItem(
-                                  value: 'B', child: Text('B (Medium)')),
-                              DropdownMenuItem(
-                                  value: 'C', child: Text('C (Low)')),
+                              DropdownMenuItem(value: 'A', child: Text('A (High)')),
+                              DropdownMenuItem(value: 'B', child: Text('B (Med)')),
+                              DropdownMenuItem(value: 'C', child: Text('C (Low)')),
                             ],
-                            onChanged: (val) =>
-                                setState(() => abcClass = val!),
+                            onChanged: (val) => setState(() => abcClass = val!),
                           ),
                         ),
                         SizedBox(width: 16.w),
                         Expanded(
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true, // Fix Overflow
                             value: hmlClass,
                             decoration: buildInputDecoration('HML (Price)'),
                             items: const [
-                              DropdownMenuItem(
-                                  value: 'H', child: Text('H (High)')),
-                              DropdownMenuItem(
-                                  value: 'M', child: Text('M (Medium)')),
-                              DropdownMenuItem(
-                                  value: 'L', child: Text('L (Low)')),
+                              DropdownMenuItem(value: 'H', child: Text('H (High)')),
+                              DropdownMenuItem(value: 'M', child: Text('M (Med)')),
+                              DropdownMenuItem(value: 'L', child: Text('L (Low)')),
                             ],
-                            onChanged: (val) =>
-                                setState(() => hmlClass = val!),
+                            onChanged: (val) => setState(() => hmlClass = val!),
                           ),
                         ),
                       ],
@@ -435,82 +354,95 @@ class IngredientsView extends StatelessWidget {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true, // Fix Overflow
                             value: sdeClass,
                             decoration: buildInputDecoration('SDE (Scarcity)'),
                             items: const [
-                              DropdownMenuItem(
-                                  value: 'S', child: Text('S (Scarce)')),
-                              DropdownMenuItem(
-                                  value: 'D', child: Text('D (Difficult)')),
-                              DropdownMenuItem(
-                                  value: 'E', child: Text('E (Easy)')),
+                              DropdownMenuItem(value: 'S', child: Text('S (Scarce)')),
+                              DropdownMenuItem(value: 'D', child: Text('D (Diff)')),
+                              DropdownMenuItem(value: 'E', child: Text('E (Easy)')),
                             ],
-                            onChanged: (val) =>
-                                setState(() => sdeClass = val!),
+                            onChanged: (val) => setState(() => sdeClass = val!),
                           ),
                         ),
                         SizedBox(width: 16.w),
                         Expanded(
                           child: DropdownButtonFormField<String>(
+                            isExpanded: true, // Fix Overflow (Utama)
                             value: fsnClass,
                             decoration: buildInputDecoration('FSN (Movement)'),
                             items: const [
                               DropdownMenuItem(
-                                  value: 'F', child: Text('F (Fast)')),
+                                  value: 'F',
+                                  child: Text('F (Fast)',
+                                      overflow: TextOverflow.ellipsis)),
                               DropdownMenuItem(
-                                  value: 'S', child: Text('S (Slow)')),
+                                  value: 'S',
+                                  child: Text('S (Slow)',
+                                      overflow: TextOverflow.ellipsis)),
                               DropdownMenuItem(
-                                  value: 'N', child: Text('N (Non-moving)')),
+                                  value: 'N',
+                                  child: Text('N (Non-moving)',
+                                      overflow: TextOverflow.ellipsis)),
                             ],
-                            onChanged: (val) =>
-                                setState(() => fsnClass = val!),
+                            onChanged: (val) => setState(() => fsnClass = val!),
                           ),
                         ),
                       ],
                     ),
-                    // Gap antar section utama (SAW ke Tombol Save): 24.0
                     SizedBox(height: 24.h),
 
-                    // ==========================================
-                    // --- SAVE BUTTON ---
-                    // ==========================================
                     SizedBox(
-                      width: 1.sw, // Mengubah double.infinity menjadi 1.sw
-                      // Standarisasi Tinggi Tombol: 55.0
+                      width: 1.sw,
                       height: 40.h,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppRestaurantColors.primary,
                           shape: RoundedRectangleBorder(
-                            // Radius Medium standar tombol: 12.0
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                         ),
                         onPressed: () {
                           if (name.trim().isNotEmpty) {
-                            vm.addIngredient(
-                              name: name.trim(),
-                              category: selectedCategory,
-                              unit: unit,
-                              currentStock: currentStock,
-                              reorderPoint: reorderPoint,
-                              abc: abcClass,
-                              hml: hmlClass,
-                              sde: sdeClass,
-                              fsn: fsnClass,
-                            );
+                            if (isEdit) {
+                              vm.updateIngredient(
+                                id: ingredient.id,
+                                name: name.trim(),
+                                category: selectedCategory,
+                                unit: unit,
+                                reorderPoint: reorderPoint,
+                                abc: abcClass,
+                                hml: hmlClass,
+                                sde: sdeClass,
+                                fsn: fsnClass,
+                              );
+                            } else {
+                              vm.addIngredient(
+                                name: name.trim(),
+                                category: selectedCategory,
+                                unit: unit,
+                                currentStock: currentStock,
+                                reorderPoint: reorderPoint,
+                                abc: abcClass,
+                                hml: hmlClass,
+                                sde: sdeClass,
+                                fsn: fsnClass,
+                              );
+                            }
+                            
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Ingredient and parameters for restock added successfully!'),
+                              SnackBar(
+                                content: Text(isEdit
+                                    ? 'Ingredient updated successfully!'
+                                    : 'Ingredient added successfully!'),
                                 backgroundColor: Colors.green,
                               ),
                             );
                           }
                         },
                         child: Text(
-                          'Add Ingredient',
+                          isEdit ? 'Save Changes' : 'Add Ingredient',
                           style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,

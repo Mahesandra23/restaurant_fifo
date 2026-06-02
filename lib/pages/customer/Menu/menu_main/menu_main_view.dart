@@ -222,7 +222,7 @@ class MenuMainView extends StatelessWidget {
               return Container(
                 width: 130.w,
                 // Gap antar Card item (Horizontal): 16.0
-                margin: EdgeInsets.only(right: 16.w),
+                margin: EdgeInsets.only(right: 16.w, bottom: 8.h), // Margin bawah untuk memberikan jarak ke bawah
                 decoration: BoxDecoration(
                   color: AppRestaurantColors.background,
                   // Radius standar Card: 12.0

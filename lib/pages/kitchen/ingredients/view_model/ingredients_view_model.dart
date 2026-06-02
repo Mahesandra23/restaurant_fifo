@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
 import 'package:restaurant_fifo/pages/kitchen/ingredients/repository/ingredients_repository.dart';
 
-// UPDATE MODEL: Tambahkan parameter stok dan kriteria
 class IngredientItem {
   final String id;
   final String name;
   final String category;
   final String unit;
   final double currentStock;
+  // Tambahkan parameter untuk menampung data form saat di-edit
+  final double reorderPoint;
+  final String abcClass;
+  final String hmlClass;
+  final String sdeClass;
+  final String fsnClass;
 
   IngredientItem({
     required this.id,
@@ -16,6 +21,11 @@ class IngredientItem {
     required this.category,
     this.unit = 'pcs',
     this.currentStock = 0,
+    this.reorderPoint = 0,
+    this.abcClass = 'C',
+    this.hmlClass = 'L',
+    this.sdeClass = 'E',
+    this.fsnClass = 'N',
   });
 }
 
@@ -29,11 +39,9 @@ class IngredientsViewModel extends BaseViewModel {
   Map<String, List<IngredientItem>> groupedIngredients = {};
 
   final List<String> categories = [
-    'Bahan Baku Utama',
-    'Sayur & Buah',
-    'Bumbu & Rempah',
-    'Cairan & Minyak',
-    'Bahan Kering',
+    'Main Ingredients',
+    'Vegetables & Fruits',
+    'Supporting Ingredients',
   ];
 
   @override
@@ -50,25 +58,27 @@ class IngredientsViewModel extends BaseViewModel {
       final rawData = await _repo.fetchIngredients();
 
       rawIngredients = rawData.map((row) {
-        // --- LOGIKA HITUNG TOTAL STOK FIFO ---
         double totalStock = 0;
         String unitName = row['unit']?.toString() ?? 'pcs';
 
-        // Cek apakah ada data di tabel relasi 'stocks'
         if (row['stocks'] != null) {
           final List<dynamic> stockBatches = row['stocks'];
           for (var batch in stockBatches) {
             totalStock += (batch['current_quantity'] as num?)?.toDouble() ?? 0;
           }
         }
-        // -------------------------------------
 
         return IngredientItem(
           id: row['id'].toString(),
           name: row['name'].toString(),
           category: row['category'].toString(),
           unit: unitName,
-          currentStock: totalStock, // Masukkan total hasil hitungan relasi
+          currentStock: totalStock,
+          reorderPoint: (row['reorder_point'] as num?)?.toDouble() ?? 0,
+          abcClass: row['abc_class']?.toString() ?? 'C',
+          hmlClass: row['hml_class']?.toString() ?? 'L',
+          sdeClass: row['sde_class']?.toString() ?? 'E',
+          fsnClass: row['fsn_class']?.toString() ?? 'N',
         );
       }).toList();
 
@@ -91,7 +101,6 @@ class IngredientsViewModel extends BaseViewModel {
     }
   }
 
-  // UPDATE FUNGSI TAMBAH: Menerima banyak parameter
   Future<void> addIngredient({
     required String name,
     required String category,
@@ -121,6 +130,42 @@ class IngredientsViewModel extends BaseViewModel {
       await fetchIngredients();
     } catch (e) {
       debugPrint("Error add ingredient: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // FUNGSI UPDATE BARU
+  Future<void> updateIngredient({
+    required String id,
+    required String name,
+    required String category,
+    required String unit,
+    required double reorderPoint,
+    required String abc,
+    required String hml,
+    required String sde,
+    required String fsn,
+  }) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repo.updateIngredient(
+        id: id,
+        name: name,
+        category: category,
+        unit: unit,
+        reorderPoint: reorderPoint,
+        abc: abc,
+        hml: hml,
+        sde: sde,
+        fsn: fsn,
+      );
+      await fetchIngredients();
+    } catch (e) {
+      debugPrint("Error update ingredient: $e");
     } finally {
       isLoading = false;
       notifyListeners();

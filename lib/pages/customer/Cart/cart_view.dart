@@ -19,11 +19,11 @@ class CartView extends StatelessWidget {
         title: const Text(
           'My Cart',
           style: TextStyle(
-            color: AppRestaurantColors.background, // Warna teks accent
+            color: AppRestaurantColors.background,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: AppRestaurantColors.primary, // Background primary
+        backgroundColor: AppRestaurantColors.primary,
         elevation: 0,
         centerTitle: true,
       ),
@@ -35,47 +35,61 @@ class CartView extends StatelessWidget {
             )
           : SafeArea(
               child: ListView.builder(
-                // Standarisasi padding layar utama: 16.0
                 padding: EdgeInsets.all(16.w),
                 itemCount: vm.items.length,
                 itemBuilder: (context, index) {
                   final item = vm.items[index];
                   return Container(
-                    // Gap antar Card item (Vertical): 16.0
                     margin: EdgeInsets.only(bottom: 16.h),
-                    // Padding dalam Card disamakan ke 16.0 agar konsisten
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
                       color: AppRestaurantColors.accent2.withOpacity(0.05),
-                      // Radius standar Card: 12.0
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(color: AppRestaurantColors.accent),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
                           blurRadius: 5.r,
-                          // Offset disamakan dengan card di menu utama
                           offset: Offset(0, 2.h),
                         ),
                       ],
                     ),
                     child: Row(
                       children: [
+                        // --- BAGIAN GAMBAR YANG SUDAH DIPERBAIKI ---
                         Container(
                           height: 60.h,
                           width: 60.w,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade200,
-                            // Radius untuk gambar di dalam card sedikit lebih kecil (8.0)
-                            // agar proporsional dengan radius luar (12.0)
                             borderRadius: BorderRadius.circular(8.r),
                           ),
-                          child: const Icon(
-                            Icons.fastfood,
-                            color: AppRestaurantColors.secondary,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: item.menu.imageUrl.isNotEmpty
+                                ? Image.network(
+                                    item.menu.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      // Fallback jika url gambar error/gagal load
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    // Fallback jika string url kosong dari database
+                                    child: Icon(
+                                      Icons.fastfood,
+                                      color: AppRestaurantColors.secondary,
+                                    ),
+                                  ),
                           ),
                         ),
-                        // Gap standar antar elemen horizontal: 16.0
+                        // -------------------------------------------
                         SizedBox(width: 16.w),
                         Expanded(
                           child: Column(
@@ -89,7 +103,6 @@ class CartView extends StatelessWidget {
                                   color: AppRestaurantColors.primary,
                                 ),
                               ),
-                              // Gap kecil antar teks judul dan harga
                               SizedBox(height: 4.h),
                               Text(
                                 vm.formatRupiah(item.menu.price),
@@ -115,8 +128,7 @@ class CartView extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppRestaurantColors.primary,
-                                fontSize: 14
-                                    .sp, // Diberi ukuran spesifik agar lebih jelas
+                                fontSize: 14.sp,
                               ),
                             ),
                             IconButton(
@@ -135,7 +147,6 @@ class CartView extends StatelessWidget {
               ),
             ),
       bottomNavigationBar: Container(
-        // Standarisasi padding layar utama: 16.0
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: AppRestaurantColors.background,
@@ -162,7 +173,6 @@ class CartView extends StatelessWidget {
                       fontSize: 12.sp,
                     ),
                   ),
-                  // Gap kecil untuk pemisah teks
                   SizedBox(height: 4.h),
                   Text(
                     vm.formatRupiah(vm.totalPrice),
@@ -182,7 +192,6 @@ class CartView extends StatelessWidget {
                     vertical: 10.h,
                   ),
                   shape: RoundedRectangleBorder(
-                    // Radius standar Tombol/Button disamakan dengan Card: 12.0
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
