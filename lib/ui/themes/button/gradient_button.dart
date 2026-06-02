@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
 
-/// backgroud button di pakai pada login, rooms, first setup
 class GradientButton extends StatelessWidget {
   final Widget child;
   final double? borderRadius;

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
-// import 'package:restaurant_fifo/ui/themes/typography/text_style_app.dart';
 
-/// ini adalah tampilan untuk text field dengan label dan hint. Di gunakan pada halaman setup profile, add new room, dan setting.
 class LabeledTextField extends StatefulWidget {
   final String label;
   final String hint;

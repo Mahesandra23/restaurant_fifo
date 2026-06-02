@@ -454,55 +454,55 @@ class PaymentView extends StatelessWidget {
   }
 
   // --- WIDGET KUSTOM BARU UNTUK KARTU METODE MAKAN BER-BORDER ---
-  Widget _buildDiningMethodCard({
-    required bool isSelected,
-    required String title,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppRestaurantColors.accent2.withOpacity(0.05)
-              : Colors.white,
-          border: Border.all(
-            color: isSelected
-                ? AppRestaurantColors.accent
-                : Colors.grey.shade200,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? AppRestaurantColors.primary
-                  : AppRestaurantColors.secondary,
-              size: 20.sp,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? AppRestaurantColors.primary
-                    : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildDiningMethodCard({
+  //   required bool isSelected,
+  //   required String title,
+  //   required IconData icon,
+  //   required VoidCallback onTap,
+  // }) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: AnimatedContainer(
+  //       duration: const Duration(milliseconds: 200),
+  //       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+  //       decoration: BoxDecoration(
+  //         color: isSelected
+  //             ? AppRestaurantColors.accent2.withOpacity(0.05)
+  //             : Colors.white,
+  //         border: Border.all(
+  //           color: isSelected
+  //               ? AppRestaurantColors.accent
+  //               : Colors.grey.shade200,
+  //           width: isSelected ? 2 : 1,
+  //         ),
+  //         borderRadius: BorderRadius.circular(12.r),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Icon(
+  //             icon,
+  //             color: isSelected
+  //                 ? AppRestaurantColors.primary
+  //                 : AppRestaurantColors.secondary,
+  //             size: 20.sp,
+  //           ),
+  //           SizedBox(width: 8.w),
+  //           Text(
+  //             title,
+  //             style: TextStyle(
+  //               fontSize: 14.sp,
+  //               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+  //               color: isSelected
+  //                   ? AppRestaurantColors.primary
+  //                   : Colors.black87,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Dialog Sukses
   void _showSuccessDialog(BuildContext context) {

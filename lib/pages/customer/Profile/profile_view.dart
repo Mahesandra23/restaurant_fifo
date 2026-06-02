@@ -274,7 +274,7 @@ class ProfileView extends StatelessWidget {
                 children: [
                   Text(
                     'Order #${order.id}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: AppRestaurantColors.primary, fontSize: 14.sp),
                   ),
                   Text(
                     order.date,
