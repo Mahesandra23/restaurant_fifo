@@ -263,11 +263,7 @@ class IngredientsView extends StatelessWidget {
                           child: TextFormField(
                             initialValue: currentStock.toString(),
                             keyboardType: TextInputType.number,
-                            readOnly: isEdit, // Disable di mode Edit
-                            decoration: buildInputDecoration('Current Stock').copyWith(
-                              fillColor: isEdit ? Colors.grey.shade200 : null,
-                              filled: isEdit,
-                            ),
+                            decoration: buildInputDecoration('Current Stock'),
                             onChanged: (val) =>
                                 currentStock = double.tryParse(val) ?? 0,
                           ),
@@ -284,14 +280,6 @@ class IngredientsView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (isEdit)
-                      Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          '*Stok FIFO hanya dapat diubah melalui menu transaksi/penyesuaian stok.',
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                      ),
                     SizedBox(height: 24),
 
                     const Text('Priority Criteria (SAW Method)',
@@ -393,6 +381,7 @@ class IngredientsView extends StatelessWidget {
                                 category: selectedCategory,
                                 unit: unit,
                                 reorderPoint: reorderPoint,
+                                currentStock: currentStock,
                                 abc: abcClass,
                                 hml: hmlClass,
                                 sde: sdeClass,

@@ -20,7 +20,7 @@ class LoginView extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: double.infinity,
-            margin: EdgeInsets.only(top: 250), // Diperkecil agar tidak terlalu bawah
+            margin: EdgeInsets.only(top: 240), // Diperkecil agar tidak terlalu bawah
             decoration: BoxDecoration(
               color: AppRestaurantColors.background,
               borderRadius: BorderRadius.only(
@@ -74,7 +74,7 @@ class LoginView extends StatelessWidget {
                   
                   // Tombol Login diperkecil ukurannya menjadi 45
                   SizedBox(
-                    height: 35,
+                    height: 45,
                     width: double.infinity,
                     child: GradientButton(
                       width: double.infinity,
@@ -103,7 +103,7 @@ class LoginView extends StatelessWidget {
                   
                   // Tombol Guest diperkecil ukurannya menjadi 45
                   SizedBox(
-                    height: 35,
+                    height: 45,
                     width: double.infinity,
                     child: GradientButton(
                       width: double.infinity,

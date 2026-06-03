@@ -18,26 +18,25 @@ class SignupView extends StatelessWidget {
       create: (_) => SignupViewModel(SignupRepository()),
       child: Consumer<SignupViewModel>(
         builder: (context, vm, child) {
-          return SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: Container(
-              width: double.infinity,
-              constraints: BoxConstraints(
-                minHeight: double.infinity - 140, // Disesuaikan agar lebih compact
+          // PERBAIKAN: Container ditaruh di paling luar seperti LoginView
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            margin: const EdgeInsets.only(top: 190), // Menyesuaikan posisi atas
+            decoration: const BoxDecoration(
+              color: AppRestaurantColors.background, // Ini yang bikin warna putih
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
-              margin: EdgeInsets.only(top: 190), // Disesuaikan agar lebih compact
+            ),
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
-                top: 20, // Diperkecil dari 24
+                top: 20,
                 bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
-              ),
-              decoration: BoxDecoration(
-                color: AppRestaurantColors.background,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,21 +44,21 @@ class SignupView extends StatelessWidget {
                   Text(
                     "RestaurantApp",
                     style: TextStyle(
-                      fontSize: 24, // Diperkecil dari 28
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
                     "Create your account",
                     style: TextStyle(
-                      fontSize: 14, // Diperkecil dari 16
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppRestaurantColors.primary,
                     ),
                   ),
-                  SizedBox(height: 20), // Diperkecil dari 24
+                  const SizedBox(height: 20),
                   LabeledTextField(
                     label: 'Username',
                     hint: 'Username',
@@ -68,21 +67,21 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 12), // Diperkecil dari 16
+                  const SizedBox(height: 12),
                   LabeledTextField(
                     label: 'Email',
                     hint: 'Email address',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.email, value),
                   ),
-                  SizedBox(height: 12), // Diperkecil dari 16
+                  const SizedBox(height: 12),
                   LabeledTextField(
                     label: 'Phone Number',
                     hint: 'Phone Number',
                     onChanged: (value) =>
                         vm.setTextFieldValue(InputSingupFieldType.phone, value),
                   ),
-                  SizedBox(height: 12), // Diperkecil dari 16
+                  const SizedBox(height: 12),
                   LabeledTextField(
                     label: 'Password',
                     hint: 'Password',
@@ -92,11 +91,11 @@ class SignupView extends StatelessWidget {
                       value,
                     ),
                   ),
-                  SizedBox(height: 20), // Diperkecil dari 24
+                  const SizedBox(height: 20),
 
-                  // Tombol Signup diperkecil ukurannya menjadi 45
+                  // Tombol Signup
                   SizedBox(
-                    height: 35,
+                    height: 45,
                     width: double.infinity,
                     child: GradientButton(
                       width: double.infinity,
@@ -119,7 +118,7 @@ class SignupView extends StatelessWidget {
                             : Text(
                                 'Register',
                                 style: TextStyle(
-                                  fontSize: 14, // Teks dalam tombol diperkecil
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: AppRestaurantColors.accent,
                                 ),
@@ -127,20 +126,20 @@ class SignupView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Center(
                     child: RichText(
                       text: TextSpan(
                         text: "Already have an account? ",
                         style: TextStyle(
-                          fontSize: 12, // Diperkecil dari 14
+                          fontSize: 12,
                           color: AppRestaurantColors.secondary,
                         ),
                         children: [
                           TextSpan(
                             text: "Login here",
                             style: TextStyle(
-                              fontSize: 12, // Diperkecil dari 14
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppRestaurantColors.accent,
                             ),
