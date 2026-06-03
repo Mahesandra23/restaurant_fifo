@@ -8,7 +8,6 @@ class IngredientItem {
   final String category;
   final String unit;
   final double currentStock;
-  // Tambahkan parameter untuk menampung data form saat di-edit
   final double reorderPoint;
   final String abcClass;
   final String hmlClass;
@@ -143,6 +142,7 @@ class IngredientsViewModel extends BaseViewModel {
     required String category,
     required String unit,
     required double reorderPoint,
+    required double currentStock,
     required String abc,
     required String hml,
     required String sde,
@@ -158,6 +158,7 @@ class IngredientsViewModel extends BaseViewModel {
         category: category,
         unit: unit,
         reorderPoint: reorderPoint,
+        currentStock: currentStock,
         abc: abc,
         hml: hml,
         sde: sde,

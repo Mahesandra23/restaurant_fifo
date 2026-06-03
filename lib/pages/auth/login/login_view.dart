@@ -21,7 +21,7 @@ class LoginView extends StatelessWidget {
           return Container(
             width: 1.sw,
             height: 1.sh,
-            margin: EdgeInsets.only(top: 250.h), // Diperkecil agar tidak terlalu bawah
+            margin: EdgeInsets.only(top: 240.h), // Diperkecil agar tidak terlalu bawah
             decoration: BoxDecoration(
               color: AppRestaurantColors.background,
               borderRadius: BorderRadius.only(
