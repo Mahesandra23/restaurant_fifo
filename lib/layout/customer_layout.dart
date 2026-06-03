@@ -55,7 +55,7 @@ class _CustomerLayoutState extends State<CustomerLayout> {
           children: [
             _buildNavItem(context, index: 0, icon: Icons.home_outlined, label: 'Menu'),
             _buildNavItem(context, index: 1, icon: Icons.shopping_cart_outlined, label: 'Cart'),
-            _buildNavItem(context, index: 2, icon: Icons.person_outline, label: 'User'),
+            _buildNavItem(context, index: 2, icon: Icons.person_outline, label: 'Profile'),
           ],
         ),
       ),
