@@ -68,7 +68,7 @@ class ProfileView extends StatelessWidget {
                           user.id,
                           user.displayName,
                           user.email,
-                          currentPhone, // Memasukkan nomor telepon ke Profile Card
+                          currentPhone,
                           session,
                         ),
                         SizedBox(height: 16.h),
