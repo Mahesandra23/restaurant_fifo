@@ -121,6 +121,7 @@ class ProfileView extends StatelessWidget {
               SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
+                height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,

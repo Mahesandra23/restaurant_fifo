@@ -105,7 +105,6 @@ class IngredientsView extends StatelessWidget {
                                             color: AppRestaurantColors.secondary,
                                           ),
                                         ),
-                                        // Ubah trailing menjadi Row untuk tombol Edit & Delete
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -186,6 +185,23 @@ class IngredientsView extends StatelessWidget {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
+            Widget buildBulletInfo(String title, String desc) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                    children: [
+                      TextSpan(
+                          text: '$title ',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: desc),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             return Container(
               height: 0.85 * MediaQuery.of(context).size.height,
               padding: EdgeInsets.only(
@@ -257,6 +273,45 @@ class IngredientsView extends StatelessWidget {
                             color: AppRestaurantColors.primary)),
                     SizedBox(height: 16),
 
+                    // INFO ROP DIKEMBALIKAN KE SINI
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        backgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        collapsedBackgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        tilePadding: EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 0),
+                        childrenPadding: EdgeInsets.only(
+                            left: 16, right: 16, bottom: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        leading: Icon(Icons.lightbulb_outline,
+                            color: AppRestaurantColors.primary, size: 20),
+                        title: Text(
+                          'What is the Reorder Point (ROP)?',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppRestaurantColors.primary,
+                              fontSize: 13),
+                        ),
+                        children: [
+                          Text(
+                            'The Reorder Point is the minimum safety stock level. When current stock drops below this number, the system will automatically alert you to restock the ingredient before it runs out completely.',
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.black87),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+
                     Row(
                       children: [
                         Expanded(
@@ -286,6 +341,54 @@ class IngredientsView extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
+                    SizedBox(height: 16),
+
+                    // INFO KRITERIA SAW DIKEMBALIKAN KE SINI
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        backgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        collapsedBackgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        tilePadding: EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 0),
+                        childrenPadding: EdgeInsets.only(
+                            left: 16, right: 16, bottom: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        leading: Icon(Icons.lightbulb_outline,
+                            color: AppRestaurantColors.primary, size: 20),
+                        title: Text(
+                          'How to classify these parameters?',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppRestaurantColors.primary,
+                              fontSize: 13),
+                        ),
+                        children: [
+                          Text(
+                            'Select the appropriate metrics for this ingredient. The DSS algorithm uses these values to calculate priority rankings:',
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.black87),
+                          ),
+                          SizedBox(height: 8),
+                          buildBulletInfo('• ABC (Usage):',
+                              'A (High kitchen usage), B (Medium), C (Low/Rare).'),
+                          buildBulletInfo('• HML (Price):',
+                              'H (High/Expensive), M (Medium), L (Low/Cheap).'),
+                          buildBulletInfo('• SDE (Scarcity):',
+                              'S (Scarce/Hard to find), D (Difficult), E (Easy to buy).'),
+                          buildBulletInfo('• FSN (Movement):',
+                              'F (Fast depletion), S (Slow depletion), N (Non-moving).'),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 16),
 
                     Row(

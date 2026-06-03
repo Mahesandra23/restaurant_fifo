@@ -347,6 +347,7 @@ class MenuView extends StatelessWidget {
                         style: TextStyle(
                           color: AppRestaurantColors.accent,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),

@@ -484,7 +484,7 @@ class StockView extends StatelessWidget {
               SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppRestaurantColors.primary,
@@ -521,10 +521,11 @@ class StockView extends StatelessWidget {
                     }
                   },
                   child: const Text(
-                    'SUBMIT RESTOCK',
+                    'Submit Restock',
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),

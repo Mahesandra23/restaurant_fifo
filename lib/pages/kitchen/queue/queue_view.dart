@@ -342,7 +342,7 @@ class QueueView extends StatelessWidget {
               // --- TOMBOL AKSI DINAMIS BERDASARKAN STATUS ---
               SizedBox(
                 width: double.infinity, // Mengubah double.infinity menjadi double.infinity
-                height: 35
+                height: 40
                     , // Disamakan dengan tinggi tombol di halaman lain (55.0)
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -388,7 +388,7 @@ class QueueView extends StatelessWidget {
                       color: isPending
                           ? AppRestaurantColors.primary
                           : AppRestaurantColors.accent,
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

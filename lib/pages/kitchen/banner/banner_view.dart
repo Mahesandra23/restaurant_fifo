@@ -402,7 +402,7 @@ class _BannerFormBottomSheetState extends State<BannerFormBottomSheet> {
             SizedBox(
               width: double.infinity, // Mengubah double.infinity menjadi double.infinity
               // Standarisasi Tinggi Tombol: 55.0
-              height: 35,
+              height: 40,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppRestaurantColors.primary,

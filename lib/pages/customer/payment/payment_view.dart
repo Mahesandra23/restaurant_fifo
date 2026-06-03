@@ -339,8 +339,8 @@ class PaymentView extends StatelessWidget {
                 ),
                 child: SafeArea(
                   child: SizedBox(
-                    width: double.infinity, // Mengubah double.infinity menjadi double.infinity
-                    height: 45,
+                    width: double.infinity,
+                    height: 40,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppRestaurantColors.primary,
@@ -368,7 +368,7 @@ class PaymentView extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              'PAY NOW',
+                              'Pay Now',
                               style: TextStyle(
                                 color: AppRestaurantColors.accent,
                                 fontWeight: FontWeight.bold,
