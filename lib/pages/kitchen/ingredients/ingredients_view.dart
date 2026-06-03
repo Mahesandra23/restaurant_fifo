@@ -106,7 +106,6 @@ class IngredientsView extends StatelessWidget {
                                             color: AppRestaurantColors.secondary,
                                           ),
                                         ),
-                                        // Ubah trailing menjadi Row untuk tombol Edit & Delete
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -275,6 +274,45 @@ class IngredientsView extends StatelessWidget {
                             color: AppRestaurantColors.primary)),
                     SizedBox(height: 16.h),
 
+                    // INFO ROP DIKEMBALIKAN KE SINI
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        backgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        collapsedBackgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        tilePadding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 0),
+                        childrenPadding: EdgeInsets.only(
+                            left: 16.w, right: 16.w, bottom: 16.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        leading: Icon(Icons.lightbulb_outline,
+                            color: AppRestaurantColors.primary, size: 20.sp),
+                        title: Text(
+                          'What is the Reorder Point (ROP)?',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppRestaurantColors.primary,
+                              fontSize: 13.sp),
+                        ),
+                        children: [
+                          Text(
+                            'The Reorder Point is the minimum safety stock level. When current stock drops below this number, the system will automatically alert you to restock the ingredient before it runs out completely.',
+                            style: TextStyle(
+                                fontSize: 12.sp, color: Colors.black87),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
                     Row(
                       children: [
                         Expanded(
@@ -304,6 +342,54 @@ class IngredientsView extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppRestaurantColors.primary)),
+                    SizedBox(height: 16.h),
+
+                    // INFO KRITERIA SAW DIKEMBALIKAN KE SINI
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        backgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        collapsedBackgroundColor:
+                            AppRestaurantColors.primary.withOpacity(0.05),
+                        tilePadding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 0),
+                        childrenPadding: EdgeInsets.only(
+                            left: 16.w, right: 16.w, bottom: 16.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        collapsedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        leading: Icon(Icons.lightbulb_outline,
+                            color: AppRestaurantColors.primary, size: 20.sp),
+                        title: Text(
+                          'How to classify these parameters?',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppRestaurantColors.primary,
+                              fontSize: 13.sp),
+                        ),
+                        children: [
+                          Text(
+                            'Select the appropriate metrics for this ingredient. The DSS algorithm uses these values to calculate priority rankings:',
+                            style: TextStyle(
+                                fontSize: 12.sp, color: Colors.black87),
+                          ),
+                          SizedBox(height: 8.h),
+                          buildBulletInfo('• ABC (Usage):',
+                              'A (High kitchen usage), B (Medium), C (Low/Rare).'),
+                          buildBulletInfo('• HML (Price):',
+                              'H (High/Expensive), M (Medium), L (Low/Cheap).'),
+                          buildBulletInfo('• SDE (Scarcity):',
+                              'S (Scarce/Hard to find), D (Difficult), E (Easy to buy).'),
+                          buildBulletInfo('• FSN (Movement):',
+                              'F (Fast depletion), S (Slow depletion), N (Non-moving).'),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 16.h),
 
                     Row(
