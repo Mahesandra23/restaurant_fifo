@@ -7,6 +7,7 @@ import 'package:restaurant_fifo/mvvm/mvvm.dart';
 import 'package:restaurant_fifo/pages/customer/History/repository/history_repository.dart';
 import 'package:restaurant_fifo/pages/customer/History/view_model/history_view_model.dart';
 import 'package:restaurant_fifo/ui/themes/app_colors.dart';
+import 'package:restaurant_fifo/ui/themes/reuseable_widget/custom_empty_state.dart';
 
 class HistoryView extends StatelessWidget {
   const HistoryView({super.key});
@@ -45,7 +46,10 @@ class HistoryView extends StatelessWidget {
               centerTitle: true,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppRestaurantColors.background),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppRestaurantColors.background,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -59,7 +63,12 @@ class HistoryView extends StatelessWidget {
                     color: AppRestaurantColors.primary,
                     onRefresh: () => vm.fetchData(),
                     child: vm.fullOrderHistory.isEmpty
-                        ? _buildEmptyState()
+                        ? const CustomEmptyState(
+                            icon: Icons.history,
+                            message:
+                                'There are no orders yet. Start ordering to see your history here!',
+                            iconColor: AppRestaurantColors.accent,
+                          )
                         : ListView.builder(
                             padding: EdgeInsets.all(16.w),
                             physics: const AlwaysScrollableScrollPhysics(),
@@ -74,8 +83,12 @@ class HistoryView extends StatelessWidget {
                                 margin: EdgeInsets.only(bottom: 16.h),
                                 padding: EdgeInsets.all(16.w),
                                 decoration: BoxDecoration(
-                                  color: AppRestaurantColors.accent2.withOpacity(0.05),
-                                  border: Border.all(color: AppRestaurantColors.accent, width: 1.2),
+                                  color: AppRestaurantColors.accent2
+                                      .withOpacity(0.05),
+                                  border: Border.all(
+                                    color: AppRestaurantColors.accent,
+                                    width: 1.2,
+                                  ),
                                   borderRadius: BorderRadius.circular(12.r),
                                   boxShadow: [
                                     BoxShadow(
@@ -89,7 +102,8 @@ class HistoryView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'Order #${order.id}',
@@ -102,7 +116,8 @@ class HistoryView extends StatelessWidget {
                                         Text(
                                           order.date,
                                           style: TextStyle(
-                                            color: AppRestaurantColors.secondary,
+                                            color:
+                                                AppRestaurantColors.secondary,
                                             fontSize: 12.sp,
                                           ),
                                         ),
@@ -118,7 +133,8 @@ class HistoryView extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           order.totalPrice,
@@ -135,7 +151,9 @@ class HistoryView extends StatelessWidget {
                                           ),
                                           decoration: BoxDecoration(
                                             color: statusColor.withOpacity(0.2),
-                                            borderRadius: BorderRadius.circular(8.r),
+                                            borderRadius: BorderRadius.circular(
+                                              8.r,
+                                            ),
                                           ),
                                           child: Text(
                                             order.status.toUpperCase(),
@@ -157,30 +175,6 @@ class HistoryView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return ListView(
-      children: [
-        SizedBox(height: 100.h),
-        Center(
-          child: Container(
-            width: 0.8.sw,
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: AppRestaurantColors.accent2.withOpacity(0.05),
-              border: Border.all(color: AppRestaurantColors.accent, width: 1),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: const Text(
-              "Belum ada riwayat pesanan.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppRestaurantColors.secondary),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
