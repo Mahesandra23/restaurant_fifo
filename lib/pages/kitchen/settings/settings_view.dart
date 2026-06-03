@@ -151,7 +151,7 @@ class SettingsView extends StatelessWidget {
                 );
               },
               child: const Text(
-                'View All ➔',
+                'See All ➔',
                 style: TextStyle(color: AppRestaurantColors.primary),
               ),
             ),
