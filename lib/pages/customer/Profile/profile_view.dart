@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -33,20 +34,29 @@ class ProfileView extends StatelessWidget {
         final vm = context.watch<ProfileViewModel>();
         final String currentPhone = vm.userPhone;
 
-        return Scaffold(
-          backgroundColor: AppRestaurantColors.background,
-          appBar: AppBar(
-            title: const Text(
-              'My Profile',
-              style: TextStyle(
-                color: AppRestaurantColors.background,
-                fontWeight: FontWeight.bold,
+        return FocusDetector(
+          onFocusGained: () => vm.init(),
+          child: Scaffold(
+            backgroundColor: AppRestaurantColors.background,
+            appBar: AppBar(
+              title: const Text(
+                'My Profile',
+                style: TextStyle(
+                  color: AppRestaurantColors.background,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: AppRestaurantColors.primary,
+              centerTitle: true,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppRestaurantColors.background,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-            backgroundColor: AppRestaurantColors.primary,
-            elevation: 0,
-            centerTitle: true,
-          ),
           body: vm.isLoading
               ? const Center(
                   child: CircularProgressIndicator(
@@ -109,6 +119,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                 ),
+        )
         );
       },
     );
