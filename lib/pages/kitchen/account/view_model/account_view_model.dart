@@ -9,7 +9,7 @@ class AccountViewModel extends BaseViewModel {
 
   bool isLoading = false;
   List<Map<String, dynamic>> staffList = [];
-  
+
   // Variabel untuk mengunci ID Admin asli yang sedang membuka halaman ini
   String? originalAdminId;
 
@@ -24,39 +24,68 @@ class AccountViewModel extends BaseViewModel {
   Future<void> fetchStaff() async {
     isLoading = true;
     notifyListeners();
-    
+
     staffList = await _repo.fetchKitchenStaff();
-    
+
     isLoading = false;
     notifyListeners();
   }
 
-  Future<void> createNewAdmin(String email, String password, String displayName, String phone) async {
+  Future<void> createNewAdmin(
+    String email,
+    String password,
+    String displayName,
+    String phone,
+  ) async {
     isLoading = true;
     notifyListeners();
-    
+
     try {
       await _repo.createAdminAccount(email, password, displayName, phone);
-      await fetchStaff(); 
+      await fetchStaff();
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> editStaffName(String id, String newName) async {
+  // Fungsi Update Profil Biasa
+  Future<bool> updateProfile(String id, String name, String phone) async {
+    final success = await _repo.updateProfile(id, name, phone);
+    if (success) await fetchStaff();
+    return success;
+  }
+
+  // Fungsi Update Keamanan
+  Future<String?> updateSecuritySettings(
+    String currentEmail,
+    String currentPassword,
+    String? newEmail,
+    String? newPassword,
+  ) async {
     isLoading = true;
     notifyListeners();
-    
-    await _repo.updateStaffName(id, newName);
-    await fetchStaff();
+
+    final error = await _repo.updateSecuritySettings(
+      currentEmail: currentEmail,
+      currentPassword: currentPassword,
+      newEmail: newEmail,
+      newPassword: newPassword,
+    );
+
+    isLoading = false;
+    notifyListeners();
+    return error;
   }
 
   Future<void> deleteAdminAccount(String id) async {
     isLoading = true;
     notifyListeners();
-    
+
     await _repo.deleteAdmin(id);
     await fetchStaff();
   }
+
+  // Tambahkan getter untuk email user saat ini (diperlukan untuk form edit)
+  String get currentUserEmail => Supabase.instance.client.auth.currentUser?.email ?? '';
 }

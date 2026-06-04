@@ -39,16 +39,53 @@ class AccountRepository {
     }
   }
 
-  // --- UPDATE ---
-  Future<void> updateStaffName(String profileId, String newName) async {
+  // --- UPDATE PROFIL UMUM (Nama & HP) ---
+  Future<bool> updateProfile(
+    String profileId,
+    String newName,
+    String newPhone,
+  ) async {
     try {
-      // PERBAIKAN: Gunakan display_name
       await _supabase
           .from('profiles')
-          .update({'display_name': newName})
+          .update({'display_name': newName, 'phone': newPhone})
           .eq('id', profileId);
+      return true;
     } catch (e) {
-      debugPrint('Error updateStaffName: $e');
+      debugPrint('Error updateProfile: $e');
+      return false;
+    }
+  }
+
+  // --- UPDATE KEAMANAN (Email & Password) ---
+  // Supabase membutuhkan UserAttributes untuk update auth data
+  Future<String?> updateSecuritySettings({
+    required String currentEmail,
+    required String currentPassword,
+    String? newEmail,
+    String? newPassword,
+  }) async {
+    try {
+      // 1. Re-autentikasi untuk memastikan ini benar-benar user yang sah
+      await _supabase.auth.signInWithPassword(
+        email: currentEmail,
+        password: currentPassword,
+      );
+
+      // 2. Siapkan atribut yang akan diupdate
+      final UserAttributes attributes = UserAttributes(
+        email: newEmail,
+        password: newPassword,
+      );
+
+      // 3. Eksekusi update
+      await _supabase.auth.updateUser(attributes);
+
+      return null; // Berhasil (tidak ada error)
+    } on AuthException catch (e) {
+      return e.message;
+    } catch (e) {
+      return e.toString();
     }
   }
 
