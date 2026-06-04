@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_fifo/core/providers/session_provider.dart';
 import 'package:restaurant_fifo/mvvm/mvvm.dart';
@@ -32,82 +33,92 @@ class ProfileView extends StatelessWidget {
         final vm = context.watch<ProfileViewModel>();
         final String currentPhone = vm.userPhone;
 
-        return Scaffold(
-          backgroundColor: AppRestaurantColors.background,
-          appBar: AppBar(
-            title: const Text(
-              'My Profile',
-              style: TextStyle(
-                color: AppRestaurantColors.background,
-                fontWeight: FontWeight.bold,
+        return FocusDetector(
+          onFocusGained: () => vm.init(),
+          child: Scaffold(
+            backgroundColor: AppRestaurantColors.background,
+            appBar: AppBar(
+              title: const Text(
+                'My Profile',
+                style: TextStyle(
+                  color: AppRestaurantColors.background,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: AppRestaurantColors.primary,
+              centerTitle: true,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppRestaurantColors.background,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-            backgroundColor: AppRestaurantColors.primary,
-            elevation: 0,
-            centerTitle: true,
-          ),
-          body: vm.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
+            body: vm.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: AppRestaurantColors.primary,
+                    ),
+                  )
+                : RefreshIndicator(
                     color: AppRestaurantColors.primary,
-                  ),
-                )
-              : RefreshIndicator(
-                  color: AppRestaurantColors.primary,
-                  onRefresh: () => vm.loadOrderHistory(user.id),
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildProfileCard(
-                          context,
-                          vm,
-                          user.id,
-                          user.displayName,
-                          user.email,
-                          currentPhone,
-                          session,
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Recent Orders',
-                              style: TextStyle(
-                                color: AppRestaurantColors.primary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const HistoryView(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'See All ➔',
+                    onRefresh: () => vm.loadOrderHistory(user.id),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProfileCard(
+                            context,
+                            vm,
+                            user.id,
+                            user.displayName,
+                            user.email,
+                            currentPhone,
+                            session,
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Recent Orders',
                                 style: TextStyle(
                                   color: AppRestaurantColors.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        _buildOrderHistory(vm),
-                        SizedBox(height: 16),
-                        _buildActionButtons(context, vm, session, user.id),
-                      ],
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const HistoryView(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'See All ➔',
+                                  style: TextStyle(
+                                    color: AppRestaurantColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          _buildOrderHistory(vm),
+                          SizedBox(height: 16),
+                          _buildActionButtons(context, vm, session, user.id),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+          ),
         );
       },
     );
@@ -279,7 +290,9 @@ class ProfileView extends StatelessWidget {
       );
     }
 
-    final displayCount = vm.orderHistory.length > 5 ? 5 : vm.orderHistory.length;
+    final displayCount = vm.orderHistory.length > 5
+        ? 5
+        : vm.orderHistory.length;
 
     return ListView.builder(
       shrinkWrap: true,
@@ -350,10 +363,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -711,9 +721,7 @@ class ProfileView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppRestaurantColors.background,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Delete Account?',
           style: TextStyle(
