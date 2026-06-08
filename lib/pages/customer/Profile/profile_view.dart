@@ -692,7 +692,7 @@ class ProfileView extends StatelessWidget {
                           }
                         },
                         child: const Text(
-                          'SAVE CHANGES',
+                          'Save Changes',
                           style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,

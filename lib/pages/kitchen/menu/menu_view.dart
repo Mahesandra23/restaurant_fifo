@@ -342,7 +342,7 @@ class MenuView extends StatelessWidget {
                           Navigator.pop(ctx);
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         'Add Category',
                         style: TextStyle(
                           color: AppRestaurantColors.accent,
