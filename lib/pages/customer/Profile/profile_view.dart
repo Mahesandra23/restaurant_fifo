@@ -49,13 +49,6 @@ class ProfileView extends StatelessWidget {
               backgroundColor: AppRestaurantColors.primary,
               centerTitle: true,
               elevation: 0,
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: AppRestaurantColors.background,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
             ),
           body: vm.isLoading
               ? const Center(
@@ -694,7 +687,7 @@ class ProfileView extends StatelessWidget {
                           }
                         },
                         child: const Text(
-                          'SAVE CHANGES',
+                          'Save Changes',
                           style: TextStyle(
                             color: AppRestaurantColors.accent,
                             fontWeight: FontWeight.bold,
