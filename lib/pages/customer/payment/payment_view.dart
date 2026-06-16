@@ -294,6 +294,8 @@ class PaymentView extends StatelessWidget {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             labelText: 'Input Table Number',
+                            // --- TAMBAHKAN ERROR TEXT DI SINI ---
+                            errorText: vm.tableError, 
                             prefixIcon: const Icon(
                               Icons.table_restaurant,
                               color: AppRestaurantColors.secondary,

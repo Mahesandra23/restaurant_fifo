@@ -374,7 +374,7 @@ class IngredientsView extends StatelessWidget {
                         ),
                         children: [
                           Text(
-                            'Select the appropriate metrics for this ingredient. The DSS algorithm uses these values to calculate priority rankings:',
+                            'Select the appropriate metrics for this ingredient. The MCDM SAW algorithm uses these values to calculate priority rankings:',
                             style: TextStyle(
                                 fontSize: 12.sp, color: Colors.black87),
                           ),

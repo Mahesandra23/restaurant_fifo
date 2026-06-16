@@ -12,8 +12,10 @@ class PaymentViewModel extends BaseViewModel {
   bool isProcessing = false;
   bool isTakeaway = true;
   String tableInput = '';
+  
+  // Tambahan: Variabel untuk menampung pesan error
+  String? tableError; 
 
-  // 1. UBAH INI JADI STRING
   String customerId;
 
   PaymentViewModel(
@@ -23,10 +25,8 @@ class PaymentViewModel extends BaseViewModel {
     required this.customerId,
   });
 
-  // --- TAMBAHKAN GETTER UNTUK TOTAL AMOUNT YANG SUDAH DIFORMAT ---
   String get formattedTotalAmount => _formatRupiah(totalAmount);
 
-  // --- FUNGSI FORMAT RUPIAH ---
   String _formatRupiah(num amount) {
     String numStr = amount.toInt().toString();
     String result = '';
@@ -49,16 +49,32 @@ class PaymentViewModel extends BaseViewModel {
 
   void toggleOrderType(bool value) {
     isTakeaway = value;
+    // Hapus pesan error jika user mengganti mode pesanan
+    tableError = null; 
     notifyListeners();
   }
 
   void setTableInput(String value) {
     tableInput = value;
-    // Boleh pakai notifyListeners() kalau mau validasi real-time, tapi opsional
+    // Hapus pesan error secara real-time ketika user mulai mengetik
+    if (tableError != null) {
+      tableError = null;
+      notifyListeners();
+    }
   }
 
-  // Fungsi simulasi bayar + simpan data beneran ke Supabase
   Future<bool> processPayment() async {
+    // --- VALIDASI NOMOR MEJA ---
+    if (!isTakeaway && tableInput.trim().isEmpty) {
+      tableError = 'Table number is required!';
+      notifyListeners();
+      return false; // Hentikan proses pembayaran
+    }
+    
+    // Reset error jika validasi lolos
+    tableError = null; 
+    // ---------------------------
+
     isProcessing = true;
     notifyListeners();
 
@@ -66,14 +82,14 @@ class PaymentViewModel extends BaseViewModel {
 
     String finalTableNumber = isTakeaway
         ? 'Takeaway'
-        : (tableInput.isEmpty ? 'Meja ?' : 'Meja $tableInput');
+        : 'Meja $tableInput';
 
     final success = await _repository.createOrder(
-      totalAmount, // Tetap kirim angka int/aslinya ke repository/database
+      totalAmount, 
       selectedMethod,
       cartItems,
       finalTableNumber,
-      customerId, // Sekarang mengirimkan String UUID
+      customerId, 
     );
 
     isProcessing = false;

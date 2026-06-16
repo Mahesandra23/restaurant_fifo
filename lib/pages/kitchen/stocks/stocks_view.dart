@@ -522,7 +522,7 @@ class StockView extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    'Submit Restock',
+                    'Update Stock',
                     style: TextStyle(
                       color: AppRestaurantColors.accent,
                       fontWeight: FontWeight.bold,
