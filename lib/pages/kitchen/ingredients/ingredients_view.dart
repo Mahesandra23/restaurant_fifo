@@ -37,105 +37,119 @@ class IngredientsView extends StatelessWidget {
               child: vm.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
-                          color: AppRestaurantColors.primary))
+                        color: AppRestaurantColors.primary,
+                      ),
+                    )
                   : vm.groupedIngredients.isEmpty
-                      ? const CustomEmptyState(
-                          icon: Icons.inventory_2_outlined,
-                          message:
-                              'There are no ingredients to display. Add new ingredients to manage your kitchen inventory.',
-                          iconColor: AppRestaurantColors.secondary,
-                        )
-                      : ListView.builder(
-                          padding: EdgeInsets.only(
-                              left: 16.w, right: 16.w, top: 16.h, bottom: 100.h),
-                          itemCount: vm.groupedIngredients.keys.length,
-                          itemBuilder: (context, index) {
-                            String categoryName =
-                                vm.groupedIngredients.keys.elementAt(index);
-                            List<IngredientItem> items =
-                                vm.groupedIngredients[categoryName]!;
+                  ? const CustomEmptyState(
+                      icon: Icons.inventory_2_outlined,
+                      message:
+                          'There are no ingredients to display. Add new ingredients to manage your kitchen inventory.',
+                      iconColor: AppRestaurantColors.secondary,
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 16.h,
+                        bottom: 100.h,
+                      ),
+                      itemCount: vm.groupedIngredients.keys.length,
+                      itemBuilder: (context, index) {
+                        String categoryName = vm.groupedIngredients.keys
+                            .elementAt(index);
+                        List<IngredientItem> items =
+                            vm.groupedIngredients[categoryName]!;
 
-                            return Card(
-                              margin: EdgeInsets.only(bottom: 16.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
+                        return Card(
+                          margin: EdgeInsets.only(bottom: 16.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          color: AppRestaurantColors.background,
+                          elevation: 2,
+                          clipBehavior: Clip.antiAlias,
+                          child: ExpansionTile(
+                            key: ValueKey('$categoryName-${items.length}'),
+                            backgroundColor: AppRestaurantColors.background,
+                            collapsedBackgroundColor:
+                                AppRestaurantColors.background,
+                            iconColor: AppRestaurantColors.primary,
+                            textColor: AppRestaurantColors.primary,
+                            initiallyExpanded: true,
+                            title: Text(
+                              categoryName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppRestaurantColors.primary,
                               ),
-                              color: AppRestaurantColors.background,
-                              elevation: 2,
-                              clipBehavior: Clip.antiAlias,
-                              child: ExpansionTile(
-                                key: ValueKey('$categoryName-${items.length}'),
-                                backgroundColor: AppRestaurantColors.background,
-                                collapsedBackgroundColor:
-                                    AppRestaurantColors.background,
-                                iconColor: AppRestaurantColors.primary,
-                                textColor: AppRestaurantColors.primary,
-                                initiallyExpanded: true,
-                                title: Text(
-                                  categoryName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppRestaurantColors.primary,
+                            ),
+                            leading: const Icon(
+                              Icons.folder_open,
+                              color: AppRestaurantColors.primary,
+                            ),
+                            children: items.map((item) {
+                              return Column(
+                                key: ValueKey(item.id),
+                                children: [
+                                  Divider(
+                                    height: 1.h,
+                                    indent: 16.w,
+                                    endIndent: 16.w,
+                                    color: AppRestaurantColors.secondary,
                                   ),
-                                ),
-                                leading: const Icon(Icons.folder_open,
-                                    color: AppRestaurantColors.primary),
-                                children: items.map((item) {
-                                  return Column(
-                                    key: ValueKey(item.id),
-                                    children: [
-                                      Divider(
-                                          height: 1.h,
-                                          indent: 16.w,
-                                          endIndent: 16.w,
-                                          color: AppRestaurantColors.secondary),
-                                      ListTile(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 16.w, vertical: 4.h),
-                                        title: Text(
-                                          item.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppRestaurantColors.primary,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          'Stok saat ini: ${item.currentStock} ${item.unit}',
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: AppRestaurantColors.secondary,
-                                          ),
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.edit_outlined,
-                                                color: Colors.blueAccent,
-                                              ),
-                                              // Panggil sheet dan lempar data item untuk EDIT
-                                              onPressed: () => _showIngredientSheet(
-                                                  context, vm,
-                                                  ingredient: item),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                  Icons.remove_circle_outline,
-                                                  color: Colors.redAccent),
-                                              onPressed: () =>
-                                                  vm.removeIngredient(item.id),
-                                            ),
-                                          ],
-                                        ),
+                                  ListTile(
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 4.h,
+                                    ),
+                                    title: Text(
+                                      item.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppRestaurantColors.primary,
                                       ),
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                            );
-                          },
-                        ),
+                                    ),
+                                    subtitle: Text(
+                                      'Stok saat ini: ${item.currentStock} ${item.unit}',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: AppRestaurantColors.secondary,
+                                      ),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.edit_outlined,
+                                            color: Colors.blueAccent,
+                                          ),
+                                          // Panggil sheet dan lempar data item untuk EDIT
+                                          onPressed: () => _showIngredientSheet(
+                                            context,
+                                            vm,
+                                            ingredient: item,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle_outline,
+                                            color: Colors.redAccent,
+                                          ),
+                                          onPressed: () =>
+                                              vm.removeIngredient(item.id),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ),
         );
@@ -144,8 +158,11 @@ class IngredientsView extends StatelessWidget {
   }
 
   // Fungsi Sheet diubah agar bisa menerima opsional parameter ingredient
-  void _showIngredientSheet(BuildContext context, IngredientsViewModel vm,
-      {IngredientItem? ingredient}) {
+  void _showIngredientSheet(
+    BuildContext context,
+    IngredientsViewModel vm, {
+    IngredientItem? ingredient,
+  }) {
     // Cek apakah ini mode Edit
     bool isEdit = ingredient != null;
 
@@ -194,8 +211,9 @@ class IngredientsView extends StatelessWidget {
                     style: TextStyle(fontSize: 12.sp, color: Colors.black87),
                     children: [
                       TextSpan(
-                          text: '$title ',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                        text: '$title ',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       TextSpan(text: desc),
                     ],
                   ),
@@ -216,7 +234,9 @@ class IngredientsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isEdit ? 'Edit Ingredient' : 'Add Ingredient & Parameters',
+                      isEdit
+                          ? 'Edit Ingredient'
+                          : 'Add Ingredient & Parameters',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -241,10 +261,15 @@ class IngredientsView extends StatelessWidget {
                             value: selectedCategory,
                             decoration: buildInputDecoration('Category'),
                             items: vm.categories
-                                .map((cat) => DropdownMenuItem(
+                                .map(
+                                  (cat) => DropdownMenuItem(
                                     value: cat,
-                                    child: Text(cat,
-                                        overflow: TextOverflow.ellipsis)))
+                                    child: Text(
+                                      cat,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (val) =>
                                 setState(() => selectedCategory = val!),
@@ -258,8 +283,12 @@ class IngredientsView extends StatelessWidget {
                             value: unit,
                             decoration: buildInputDecoration('Unit'),
                             items: ['kg', 'gram', 'liter', 'ml', 'pcs', 'ikat']
-                                .map((u) => DropdownMenuItem(
-                                    value: u, child: Text(u)))
+                                .map(
+                                  (u) => DropdownMenuItem(
+                                    value: u,
+                                    child: Text(u),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (val) => setState(() => unit = val!),
                           ),
@@ -268,45 +297,60 @@ class IngredientsView extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
 
-                    const Text('Stock Settings',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppRestaurantColors.primary)),
+                    const Text(
+                      'Stock Settings',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppRestaurantColors.primary,
+                      ),
+                    ),
                     SizedBox(height: 16.h),
 
                     // INFO ROP DIKEMBALIKAN KE SINI
                     Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: Colors.transparent),
+                      data: Theme.of(
+                        context,
+                      ).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
-                        backgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        collapsedBackgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
+                        backgroundColor: AppRestaurantColors.primary
+                            .withOpacity(0.05),
+                        collapsedBackgroundColor: AppRestaurantColors.primary
+                            .withOpacity(0.05),
                         tilePadding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 0),
+                          horizontal: 16.w,
+                          vertical: 0,
+                        ),
                         childrenPadding: EdgeInsets.only(
-                            left: 16.w, right: 16.w, bottom: 16.h),
+                          left: 16.w,
+                          right: 16.w,
+                          bottom: 16.h,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         collapsedShape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        leading: Icon(Icons.lightbulb_outline,
-                            color: AppRestaurantColors.primary, size: 20.sp),
+                        leading: Icon(
+                          Icons.lightbulb_outline,
+                          color: AppRestaurantColors.primary,
+                          size: 20.sp,
+                        ),
                         title: Text(
                           'What is the Reorder Point (ROP)?',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppRestaurantColors.primary,
-                              fontSize: 13.sp),
+                            fontWeight: FontWeight.bold,
+                            color: AppRestaurantColors.primary,
+                            fontSize: 13.sp,
+                          ),
                         ),
                         children: [
                           Text(
                             'The Reorder Point is the minimum safety stock level. When current stock drops below this number, the system will automatically alert you to restock the ingredient before it runs out completely.',
                             style: TextStyle(
-                                fontSize: 12.sp, color: Colors.black87),
+                              fontSize: 12.sp,
+                              color: Colors.black87,
+                            ),
                           ),
                         ],
                       ),
@@ -338,55 +382,78 @@ class IngredientsView extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
 
-                    const Text('Priority Criteria (SAW Method)',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppRestaurantColors.primary)),
+                    const Text(
+                      'Priority Criteria (SAW Method)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppRestaurantColors.primary,
+                      ),
+                    ),
                     SizedBox(height: 16.h),
 
                     // INFO KRITERIA SAW DIKEMBALIKAN KE SINI
                     Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: Colors.transparent),
+                      data: Theme.of(
+                        context,
+                      ).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
-                        backgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
-                        collapsedBackgroundColor:
-                            AppRestaurantColors.primary.withOpacity(0.05),
+                        backgroundColor: AppRestaurantColors.primary
+                            .withOpacity(0.05),
+                        collapsedBackgroundColor: AppRestaurantColors.primary
+                            .withOpacity(0.05),
                         tilePadding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 0),
+                          horizontal: 16.w,
+                          vertical: 0,
+                        ),
                         childrenPadding: EdgeInsets.only(
-                            left: 16.w, right: 16.w, bottom: 16.h),
+                          left: 16.w,
+                          right: 16.w,
+                          bottom: 16.h,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         collapsedShape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        leading: Icon(Icons.lightbulb_outline,
-                            color: AppRestaurantColors.primary, size: 20.sp),
+                        leading: Icon(
+                          Icons.lightbulb_outline,
+                          color: AppRestaurantColors.primary,
+                          size: 20.sp,
+                        ),
                         title: Text(
                           'How to classify these parameters?',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppRestaurantColors.primary,
-                              fontSize: 13.sp),
+                            fontWeight: FontWeight.bold,
+                            color: AppRestaurantColors.primary,
+                            fontSize: 13.sp,
+                          ),
                         ),
                         children: [
                           Text(
                             'Select the appropriate metrics for this ingredient. The MCDM SAW algorithm uses these values to calculate priority rankings:',
                             style: TextStyle(
-                                fontSize: 12.sp, color: Colors.black87),
+                              fontSize: 12.sp,
+                              color: Colors.black87,
+                            ),
                           ),
                           SizedBox(height: 8.h),
-                          buildBulletInfo('• ABC (Usage):',
-                              'A (High kitchen usage), B (Medium), C (Low/Rare).'),
-                          buildBulletInfo('• HML (Price):',
-                              'H (High/Expensive), M (Medium), L (Low/Cheap).'),
-                          buildBulletInfo('• SDE (Scarcity):',
-                              'S (Scarce/Hard to find), D (Difficult), E (Easy to buy).'),
-                          buildBulletInfo('• FSN (Movement):',
-                              'F (Fast depletion), S (Slow depletion), N (Non-moving).'),
+                          buildBulletInfo(
+                            '• ABC (Budget Impact):',
+                            'A (High cost impact), B (Medium), C (Low cost impact).',
+                          ),
+                          buildBulletInfo(
+                            '• HML (Price):',
+                            'H (High/Expensive), M (Medium), L (Low/Cheap).',
+                          ),
+                          buildBulletInfo(
+                            '• SDE (Scarcity):',
+                            'S (Scarce/Hard to find), D (Difficult), E (Easy to buy).',
+                          ),
+                          buildBulletInfo(
+                            '• FSN (Movement):',
+                            'F (Fast depletion), S (Slow depletion), N (Non-moving).',
+                          ),
                         ],
                       ),
                     ),
@@ -400,9 +467,18 @@ class IngredientsView extends StatelessWidget {
                             value: abcClass,
                             decoration: buildInputDecoration('ABC (Usage)'),
                             items: const [
-                              DropdownMenuItem(value: 'A', child: Text('A (High)')),
-                              DropdownMenuItem(value: 'B', child: Text('B (Med)')),
-                              DropdownMenuItem(value: 'C', child: Text('C (Low)')),
+                              DropdownMenuItem(
+                                value: 'A',
+                                child: Text('A (High)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'B',
+                                child: Text('B (Med)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'C',
+                                child: Text('C (Low)'),
+                              ),
                             ],
                             onChanged: (val) => setState(() => abcClass = val!),
                           ),
@@ -414,9 +490,18 @@ class IngredientsView extends StatelessWidget {
                             value: hmlClass,
                             decoration: buildInputDecoration('HML (Price)'),
                             items: const [
-                              DropdownMenuItem(value: 'H', child: Text('H (High)')),
-                              DropdownMenuItem(value: 'M', child: Text('M (Med)')),
-                              DropdownMenuItem(value: 'L', child: Text('L (Low)')),
+                              DropdownMenuItem(
+                                value: 'H',
+                                child: Text('H (High)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'M',
+                                child: Text('M (Med)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'L',
+                                child: Text('L (Low)'),
+                              ),
                             ],
                             onChanged: (val) => setState(() => hmlClass = val!),
                           ),
@@ -432,9 +517,18 @@ class IngredientsView extends StatelessWidget {
                             value: sdeClass,
                             decoration: buildInputDecoration('SDE (Scarcity)'),
                             items: const [
-                              DropdownMenuItem(value: 'S', child: Text('S (Scarce)')),
-                              DropdownMenuItem(value: 'D', child: Text('D (Diff)')),
-                              DropdownMenuItem(value: 'E', child: Text('E (Easy)')),
+                              DropdownMenuItem(
+                                value: 'S',
+                                child: Text('S (Scarce)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'D',
+                                child: Text('D (Diff)'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'E',
+                                child: Text('E (Easy)'),
+                              ),
                             ],
                             onChanged: (val) => setState(() => sdeClass = val!),
                           ),
@@ -447,17 +541,26 @@ class IngredientsView extends StatelessWidget {
                             decoration: buildInputDecoration('FSN (Movement)'),
                             items: const [
                               DropdownMenuItem(
-                                  value: 'F',
-                                  child: Text('F (Fast)',
-                                      overflow: TextOverflow.ellipsis)),
+                                value: 'F',
+                                child: Text(
+                                  'F (Fast)',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'S',
-                                  child: Text('S (Slow)',
-                                      overflow: TextOverflow.ellipsis)),
+                                value: 'S',
+                                child: Text(
+                                  'S (Slow)',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                               DropdownMenuItem(
-                                  value: 'N',
-                                  child: Text('N (Non-moving)',
-                                      overflow: TextOverflow.ellipsis)),
+                                value: 'N',
+                                child: Text(
+                                  'N (Non-moving)',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                             onChanged: (val) => setState(() => fsnClass = val!),
                           ),
@@ -504,13 +607,15 @@ class IngredientsView extends StatelessWidget {
                                 fsn: fsnClass,
                               );
                             }
-                            
+
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(isEdit
-                                    ? 'Ingredient updated successfully!'
-                                    : 'Ingredient added successfully!'),
+                                content: Text(
+                                  isEdit
+                                      ? 'Ingredient updated successfully!'
+                                      : 'Ingredient added successfully!',
+                                ),
                                 backgroundColor: Colors.green,
                               ),
                             );

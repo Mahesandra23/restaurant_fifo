@@ -171,8 +171,8 @@ class StockView extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     _buildInfoText(
-                      '• ABC (Usage Frequency):',
-                      'How often the ingredient is used in the kitchen.',
+                      '• ABC (Capital Impact):',
+                      'How much total money is spent consuming this ingredient.',
                     ),
                     _buildInfoText(
                       '• FSN (Consumption Speed):',
