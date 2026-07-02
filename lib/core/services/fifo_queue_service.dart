@@ -6,7 +6,7 @@ class FifoQueueService {
 
   // Memasukkan data awal (dari database) ke dalam antrean
   void loadInitialQueue(List<Map<String, dynamic>> rawOrders) {
-    // Kosongkan queue jika ada sisa (reset)
+    
     while (!orderQueue.isEmpty()) {
       orderQueue.dequeue();
     }

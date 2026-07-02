@@ -80,12 +80,19 @@ class QueueViewModel extends BaseViewModel {
       _queueService.dequeueFrontOrder();
 
       _mapQueueToUI();
-
     }
 
     isLoading = false;
     notifyListeners();
     return success;
+  }
+
+  bool isFrontOrder(String rawId) {
+    final front = _queueService.peekFrontOrder();
+
+    if (front == null) return false;
+
+    return front['id'] == rawId;
   }
 
   void _mapQueueToUI() {
