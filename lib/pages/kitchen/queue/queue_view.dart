@@ -65,7 +65,14 @@ class QueueView extends StatelessWidget {
                             itemCount: vm.activeOrders.length,
                             itemBuilder: (context, index) {
                               final order = vm.activeOrders[index];
-                              return _buildOrderCard(context, order, vm);
+                              final bool isFrontQueue = index == 0;
+
+                              return _buildOrderCard(
+                                context,
+                                order,
+                                vm,
+                                isFrontQueue,
+                              );
                             },
                           ),
                   ),
@@ -79,6 +86,7 @@ class QueueView extends StatelessWidget {
     BuildContext context,
     OrderQueue order,
     QueueViewModel vm,
+    bool isFrontQueue,
   ) {
     final bool isCooking = order.status == 'cooking';
 
@@ -99,14 +107,14 @@ class QueueView extends StatelessWidget {
             blurRadius: 5,
             // Offset disamakan dengan card di menu utama
             offset: Offset(0, 2),
-          ),  
+          ),
         ],
       ),
       child: Material(
         color: Colors
             .transparent, // Penting agar background dari Container tidak tertutup
         child: InkWell(
-          onTap: () => _showOrderDetails(context, order, vm),
+          onTap: () => _showOrderDetails(context, order, vm, isFrontQueue),
           borderRadius: BorderRadius.circular(
             12,
           ), // Menjaga efek klik tetap di dalam radius
@@ -201,6 +209,7 @@ class QueueView extends StatelessWidget {
     BuildContext context,
     OrderQueue order,
     QueueViewModel vm,
+    bool isFrontQueue,
   ) {
     final bool isPending = order.status == 'pending';
 
@@ -341,12 +350,13 @@ class QueueView extends StatelessWidget {
 
               // --- TOMBOL AKSI DINAMIS BERDASARKAN STATUS ---
               SizedBox(
-                width: double.infinity, // Mengubah double.infinity menjadi double.infinity
-                height: 40
-                    , // Disamakan dengan tinggi tombol di halaman lain (55.0)
+                width: 1 * MediaQuery.of(context).size.width,
+                height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isPending
+                    backgroundColor: !isFrontQueue
+                        ? Colors.grey
+                        : isPending
                         ? AppRestaurantColors.accent
                         : AppRestaurantColors.primary,
                     shape: RoundedRectangleBorder(
@@ -354,38 +364,45 @@ class QueueView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () async {
-                    if (isPending) {
-                      final success = await vm.acceptToCook(order.rawId);
-                      if (context.mounted && success) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${order.id} Started Cooking! and Stock Updated!',
-                            ),
-                            backgroundColor: AppRestaurantColors.primary,
-                          ),
-                        );
-                      }
-                    } else {
-                      final success = await vm.completeOrder(order.rawId);
-                      if (context.mounted && success) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${order.id} Completed!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      }
-                    }
-                  },
+                  onPressed: !isFrontQueue
+                      ? null
+                      : () async {
+                          if (isPending) {
+                            final success = await vm.acceptToCook(order.rawId);
+                            if (context.mounted && success) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${order.id} Started Cooking! and Stock Updated!',
+                                  ),
+                                  backgroundColor: AppRestaurantColors.primary,
+                                ),
+                              );
+                            }
+                          } else {
+                            final success = await vm.completeOrder(order.rawId);
+                            if (context.mounted && success) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${order.id} Completed!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          }
+                        },
                   child: Text(
-                    isPending ? 'START COOKING' : 'COOKING COMPLETE',
+                    !isFrontQueue
+                        ? 'WAITING PREVIOUS ORDER'
+                        : isPending
+                        ? 'START COOKING'
+                        : 'COOKING COMPLETE',
                     style: TextStyle(
-                      // Memastikan teks selalu kontras dengan background
-                      color: isPending
+                      color: !isFrontQueue
+                          ? Colors.white70
+                          : isPending
                           ? AppRestaurantColors.primary
                           : AppRestaurantColors.accent,
                       fontSize: 16,
