@@ -52,10 +52,10 @@ class SessionProvider extends ChangeNotifier {
 
       if (response.user != null) {
         await fetchCurrentUser();
-        print('Guest login sukses: ${response.user!.id}');
+        // print('Guest login sukses: ${response.user!.id}');
       }
     } catch (e) {
-      print('Error Guest Login: $e');
+      // print('Error Guest Login: $e');
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_fifo/mvvm/base_view_model.dart';
-import 'package:restaurant_fifo/pages/kitchen/queue/repository/queue_repository.dart'; 
+import 'package:restaurant_fifo/pages/kitchen/queue/repository/queue_repository.dart';
 import 'package:restaurant_fifo/core/services/fifo_queue_service.dart';
 
 class OrderItem {
@@ -12,13 +12,13 @@ class OrderItem {
 }
 
 class OrderQueue {
-  final String id;          // ID pendek untuk tampilan UI (ORD-XXXXXX)
-  final String rawId;       // UUID asli dari Supabase untuk transaksi query
+  final String id;
+  final String rawId;
   final String customerName;
   final String orderTime;
   final List<OrderItem> items;
   final String tableNumber;
-  final String status;      // Menampung nilai status: 'pending' atau 'cooking'
+  final String status;
 
   OrderQueue({
     required this.id,
@@ -52,19 +52,19 @@ class QueueViewModel extends BaseViewModel {
     _mapQueueToUI();
 
     isLoading = false;
-    notifyListeners(); 
+    notifyListeners();
   }
 
-  // Fungsi Baru: Mengubah status menjadi Cooking & Mengurangi Stok Bahan Baku
+  // Fungsi Mengubah status menjadi Cooking & Mengurangi Stok Bahan Baku
   Future<bool> acceptToCook(String orderId) async {
     isLoading = true;
     notifyListeners();
 
     final success = await _repo.startCookingOrder(orderId);
     if (success) {
-      await fetchData(); // Ambil ulang data terbaru untuk memperbarui status di UI
+      await fetchData();
     }
-    
+
     isLoading = false;
     notifyListeners();
     return success;
@@ -77,9 +77,12 @@ class QueueViewModel extends BaseViewModel {
 
     final success = await _repo.updateOrderStatusToCompleted(orderId);
     if (success) {
-      await fetchData(); 
+      _queueService.dequeueFrontOrder();
+
+      _mapQueueToUI();
+
     }
-    
+
     isLoading = false;
     notifyListeners();
     return success;
@@ -102,14 +105,18 @@ class QueueViewModel extends BaseViewModel {
       String timeString = '';
       if (createdAt != null) {
         final parsedDate = DateTime.parse(createdAt).toLocal();
-        timeString = '${parsedDate.hour.toString().padLeft(2, '0')}:${parsedDate.minute.toString().padLeft(2, '0')}';
+        timeString =
+            '${parsedDate.hour.toString().padLeft(2, '0')}:${parsedDate.minute.toString().padLeft(2, '0')}';
       }
 
       final String rawId = orderMap['id'].toString();
-      final String shortId = rawId.length > 6 ? rawId.substring(0, 6).toUpperCase() : rawId;
+      final String shortId = rawId.length > 6
+          ? rawId.substring(0, 6).toUpperCase()
+          : rawId;
 
-      String customerName = 'Guest'; 
-      if (orderMap['profiles'] != null && orderMap['profiles']['display_name'] != null) {
+      String customerName = 'Guest';
+      if (orderMap['profiles'] != null &&
+          orderMap['profiles']['display_name'] != null) {
         customerName = orderMap['profiles']['display_name'];
       }
 
@@ -119,8 +126,9 @@ class QueueViewModel extends BaseViewModel {
         customerName: customerName,
         orderTime: timeString,
         items: parsedItems,
-        tableNumber: orderMap['table_number'] ?? 'Takeaway', 
-        status: orderMap['status']?.toString() ?? 'pending', // Ambil status dari DB
+        tableNumber: orderMap['table_number'] ?? 'Takeaway',
+        status:
+            orderMap['status']?.toString() ?? 'pending', // Ambil status dari DB
       );
     }).toList();
   }

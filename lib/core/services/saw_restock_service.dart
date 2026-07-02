@@ -1,6 +1,6 @@
 import 'package:restaurant_fifo/core/models/ingredients_model.dart';
 
-// Model khusus untuk hasil SAW agar rapi saat dilempar ke UI
+// Model untuk dilempar ke UI
 class SawResult {
   final IngredientModel ingredient;
   final double score;
@@ -38,7 +38,7 @@ class SawRestockService {
 
     // Catatan Akademis: Dalam SAW murni, matriks keputusan (X) harus di-Normalisasi (R).
     // Karena max nilai kita seragam yaitu 3, pembaginya adalah 3.
-    // Jika dosen bertanya, Anda bisa bilang: Rij = Xij / Max(Xj)
+    //  Rij = Xij / Max(Xj)
     const double maxCriteriaValue = 3.0;
 
     // 2. PERHITUNGAN MATRIKS

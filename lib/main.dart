@@ -58,14 +58,12 @@ class MainApp extends StatelessWidget {
           : const Size(360, 640),
       builder: (context, child) => LayoutBuilder(
         builder: (context, constraints) {
-          // MvvmBuilder sudah DIHAPUS karena tidak diperlukan di root aplikasi
           return MaterialApp(
             title: 'Restaurant FIFO',
             navigatorKey: navigatorKey,
             scaffoldMessengerKey: snackBarKey,
             debugShowCheckedModeBanner:
-                false, // Tambahan opsional agar tulisan "Debug" hilang
-            // Mengubah rute awal langsung ke halaman AuthSelector / Login
+                false,
             initialRoute: RouteList.AuthSelector,
 
             theme: ThemeData(

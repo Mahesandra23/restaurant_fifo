@@ -7,7 +7,7 @@ import 'dart:io';
 class CategoryData {
   final String id;
   final String name;
-  final int sortOrder; // 1. TAMBAH VARIABEL INI
+  final int sortOrder;
   
   CategoryData({required this.id, required this.name, this.sortOrder = 0});
 }
@@ -104,11 +104,11 @@ class MenuViewModel extends BaseViewModel {
     Map<String, List<MenuModel>> tempGrouped = {};
     final lowerQuery = query.toLowerCase().trim();
 
-    // Inisialisasi Map menggunakan urutan 'categories' yang sudah diurutkan dari database
+    
     for (var cat in categories) {
       tempGrouped[cat.name] = [];
     }
-    // Tambahkan 'Uncategorized' di paling bawah jika ada yang tidak punya kategori
+    
     tempGrouped['Uncategorized'] = [];
 
     for (var row in _cachedRawMenus) {
@@ -144,7 +144,7 @@ class MenuViewModel extends BaseViewModel {
         ingredients: menuIngs,
       );
 
-      // Jaga-jaga jika ada data kategori usang, buatkan list-nya
+      
       if (!tempGrouped.containsKey(catName)) {
         tempGrouped[catName] = [];
       }

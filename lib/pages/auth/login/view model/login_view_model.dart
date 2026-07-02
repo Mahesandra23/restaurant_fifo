@@ -60,7 +60,7 @@ class LoginViewModel extends ChangeNotifier {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Selamat datang kembali!'),
+            content: Text('Wellcome!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -85,7 +85,7 @@ class LoginViewModel extends ChangeNotifier {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Email atau Password salah!'),
+          content: Text('incorrect email or password!'),
           backgroundColor: Colors.red,
         ),
       );
@@ -115,7 +115,7 @@ class LoginViewModel extends ChangeNotifier {
       // 2. Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Berhasil masuk sebagai Tamu'),
+          content: Text('Successfully logged in as Guest!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -129,7 +129,7 @@ class LoginViewModel extends ChangeNotifier {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Gagal masuk sebagai tamu. Coba lagi.'),
+          content: Text('Failed to log in as guest. Please try again.'),
           backgroundColor: Colors.red,
         ),
       );
