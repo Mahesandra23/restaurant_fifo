@@ -65,7 +65,7 @@ class QueueView extends StatelessWidget {
                             itemCount: vm.activeOrders.length,
                             itemBuilder: (context, index) {
                               final order = vm.activeOrders[index];
-                              final bool isFrontQueue = index == 0;
+                              final isFrontQueue = vm.isFrontOrder(order.rawId);
 
                               return _buildOrderCard(
                                 context,
